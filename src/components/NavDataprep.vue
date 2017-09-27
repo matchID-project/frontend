@@ -234,6 +234,7 @@
       <div class="navbar-item has-text-centered">
         <div class="hero has-text-right">
           <div class="level-item has-text-centered">
+              <i v-show="project != ''" class="fa fa-connectdevelop" @click="graphShow = !graphShow"></i>&nbsp;&nbsp;            
 
             <div>
               <p class="title is-4">  {{project}} </p>
@@ -252,11 +253,20 @@
       :action="newObject.action"
     ></new-object>
 
+    <graph-view
+      v-if="graphShow"
+      @close="graphShow = false"
+      :datasets="all_datasets"
+      :recipes="all_recipes"
+      :project="project"
+    ></graph-view>   
+
   </div>
 </template>
 
 <script>
 import NewObject from './NewObject'
+import GraphView from './Graph'
 import localization from '../assets/json/lang.json'
 import apiConf from '../../matchIdConfig/backend.json'
 
@@ -264,7 +274,8 @@ let api = apiConf.api
 
 export default {
   components: {
-    NewObject
+    NewObject,
+    GraphView
   },
   data () {
     return {
@@ -273,6 +284,7 @@ export default {
         type: 'project',
         action: 'new'
       },
+      graphShow: false,
       localization: localization,
       langs: localization.available,
       lang: localization.default,
@@ -280,8 +292,10 @@ export default {
       object: {},
       projects: [],
       project: '',
-      recipes: {empty: {'empty - choose a project first': {running: false}}},
-      datasets: {empty: {'empty - choose a project first': 'null'}},
+      recipes: [],
+      all_recipes: {},
+      datasets: [],
+      all_datasets: {},
       source: ''
     }
   },
@@ -323,6 +337,7 @@ export default {
       var datasets = []
       this.$http.get(api.url + '/datasets/')
         .then(response => {
+          vue.all_datasets = response.body
           for (var dataset in response.body) {
             if (response.body[dataset].project === this.project) {
               var obj = {}
@@ -337,6 +352,7 @@ export default {
           })
       this.$http.get(api.url + '/recipes/')
         .then(response => {
+          vue.all_recipes = response.body
           for (var recipe in response.body) {
             if (response.body[recipe].project === this.project) {
               var obj = {}
