@@ -33,7 +33,7 @@ export default {
     }
   },
   mounted () {
-    if (Number.isInteger(this.value) && this.value > 0 && this.value < this.max) {
+    if (Number.isInteger(this.value) && this.value > 0 && this.value <= this.max) {
       this.displayProgress = true
     }
   },
