@@ -258,7 +258,7 @@
 <script>
 import NewObject from './NewObject'
 import localization from '../assets/json/lang.json'
-import apiConf from '../../matchIdConfig/backend.json'
+import apiConf from '../assets/json/backend.json'
 
 let api = apiConf.api
 

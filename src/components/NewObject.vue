@@ -70,7 +70,7 @@ import Message from './Helpers/Message'
 import Dropzone from 'vue2-dropzone'
 
 import localization from '../assets/json/lang.json'
-import apiConf from '../../matchIdConfig/backend.json'
+import apiConf from '../assets/json/backend.json'
 let api = apiConf.api
 
 export default {
