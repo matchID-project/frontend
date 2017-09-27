@@ -24,7 +24,7 @@
   import { codemirror } from 'vue-codemirror'
   import localization from '../assets/json/lang.json'
 
-  import apiConf from '../../matchIdConfig/backend.json'
+  import apiConf from '../assets/json/backend.json'
   let api = apiConf.api
 
   // require('../codemirror_addons/comment.js')
@@ -154,4 +154,3 @@
     }
   }
 </script>
-
