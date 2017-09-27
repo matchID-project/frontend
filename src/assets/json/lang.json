@@ -1,0 +1,208 @@
+{
+  "available": [
+    "en",
+    "fr"
+  ],
+  "default": "fr",
+  "navbar": {
+    "table": {
+      "en": "Table Validation",
+      "fr": "Validation par Table"
+    },
+    "single": {
+      "en": "Single Validation",
+      "fr": "Validation par Fiche"
+    },
+    "projects":{
+      "en": "Projects",
+      "fr": "Projets"
+    },
+
+    "objects":{
+      "en": "Datasets and Recipes",
+      "fr": "Données et Recettes"
+    },
+    "datasets":{
+      "en": "Datasets",
+      "fr": "Données"
+    },
+    "recipes":{
+      "en": "Recipes",
+      "fr": "Recettes"
+    },
+    "statistics": {
+      "en": "Statistics",
+      "fr": "Statistiques"
+    },
+    "keyboard": {
+      "title": {
+        "en": "Keyboard shortcuts",
+        "fr": "Raccourcis clavier"
+      },
+      "activate_deactivate": {
+        "en": "Enable or disble keyboard shortcuts <br/><em class='is-size-7'><u>Nota</u> : once the shortcuts are activated, your classical browser shortcuts do not work anymore.</em>",
+        "fr": "Active ou désactive l'usage des raccourcis clavier <br/><em class='is-size-7'><u>Nota</u> : les raccourcis classiques de votre navigateur ne fonctionnent plus lorsque les raccourcis sont activés.</em>"
+      },
+      "only_when_activated": {
+        "en": "Only work when the shortcuts have been activated :",
+        "fr": "Ne fonctionnent que lorsque les raccourcis ont été activés :"
+      },
+      "change_decision": {
+        "en": "Change match's decision",
+        "fr": "Changer la décision du match"
+      },
+      "change_indecision": {
+        "en": "Change match's possible indecision",
+        "fr": "Changer la possible indécision du match"
+      },
+      "validate": {
+        "en": "Validate the row",
+        "fr": "Validation de la ligne"
+      },
+      "previous_next": {
+        "en": "Previous row / Next row",
+        "fr": "Ligne précédente / Ligne suivante"
+      },
+      "reload_random": {
+        "en": "Randomly reload data",
+        "fr": "Recharge les données aléatoirement"
+      },
+      "json_view": {
+        "en": "Show/hide json view of row data",
+        "fr": "Affiche/cache le json source de la ligne"
+      }
+    }
+  },
+  "validation": {
+        "filter": {
+          "en": "Filter",
+          "fr": "Filtre"
+        },
+        "mistake": {
+          "en": "An error occured",
+          "fr": "Une erreur s'est produite"
+        },
+        "displayUndoneOnly": {
+          "en": "Also display already done matchs",
+          "fr": "Afficher les matchs déjà traités"
+        }
+    },
+  "dataprep": {
+    "mistake": {
+      "en": "An error occured",
+      "fr": "Une erreur s'est produite"
+    },
+    "success": {
+          "en": "Operation successful",
+          "fr": "Opération réussie"
+    },
+    "newProject": {
+          "en": "new project",
+          "fr": "nouveau projet"
+    },
+    "newDataset": {
+          "en": "new dataset",
+          "fr": "nouvelle donnée"
+    },
+    "newRecipe": {
+          "en": "new recipe",
+          "fr": "nouvelle recette"
+    },
+    "importProject": {
+          "en": "import project",
+          "fr": "importer un projet"
+    },
+    "importDataset": {
+          "en": "importer dataset",
+          "fr": "importer une donnée"
+    },
+    "importRecipe": {
+          "en": "import recipe",
+          "fr": "importer une recette"
+    }
+  },
+  "viewdata": {
+    "page": {
+      "en": "Page",
+      "fr": "Page"
+    },
+    "search": {
+      "en": "Search",
+      "fr": "Recherche"
+    },
+    "filter": {
+      "en": "Filter",
+      "fr": "Filtre"
+    },
+    "columnsFilter": {
+      "en": "Columns filter",
+      "fr": "Filtre des colonnes"
+    }
+  },
+  "codemirror": {
+    "saved": {
+      "en": "Successfully saved",
+      "fr": "Enregistré"
+    },
+    "notSaved": {
+      "en": "Not saved",
+      "fr": "Non enregistré"
+    }
+  },
+  "viewlog": {
+    "recipeError": {
+      "en": "Bug in recipe : please check log",
+      "fr": "Attention - bug dans la recette, regardez le journal d'exécution"
+    }
+  },
+  "newObject": {
+    "newproject": {
+      "en": "New project",
+      "fr": "Nouveau projet"
+    },
+    "newrecipe": {
+      "en": "New recipe",
+      "fr": "Nouvelle recette"
+    },
+    "newdataset": {
+      "en": "New dataset",
+      "fr": "Nouvelle donnée"
+    },
+    "importproject": {
+      "en": "Import project",
+      "fr": "Importer un projet"
+    },
+    "importrecipe": {
+      "en": "Import recipe",
+      "fr": "Importer une recette"
+    },
+    "importdataset": {
+      "en": "Import dataset",
+      "fr": "Importer une donnée"
+    },
+    "nameproject": {
+      "en": "project name",
+      "fr": "nom du projet"
+    },
+    "namerecipe": {
+      "en": "recipe name",
+      "fr": "nom de la recette"
+    },
+    "namedataset": {
+      "en": "dataset name",
+      "fr": "nom de la donnée"
+    },
+    "save": {
+      "en": "save",
+      "fr": "enregistrer"
+    },
+    "dropzoneDict": {
+      "en": {
+        "dictDefaultMessage": "drag'n'drop a data file here"
+      },
+      "fr": {
+        "dictDefaultMessage": "glissez-déposez un fichier donnée ici"
+      }
+    }
+  }
+}
