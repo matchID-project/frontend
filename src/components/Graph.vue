@@ -48,41 +48,41 @@
                       :stroke-width="strokes[linkStatus(link)]"
                       :stroke-dasharray="strokeDasharray[linkStatus(link)]"
                       :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
-                      ></polyline>    
+                      ></polyline>
 
-                <circle v-for="(node, i) in nodes"
-                         v-tooltip="node.type + ': ' + node.name"
-                        :cx="coords[i].x"
-                        :cy="coords[i].y"
-                        :r="circles[nodeStatus(node)]" fill="white"
-                        :stroke="colors[node.type]" 
-                        :stroke-width="strokes[nodeStatus(node)]"
-                        @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
-                        @click="toggle(node)"
-                        >
-                </circle>
-                <icon v-for="(node, i) in nodes"
-                      v-show="show[node.name+node.type]=== 'active'"
-                      :name="icons[node.type]" 
-                      :x="coords[i].x-8"
-                      :y="coords[i].y-8"
-                      :color="colors[nodeStatus(node)]"
-                >
-                      
-                </icon>
+                <template v-for="(node, i) in nodes" v-show="dynShow[node.name+node.type] != 'hidden'">
+                  <circle
+                           v-tooltip="node.type + ': ' + node.name"
+                          :cx="coords[i].x"
+                          :cy="coords[i].y"
+                          :r="circles[nodeStatus(node)]" fill="white"
+                          :stroke="colors[node.type]" 
+                          :stroke-width="strokes[nodeStatus(node)]"
+                          @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
+                          @click="toggle(node)"
+                          >
+                  </circle>
+                  <icon 
+                        v-show="dynShow[node.name+node.type] === 'active'"
+                        :name="icons[node.type]" 
+                        :x="coords[i].x-8"
+                        :y="coords[i].y-8"
+                        :color="colors[nodeStatus(node)]"
+                  >
+                  </icon>
 
-                <text v-for="(node, i) in nodes"
-                        v-show="show[node.name+node.type] === 'active'"
-                        :x="coords[i].x"
-                        :y="coords[i].y+25"
-                        :fill="colors[node.type]"
-                        class="is-small"
-                        text-anchor="middle"
-                        > 
+                  <text 
+                    v-show="dynShow[node.name+node.type] === 'active'"
+                    :x="coords[i].x"
+                    :y="coords[i].y+25"
+                    :fill="colors[node.type]"
+                    class="is-small"
+                    text-anchor="middle"
+                    > 
 
-                        {{node.name}}
-                </text>
-
+                          {{node.name}}
+                  </text>
+                </template>
 
 
               </svg>
@@ -119,9 +119,10 @@ export default {
       localization: localization,
       langs: localization.available,
       lang: localization.default,
-      nodes: Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: null, y: null, fixed: false, rank: 1 }))
+      nodes: [{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: true, rank: 0}]
+        .concat(Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: null, y: null, fixed: false, rank: 1 })))
         .concat(Object.keys(this.recipes).map(i => ({ index: i, name: i, type: 'recipe', props: this.recipes[i], x: null, y: null, fixed: false, rank: 1 })))
-        .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: true, rank: 0}]),
+        .concat(),
       width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * 0.66,
       height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0) * 0.8,
       padding: 20,
@@ -133,16 +134,16 @@ export default {
         'join': 1
       },
       collide: {
-        'project': 50,
+        'project': 100,
         'dataset': 30,
         'recipe': 30,
-        'inactive': 1
+        'inactive': 20
       },
       charge: {
         'project': 1,
-        'dataset': -20,
-        'recipe': -20,
-        'inactive': -100
+        'dataset': -10,
+        'recipe': -10,
+        'inactive': -1
       },
       markers: {
         'projectLink': 'arrow',
@@ -235,6 +236,26 @@ export default {
       }
       links = links.filter(l => (l.source !== null) && (l.target !== null))
       return links
+    },
+    dynShow () {
+      var show = this.show
+      for (var key in show) {
+        if (show[key] === 'inactive') {
+          show[key] = 'hidden'
+        }
+      }
+      for (var link in this.links) {
+        console.log(this.links[link].source.name)
+        if (this.linkStatus(this.links[link]) !== 'hidden') {
+          if (show[this.links[link].source.name + this.links[link].source.type] === 'hidden') {
+            show[this.links[link].source.name + this.links[link].source.type] = 'inactive'
+          }
+          if (show[this.links[link].target.name + this.links[link].target.type] === 'hidden') {
+            show[this.links[link].target.name + this.links[link].target.type] = 'inactive'
+          }
+        }
+      }
+      return show
     }
   },
   created () {
@@ -250,8 +271,6 @@ export default {
         .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
         .force('charge', d3.forceManyBody().strength(d => vue.charge[vue.nodeStatus(d)]))
         .force('link', d3.forceLink(this.links))
-        .force('center', d3.forceCenter(this.width / 2, this.height / 2))
-        .force('x', d3.forceX())
         .force('y', d3.forceY())
         // .linkStrength(function (link) { return vue.linkStrength[vue.linkStatus(link)] })
   },
@@ -262,10 +281,7 @@ export default {
       } else if (this.show[node.name + node.type] === 'inactive') {
         this.show[node.name + node.type] = 'active'
       }
-      this.prune()
-    },
-    prune: function () {
-
+      this.show = this.dynShow()
     },
     nodeStatus: function (node) {
       if (this.show[node.name + node.type] === 'active') {
