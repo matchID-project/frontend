@@ -119,7 +119,8 @@ export default {
       localization: localization,
       langs: localization.available,
       lang: localization.default,
-      nodes: [{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: true, rank: 0}]
+      nodes: []
+       // [{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}]
         .concat(Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: null, y: null, fixed: false, rank: 1 })))
         .concat(Object.keys(this.recipes).map(i => ({ index: i, name: i, type: 'recipe', props: this.recipes[i], x: null, y: null, fixed: false, rank: 1 })))
         .concat(),
@@ -134,10 +135,10 @@ export default {
         'join': 1
       },
       collide: {
-        'project': 100,
-        'dataset': 30,
-        'recipe': 30,
-        'inactive': 20
+        'project': 10,
+        'dataset': 3,
+        'recipe': 3,
+        'inactive': 2
       },
       charge: {
         'project': 1,
@@ -267,12 +268,19 @@ export default {
         this.show[this.nodes[node].name + this.nodes[node].type] = 'inactive'
       }
     }
-    this.simulation = d3.forceSimulation(this.nodes)
-        .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
+    this.simulation = d3.forceSimulation(vue.nodes)
+        // .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
         .force('charge', d3.forceManyBody().strength(d => vue.charge[vue.nodeStatus(d)]))
         .force('link', d3.forceLink(this.links))
         .force('y', d3.forceY())
-        // .linkStrength(function (link) { return vue.linkStrength[vue.linkStatus(link)] })
+        .force('x', d3.forceX())
+        .distanceMax(200).distanceMin(100)
+        .linkDistance(this.height / 12)
+    // vue.simulation = d3.layout.force()
+    //   .linkDistance(200)
+    //   .charge(-500)
+    //   .gravity(0.05)
+    //   .size([this.width, this.height])
   },
   methods: {
     toggle: function (node) {
