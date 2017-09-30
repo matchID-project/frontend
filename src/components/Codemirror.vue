@@ -110,7 +110,11 @@
     },
     computed: {
       editor () {
-        return this.$refs.myEditor.editor
+        if (this.$refs.myEditor.editor !== undefined) {
+          return this.$refs.myEditor.editor
+        } else {
+          return null
+        }
       }
     },
     mounted () {
