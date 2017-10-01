@@ -21,7 +21,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class ="fa fa-plus"></i> &nbsp; &nbsp;
+                    <i class ="fa fa-plus mID-margin-right-8"></i> 
                   </span>
                 </div>
               </div>
@@ -42,7 +42,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class ="fa fa-upload"></i> &nbsp; &nbsp;
+                    <i class ="fa fa-upload mID-margin-right-8"></i>
                   </span>
                 </div>
               </div>
@@ -66,7 +66,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa"></i> &nbsp; &nbsp;
+                  <i :class="'fa mID-margin-right-8 ' + [aProj === project ? 'fa-connectdevelop has-text-primary' : '']" @click="graphShow = !graphShow"></i>
                   </span>
                 </div>
               </div>
@@ -101,7 +101,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-plus"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-plus mID-margin-right-8"></i>
                   </span>
                 </div>
               </div>
@@ -120,7 +120,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-upload"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-upload mID-margin-right-8"></i>
                   </span>
                 </div>
               </div>
@@ -143,7 +143,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa" :class="[aDataset[Object.keys(aDataset)[0]].validation === true ? 'fa-check has-text-primary' : (isActive(aDataset,'dataset') ? 'fa-table has-text-primary' : '')]" @click="validateObj(aDataset)"></i>  &nbsp;&nbsp;
+                    <i class="fa" :class="'mID-margin-right-8 ' + [aDataset[Object.keys(aDataset)[0]].validation === true ? 'fa-check has-text-primary' : (isActive(aDataset,'dataset') ? 'fa-table has-text-primary' : '')]" @click="validateObj(aDataset)"></i> 
                   </span>
                 </div>
               </div>
@@ -175,7 +175,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-plus"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-plus mID-margin-right-8"></i> 
                   </span>
                 </div>
               </div>
@@ -194,7 +194,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-upload"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-upload mID-margin-right-8"></i> 
                   </span>
                 </div>
               </div>
@@ -240,8 +240,6 @@
       <div class="navbar-item has-text-centered">
         <div class="hero has-text-right">
           <div class="level-item has-text-centered">
-              <i v-show="project != ''" class="fa fa-connectdevelop" @click="graphShow = !graphShow"></i>&nbsp;&nbsp;            
-
             <div>
               <p class="title is-4">  {{project}} </p>
               <p></p>
