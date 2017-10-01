@@ -51,17 +51,19 @@
                       ></polyline>
 
                 <template v-for="(node, i) in nodes" v-show="dynShow[node.name+node.type] != 'hidden'">
-                  <circle
-                           v-tooltip="node.type + ': ' + node.name"
-                          :cx="coords[i].x"
-                          :cy="coords[i].y"
-                          :r="circles[nodeStatus(node)]" fill="white"
-                          :stroke="colors[node.type]" 
-                          :stroke-width="strokes[nodeStatus(node)]"
-                          @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
-                          @click="toggle(node)"
-                          >
-                  </circle>
+                  <g>
+                    <title> {{node.type}}: {{node.name}}</title>
+                    <circle
+                            :cx="coords[i].x"
+                            :cy="coords[i].y"
+                            :r="circles[nodeStatus(node)]" fill="white"
+                            :stroke="colors[node.type]" 
+                            :stroke-width="strokes[nodeStatus(node)]"
+                            @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
+                            @click="toggle(node)"
+                            >
+                    </circle>
+                  </g>
                   <icon 
                         v-show="dynShow[node.name+node.type] === 'active'"
                         :name="icons[node.type]" 
@@ -378,20 +380,3 @@ export default {
 }
 </script>
 
-<style>
-.vue-tooltip{background-color:#fff;box-sizing:border-box;color:#00d1b2;max-width:320px;padding:6px 10px;border-radius:3px;z-index:100;box-shadow:2px 2px 3px rgba(0,0,0,0.4)}
-.vue-tooltip .vue-tooltip-content{text-align:center}
-.vue-tooltip .tooltip-arrow{content:'';width:0;height:0;border-style:solid;position:absolute;margin:5px}
-.vue-tooltip[x-placement^="top"]{margin-bottom:5px}
-.vue-tooltip[x-placement^="top"] 
-.tooltip-arrow{border-width:5px 5px 0 5px;border-top-color:#00d1b2;border-bottom-color:transparent !important;border-left-color:transparent !important;border-right-color:transparent !important;bottom:-5px;margin-top:0;margin-bottom:0}
-.vue-tooltip[x-placement^="bottom"]{margin-top:5px}
-.vue-tooltip[x-placement^="bottom"] 
-.tooltip-arrow{border-width:0 5px 5px 5px;border-bottom-color:#00d1b2;border-top-color:transparent !important;border-left-color:transparent !important;border-right-color:transparent !important;top:-5px;margin-top:0;margin-bottom:0}
-.vue-tooltip[x-placement^="right"]{margin-left:5px}
-.vue-tooltip[x-placement^="right"]
-.tooltip-arrow{border-width:5px 5px 5px 0;border-right-color:#00d1b2;border-top-color:transparent !important;border-left-color:transparent !important;border-bottom-color:transparent !important;left:-5px;margin-left:0;margin-right:0}
-.vue-tooltip[x-placement^="left"]{margin-right:5px}
-.vue-tooltip[x-placement^="left"] 
-.tooltip-arrow{border-width:5px 0 5px 5px;border-left-color:#00d1b2;border-top-color:transparent !important;border-right-color:transparent !important;border-bottom-color:transparent !important;right:-5px;margin-left:0;margin-right:0}
-</style>
