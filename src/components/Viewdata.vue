@@ -110,6 +110,9 @@ export default {
           response => {
             if (response.body.data !== undefined) {
               vue.gridData = response.body.data
+              if (vue.gridData[0] === undefined) {
+                vue.gridData = [{result: 'empty result'}]
+              }
               vue.empty = false
               vue.gridColumns = Object.keys(vue.gridData[0])
               w.bus.$emit('columnsChange', vue.gridColumns)
