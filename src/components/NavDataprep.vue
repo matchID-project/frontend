@@ -136,14 +136,14 @@
             class="navbar-item"
             v-for="aDataset in datasets"
             :key="aDataset.key"
-            :class="{'is-active' : (Object.keys(aDataset)[0] === Object.keys(object)[0])}"
+            :class="{'is-active': isActive(aDataset,'dataset') }"
             @click="changeObj(aDataset,'dataset')"
           >
             <div class="level is-mobile">
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa" :class="[aDataset[Object.keys(aDataset)[0]].validation === true ? 'fa-check has-text-primary' : '']" @click="validateObj(aDataset)"></i>  &nbsp;&nbsp;
+                    <i class="fa" :class="[aDataset[Object.keys(aDataset)[0]].validation === true ? 'fa-check has-text-primary' : (isActive(aDataset,'dataset') ? 'fa-table has-text-primary' : '')]" @click="validateObj(aDataset)"></i>  &nbsp;&nbsp;
                   </span>
                 </div>
               </div>
@@ -210,7 +210,7 @@
             class="navbar-item"
             v-for="aRecipe in recipes"
             :key="aRecipe.key"
-            :class="{'is-active' : (Object.keys(aRecipe)[0] === Object.keys(object)[0])}"
+            :class="{'is-active': isActive(aRecipe,'recipe') }"
             @click="changeObj(aRecipe,'recipe')"
           >
             <div class="level is-mobile">
@@ -219,9 +219,9 @@
                   <span class="icon has-text-info">
                     <i
                       class="fa"
-                      :class="[ (isRunning[Object.keys(aRecipe)[0]] === true ? 'fa-flask fa-spin has-text-danger' : ( Object.keys(aRecipe)[0] === Object.keys(object)[0] ? 'fa-flask has-text-primary' : ''))]"
-                       @click="(Object.keys(aRecipe)[0] === Object.keys(object)[0] || isRunning[Object.keys(aRecipe)[0]] === true) ? runStopRecipe(aRecipe) : ''"
-                    ></i> &nbsp;&nbsp;&nbsp;&nbsp;
+                      :class="'mID-margin-right-8 ' + [ (isRunning[Object.keys(aRecipe)[0]] === true ? 'fa-flask fa-spin has-text-danger' : ( isActive(aRecipe,'recipe') ? 'fa-flask has-text-primary' : ''))]"
+                       @click="(isActive(aRecipe,'recipe') || isRunning[Object.keys(aRecipe)[0]] === true) ? runStopRecipe(aRecipe) : ''"
+                    ></i> 
                   </span>
                 </div>
               </div>
@@ -382,6 +382,10 @@ export default {
         response => {
         })
     },
+    isActive (anObj, type) {
+      return (Object.keys(this.object)[0] === Object.keys(anObj)[0]) &&
+        (this.object[Object.keys(this.object)[0]].type === anObj[Object.keys(anObj)[0]].type)
+    },
     checkStatus (name) {
       var vue = this
       this.$http.get(api.url + 'recipes/' + name + '/status')
@@ -400,14 +404,13 @@ export default {
       if (vue.isRunning[name] === true) {
         this.$http.put(api.url + '/recipes/' + name + '/stop')
           .then(response => {
-            vue.isRunning[name] = false
           })
       } else {
         this.$http.put(api.url + '/recipes/' + name + '/run')
           .then(response => {
-            vue.isRunning[name] = true
           })
       }
+      vue.isRunning[name] = !vue.isRunning[name]
     }
   },
   mounted () {
