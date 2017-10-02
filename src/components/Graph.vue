@@ -51,17 +51,19 @@
                       ></polyline>
 
                 <template v-for="(node, i) in nodes" v-show="dynShow[node.name+node.type] != 'hidden'">
-                  <circle
-                           v-tooltip="node.type + ': ' + node.name"
-                          :cx="coords[i].x"
-                          :cy="coords[i].y"
-                          :r="circles[nodeStatus(node)]" fill="white"
-                          :stroke="colors[node.type]" 
-                          :stroke-width="strokes[nodeStatus(node)]"
-                          @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
-                          @click="toggle(node)"
-                          >
-                  </circle>
+                  <g>
+                    <title> {{node.type}}: {{node.name}}</title>
+                    <circle
+                            :cx="coords[i].x"
+                            :cy="coords[i].y"
+                            :r="circles[nodeStatus(node)]" fill="white"
+                            :stroke="colors[node.type]" 
+                            :stroke-width="strokes[nodeStatus(node)]"
+                            @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
+                            @click="toggle(node)"
+                            >
+                    </circle>
+                  </g>
                   <icon 
                         v-show="dynShow[node.name+node.type] === 'active'"
                         :name="icons[node.type]" 
@@ -119,7 +121,8 @@ export default {
       localization: localization,
       langs: localization.available,
       lang: localization.default,
-      nodes: [{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: true, rank: 0}]
+      nodes: []
+       // [{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}]
         .concat(Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: null, y: null, fixed: false, rank: 1 })))
         .concat(Object.keys(this.recipes).map(i => ({ index: i, name: i, type: 'recipe', props: this.recipes[i], x: null, y: null, fixed: false, rank: 1 })))
         .concat(),
@@ -134,10 +137,10 @@ export default {
         'join': 1
       },
       collide: {
-        'project': 100,
-        'dataset': 30,
-        'recipe': 30,
-        'inactive': 20
+        'project': 10,
+        'dataset': 3,
+        'recipe': 3,
+        'inactive': 2
       },
       charge: {
         'project': 1,
@@ -267,12 +270,19 @@ export default {
         this.show[this.nodes[node].name + this.nodes[node].type] = 'inactive'
       }
     }
-    this.simulation = d3.forceSimulation(this.nodes)
-        .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
+    this.simulation = d3.forceSimulation(vue.nodes)
+        // .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
         .force('charge', d3.forceManyBody().strength(d => vue.charge[vue.nodeStatus(d)]))
         .force('link', d3.forceLink(this.links))
         .force('y', d3.forceY())
-        // .linkStrength(function (link) { return vue.linkStrength[vue.linkStatus(link)] })
+        .force('x', d3.forceX())
+        .distanceMax(200).distanceMin(100)
+        .linkDistance(this.height / 12)
+    // vue.simulation = d3.layout.force()
+    //   .linkDistance(200)
+    //   .charge(-500)
+    //   .gravity(0.05)
+    //   .size([this.width, this.height])
   },
   methods: {
     toggle: function (node) {
@@ -370,20 +380,3 @@ export default {
 }
 </script>
 
-<style>
-.vue-tooltip{background-color:#fff;box-sizing:border-box;color:#00d1b2;max-width:320px;padding:6px 10px;border-radius:3px;z-index:100;box-shadow:2px 2px 3px rgba(0,0,0,0.4)}
-.vue-tooltip .vue-tooltip-content{text-align:center}
-.vue-tooltip .tooltip-arrow{content:'';width:0;height:0;border-style:solid;position:absolute;margin:5px}
-.vue-tooltip[x-placement^="top"]{margin-bottom:5px}
-.vue-tooltip[x-placement^="top"] 
-.tooltip-arrow{border-width:5px 5px 0 5px;border-top-color:#00d1b2;border-bottom-color:transparent !important;border-left-color:transparent !important;border-right-color:transparent !important;bottom:-5px;margin-top:0;margin-bottom:0}
-.vue-tooltip[x-placement^="bottom"]{margin-top:5px}
-.vue-tooltip[x-placement^="bottom"] 
-.tooltip-arrow{border-width:0 5px 5px 5px;border-bottom-color:#00d1b2;border-top-color:transparent !important;border-left-color:transparent !important;border-right-color:transparent !important;top:-5px;margin-top:0;margin-bottom:0}
-.vue-tooltip[x-placement^="right"]{margin-left:5px}
-.vue-tooltip[x-placement^="right"]
-.tooltip-arrow{border-width:5px 5px 5px 0;border-right-color:#00d1b2;border-top-color:transparent !important;border-left-color:transparent !important;border-bottom-color:transparent !important;left:-5px;margin-left:0;margin-right:0}
-.vue-tooltip[x-placement^="left"]{margin-right:5px}
-.vue-tooltip[x-placement^="left"] 
-.tooltip-arrow{border-width:5px 0 5px 5px;border-left-color:#00d1b2;border-top-color:transparent !important;border-right-color:transparent !important;border-bottom-color:transparent !important;right:-5px;margin-left:0;margin-right:0}
-</style>

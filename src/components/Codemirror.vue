@@ -110,7 +110,11 @@
     },
     computed: {
       editor () {
-        return this.$refs.myEditor.editor
+        if (this.$refs.myEditor.editor !== undefined) {
+          return this.$refs.myEditor.editor
+        } else {
+          return null
+        }
       }
     },
     mounted () {
@@ -118,7 +122,6 @@
       var w = window
       window.bus.$on('projectChange', function (project) {
         vue.project = project
-        // vue.editor.setValue('')
       })
 
       window.bus.$on('loadingCode', function (loading) {
@@ -132,7 +135,6 @@
       window.bus.$on('objectChange', function (object) {
         // console.log('codeMirror objectChange ' + vue.id + ' ' + Object.keys(object)[0])
         if (vue.object !== object) {
-          // vue.editor.setValue('')
           vue.object = object
           var props = object[Object.keys(object)[0]]
           w.bus.$emit('loadingCode', true)
