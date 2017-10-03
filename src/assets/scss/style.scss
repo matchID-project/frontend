@@ -26,9 +26,12 @@ html, body {
     flex-grow: 1;
     display: flex;
     overflow: auto;
-    // padding-top: 1rem;
     background-color: $grey-lighter;
   }
+}
+
+.navbar {
+  border-bottom: $white-ter 1px solid;
 }
 
 .logo {
@@ -60,18 +63,22 @@ html, body {
   padding: 0.5rem 0.7rem;
   background-color: $grey-lighter;
 }
+
 #validationWrapper {
   display: flex;
   flex-flow: column;
   flex-wrap: none;
   height: 100%;
 }
+
 #content {
   width: 100%;
 }
+
 .box {
   padding: 0.7rem;
 }
+
 .table {
   td,th {
     vertical-align: middle !important;
@@ -84,18 +91,22 @@ html, body {
     text-align: center !important;
   }
 }
+
 #loading-spinner {
   margin-top: 8rem;
 }
+
 .stickTable-container {
   position: relative;
 }
+
 .stickTable {
   table {
     width: 100%;
     background-color: $white;
   }
 }
+
 #sliderWrapper {
   padding-left: 5px;
   padding-right: 10px;
@@ -130,6 +141,7 @@ html, body {
     opacity: 0.3;
   }
 }
+
 .table tr:hover {
   background-color: inherit;
 }
