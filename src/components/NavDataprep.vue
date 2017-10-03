@@ -271,7 +271,6 @@
 <script>
 import NewObject from './NewObject'
 import GraphView from './Graph'
-import localization from '../assets/json/lang.json'
 import apiConf from '../assets/json/backend.json'
 
 let api = apiConf.api
@@ -289,9 +288,6 @@ export default {
         action: 'new'
       },
       graphShow: false,
-      localization: localization,
-      langs: localization.available,
-      lang: localization.default,
       validation: false,
       object: {},
       projects: [],
@@ -415,10 +411,6 @@ export default {
     let self = this
 
     this.loadProjectsList(this.project)
-
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
 
     window.bus.$on('projectChange', function (value) {
       self.project = value

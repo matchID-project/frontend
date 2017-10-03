@@ -60,7 +60,6 @@ import Controller from './Validation/Controller'
 import Codemirror from './Codemirror'
 import Viewdata from './Viewdata'
 import Viewlog from './Viewlog'
-import localization from '../assets/json/lang.json'
 
 export default {
   components: {
@@ -74,8 +73,6 @@ export default {
     return {
       empty: true,
       loading: false,
-      localization: localization,
-      lang: localization.default,
       loadingCode: false,
       loadingData: false,
       loadingLog: false,
@@ -125,10 +122,6 @@ export default {
 
     window.bus.$on('error', function (error) {
       self.error = error
-    })
-
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
     })
   }
 }

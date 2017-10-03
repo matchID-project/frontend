@@ -50,7 +50,6 @@
 
 <script>
 import Grid from './Grid'
-import localization from '../assets/json/lang.json'
 import apiConf from '../assets/json/backend.json'
 let api = apiConf.api
 
@@ -61,9 +60,6 @@ export default {
   data () {
     return {
       empty: true,
-      localization: localization,
-      langs: localization.available,
-      lang: localization.default,
       searchQuery: '',
       columnsFilter: '',
       loading: false,
@@ -130,10 +126,6 @@ export default {
   },
   mounted () {
     var vue = this
-
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
 
     window.bus.$on('codeContentChange', this.loadData)
 

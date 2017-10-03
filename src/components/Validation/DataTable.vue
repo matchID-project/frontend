@@ -132,7 +132,6 @@ import ScrollManager from '../Helpers/FixedHeader/ScrollManager'
 import TableHeader from '../Helpers/FixedHeader/TableHeader'
 import ElasticsearchResponse from './ElasticsearchResponse'
 
-import localization from '../../assets/json/lang.json'
 import formatCell from '../../assets/js/formatCell'
 import ToggleButton from 'vue-js-toggle-button'
 Vue.use(ToggleButton)
@@ -180,9 +179,6 @@ export default {
   },
   data () {
     return {
-      // LOCALIZATION
-      localization: localization,
-      lang: localization.default,
       // JSON RESPONSE VIEW
       elasticsearchResponseShow: false,
       elasticsearchResponseData: {},
@@ -206,11 +202,6 @@ export default {
     this.scrollManager.init(scrollContainerEl)
 
     this.initShortcuts()
-
-    let self = this
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
   },
   destroyed () {
     this.scrollManager.destroy()

@@ -178,8 +178,6 @@ import elasticsearchLib from 'elasticsearch'
 import Statistics from './Statistics'
 import Keyboard from './Keyboard'
 
-import localization from '../../assets/json/lang.json'
-
 export default {
   components: {
     RangeSlider,
@@ -212,9 +210,6 @@ export default {
   },
   data () {
     return {
-      // LOCALIZATION
-      localization: localization,
-      lang: localization.default,
       // OUTPUT PROPS DATA-TABLE + ALL PROPS INCOMING
       loading: false,
       dataTable: [],
@@ -249,9 +244,6 @@ export default {
     this.refreshData()
 
     let self = this
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
 
     window.bus.$on('reloadData', function () {
       self.refreshData()

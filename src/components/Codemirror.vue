@@ -22,7 +22,6 @@
 
 <script>
   import { codemirror } from 'vue-codemirror'
-  import localization from '../assets/json/lang.json'
 
   import apiConf from '../assets/json/backend.json'
   let api = apiConf.api
@@ -37,8 +36,6 @@
       return {
         code: null,
         object: {},
-        localization: localization,
-        lang: localization.default,
         id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
         project: '',
         source: '',
@@ -126,10 +123,6 @@
 
       window.bus.$on('loadingCode', function (loading) {
         vue.loading = loading
-      })
-
-      window.bus.$on('langChange', function (value) {
-        self.lang = value
       })
 
       window.bus.$on('objectChange', function (object) {

@@ -88,26 +88,12 @@
 </template>
 
 <script>
-import localization from '../../assets/json/lang.json'
-
 export default {
   props: {
     'validationDisplay': {
       required: true,
       type: Boolean
     }
-  },
-  data () {
-    return {
-      localization: localization,
-      lang: localization.default
-    }
-  },
-  mounted () {
-    let self = this
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
   }
 }
 </script>

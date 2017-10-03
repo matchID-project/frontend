@@ -28,8 +28,6 @@
 </template>
 
 <script>
-import localization from '../../assets/json/lang.json'
-
 import statsChart from '../../assets/js/charts'
 
 export default {
@@ -48,12 +46,6 @@ export default {
     validationIndecisionDisplay: {
       required: true,
       type: Boolean
-    }
-  },
-  data () {
-    return {
-      localization: localization,
-      lang: localization.default
     }
   },
   computed: {
@@ -170,12 +162,6 @@ export default {
         }
       }
     }
-  },
-  mounted () {
-    let self = this
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
   }
 }
 </script>

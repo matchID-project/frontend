@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import localization from '../assets/json/lang.json'
-
 import apiConf from '../assets/json/backend.json'
 let api = apiConf.api
 
@@ -29,11 +27,8 @@ export default {
     return {
       object: {},
       head: 100,
-      langs: localization.available,
-      lang: localization.default,
       log: '',
-      loading: false,
-      localization: localization
+      loading: false
     }
   },
   methods: {
@@ -95,10 +90,6 @@ export default {
 
     window.bus.$on('loadingLog', function (loading) {
       vue.loading = loading
-    })
-
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
     })
 
     window.bus.$on('logChange', this.changeLog)

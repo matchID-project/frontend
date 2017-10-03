@@ -69,7 +69,6 @@
 import Message from './Helpers/Message'
 import Dropzone from 'vue2-dropzone'
 
-import localization from '../assets/json/lang.json'
 import apiConf from '../assets/json/backend.json'
 let api = apiConf.api
 
@@ -90,10 +89,8 @@ export default {
         message: ''
       },
       project: '',
-      localization: localization,
-      lang: localization.default,
       customOptionsObject: {
-        language: localization.newObject.dropzoneDict[this.lang]
+        language: this.localization.newObject.dropzoneDict[this.lang]
       },
       name: null
     }
@@ -194,10 +191,6 @@ export default {
   },
   mounted () {
     let vue = this
-
-    window.bus.$on('langChange', function (value) {
-      vue.lang = value
-    })
 
     window.bus.$on('projectChange', function (value) {
       vue.project = value

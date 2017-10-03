@@ -28,8 +28,6 @@
 </template>
 
 <script>
-import localization from '../assets/json/lang.json'
-
 import NavDataprep from './NavDataprep'
 
 export default {
@@ -38,8 +36,7 @@ export default {
   },
   data () {
     return {
-      langs: localization.available,
-      lang: localization.default
+      langs: []
     }
   },
   methods: {
@@ -49,11 +46,9 @@ export default {
     }
   },
   mounted () {
-    let self = this
+    this.langs = this.localization.available
+
     this.changeLang(this.lang)
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
   }
 }
 </script>

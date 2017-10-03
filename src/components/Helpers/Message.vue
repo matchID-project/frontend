@@ -53,10 +53,6 @@
       window.bus.$on('objectChange', function (loading) {
         window.bus.$emit('error', {display: false, message: '', type: 'success'})
       })
-
-      window.bus.$on('langChange', function (value) {
-        self.lang = value
-      })
     }
   }
 </script>

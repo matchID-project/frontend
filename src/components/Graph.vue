@@ -108,7 +108,6 @@
 </template>
 
 <script>
-import localization from '../assets/json/lang.json'
 import * as d3 from 'd3'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -124,9 +123,6 @@ export default {
   },
   data () {
     return {
-      localization: localization,
-      langs: localization.available,
-      lang: localization.default,
       nodes: []
         // .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
         .concat(Object.keys(this.datasets).map((name, index) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), dbtype: this.datasets[name].connector, active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
