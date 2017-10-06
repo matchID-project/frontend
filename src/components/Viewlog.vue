@@ -11,7 +11,7 @@
 
   <div v-show="!loading" class="is-fullheight">
       <p v-for="entry in parsedLog" class="is-small">
-           <a :class="[entry.match('Ooops') ? 'has-text-danger' : 'has-text-primary']" > {{entry}}</a> 
+           <a :class="[entry.match('Ooops') ? 'has-text-danger' : 'has-text-primary']" > {{entry}}</a>
       </p>
   </div>
 </div>
@@ -101,4 +101,3 @@ export default {
 }
 
 </script>
-

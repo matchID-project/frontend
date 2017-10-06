@@ -24,7 +24,6 @@
     </tbody>
   </table>
 </div>
-
 </template>
 
 
@@ -120,4 +119,3 @@ export default {
 }
 
 </script>
-
