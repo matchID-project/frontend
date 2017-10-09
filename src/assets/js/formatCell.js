@@ -23,7 +23,9 @@ function sexConvertor (value) {
 
 // CUSTOM FUNCTION
 function formatDistance (value) {
-  if (Number(value) === 0) return ''
+  if (value === '' || value === undefined) return '<span class="icon is-medium"><i class="fa fa-lg fa-question has-text-danger"></i></span>'
+
+  if (value === 0) return '<span class="icon is-medium"><i class="fa fa-check has-text-dark"></i></span>'
 
   if (value < 10) return value + ' km'
 
