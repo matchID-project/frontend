@@ -59,7 +59,7 @@
                             :r="circles[nodeStatus(node)]" fill="white"
                             :stroke="colors[node.type]" 
                             :stroke-width="strokes[nodeStatus(node)]"
-                            @mousedown="currentMove = (node.fixed ? null : {x: $event.screenX, y: $event.screenY, node: node})"
+                            @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
                             @click="toggle(node)"
                             >
                     </circle>
@@ -122,9 +122,9 @@ export default {
       langs: localization.available,
       lang: localization.default,
       nodes: []
-       // [{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}]
-        .concat(Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: null, y: null, fixed: false, rank: 1 })))
-        .concat(Object.keys(this.recipes).map(i => ({ index: i, name: i, type: 'recipe', props: this.recipes[i], x: null, y: null, fixed: false, rank: 1 })))
+        .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
+        .concat(Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: this.width / 2, y: this.height / 2, fixed: false, rank: 1 })))
+        .concat(Object.keys(this.recipes).map(i => ({ index: i, name: i, type: 'recipe', props: this.recipes[i], x: this.width / 2, y: this.height / 2, fixed: false, rank: 1 })))
         .concat(),
       width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * 0.66,
       height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0) * 0.8,
@@ -209,10 +209,15 @@ export default {
       }
     },
     coords () {
+      var vue = this
       return this.nodes.map(node => {
-        return {
-          x: this.padding + (node.x - this.bounds.minX) * (this.width - 2 * this.padding) / (this.bounds.maxX - this.bounds.minX),
-          y: this.padding + (node.y - this.bounds.minY) * (this.height - 2 * this.padding) / (this.bounds.maxY - this.bounds.minY)
+        if (node !== undefined) {
+          return {
+            x: this.padding + (node.x - this.bounds.minX) * (this.width - 2 * this.padding) / (this.bounds.maxX - this.bounds.minX),
+            y: this.padding + (node.y - this.bounds.minY) * (this.height - 2 * this.padding) / (this.bounds.maxY - this.bounds.minY)
+          }
+        } else {
+          return { x: vue.width / 2, y: vue.width / 2 }
         }
       })
     },
@@ -232,12 +237,12 @@ export default {
 
       // adds call from recipes to recipes
       for (var recipe in this.recipes) {
-        if (this.recipes[recipe].steps !== undefined) {
+        if ((this.recipes[recipe].steps !== undefined) && (this.recipes[recipe].steps !== null)) {
           links = links.concat(this.recipes[recipe].steps.map(i => ({source: this.getNodeIndex(recipe, 'recipe'), target: this.getNodeIndex(Object.keys(i)[0], 'recipe'), type: 'recipeCall'})))
           links = links.concat(this.recipes[recipe].steps.filter(i => (Object.keys(i)[0] === 'join')).map(i => ({source: this.getNodeIndex(recipe, 'recipe'), target: this.getNodeIndex(i.join.dataset, 'dataset'), type: 'join'})))
         }
       }
-      links = links.filter(l => (l.source !== null) && (l.target !== null))
+      links = links.filter(l => (l.source !== null) && (l.source !== undefined) && (l.target !== null) && (l.target !== undefined))
       return links
     },
     dynShow () {
@@ -248,7 +253,7 @@ export default {
         }
       }
       for (var link in this.links) {
-        console.log(this.links[link].source.name)
+        // console.log(this.links[link].source.name)
         if (this.linkStatus(this.links[link]) !== 'hidden') {
           if (show[this.links[link].source.name + this.links[link].source.type] === 'hidden') {
             show[this.links[link].source.name + this.links[link].source.type] = 'inactive'
@@ -271,13 +276,13 @@ export default {
       }
     }
     this.simulation = d3.forceSimulation(vue.nodes)
-        // .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
+        .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
         .force('charge', d3.forceManyBody().strength(d => vue.charge[vue.nodeStatus(d)]))
         .force('link', d3.forceLink(this.links))
         .force('y', d3.forceY())
         .force('x', d3.forceX())
-        .distanceMax(200).distanceMin(100)
-        .linkDistance(this.height / 12)
+        // .distanceMax(200).distanceMin(100)
+        // .linkDistance(this.height / 12)
     // vue.simulation = d3.layout.force()
     //   .linkDistance(200)
     //   .charge(-500)
