@@ -8,6 +8,7 @@
             class="control"
              v-on:mouseover="loadProjectsList()"
           >
+          <i class="fa fa-connectdevelop mID-margin-right-8" aria-hidden="true"></i>
           {{localization.navbar.projects[lang]}}
           </span>
         </a>
@@ -20,7 +21,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class ="fa fa-plus"></i> &nbsp; &nbsp;
+                    <i class ="fa fa-plus mID-margin-right-8"></i> 
                   </span>
                 </div>
               </div>
@@ -41,7 +42,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class ="fa fa-upload"></i> &nbsp; &nbsp;
+                    <i class ="fa fa-upload mID-margin-right-8"></i>
                   </span>
                 </div>
               </div>
@@ -65,7 +66,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa"></i> &nbsp; &nbsp;
+                  <i :class="'fa mID-margin-right-8 ' + [aProj === project ? 'fa-connectdevelop has-text-primary' : '']" @click="graphShow = !graphShow"></i>
                   </span>
                 </div>
               </div>
@@ -86,6 +87,8 @@
             class="control"
              v-on:mouseover="loadObjectsList()"
           >
+          <i class="fa fa-table mID-margin-right-8" aria-hidden="true"></i>
+
           {{localization.navbar.datasets[lang]}}
           </span>
         </a>
@@ -98,7 +101,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-plus"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-plus mID-margin-right-8"></i>
                   </span>
                 </div>
               </div>
@@ -117,7 +120,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-upload"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-upload mID-margin-right-8"></i>
                   </span>
                 </div>
               </div>
@@ -133,14 +136,14 @@
             class="navbar-item"
             v-for="aDataset in datasets"
             :key="aDataset.key"
-            :class="{'is-active' : (Object.keys(aDataset)[0] === Object.keys(object)[0])}"
-            @click="changeObj(aDataset)"
+            :class="{'is-active': isActive(aDataset,'dataset') }"
+            @click="changeObj(aDataset,'dataset')"
           >
             <div class="level is-mobile">
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa" :class="[aDataset[Object.keys(aDataset)[0]].validation === true ? 'fa-check has-text-primary' : '']" @click="validateObj(aDataset)"></i>  &nbsp;&nbsp;
+                    <i class="fa" :class="'mID-margin-right-8 ' + [aDataset[Object.keys(aDataset)[0]].validation === true ? 'fa-check has-text-primary' : (isActive(aDataset,'dataset') ? 'fa-table has-text-primary' : '')]" @click="validateObj(aDataset)"></i> 
                   </span>
                 </div>
               </div>
@@ -157,8 +160,11 @@
         <a class="navbar-link is-active">
           <span
             class="control"
-             v-on:mouseover="loadObjectsList() & checkRecipesSatus()"
-          > {{localization.navbar.recipes[lang]}} </span>
+             v-on:mouseover="loadObjectsList()"            
+          >
+          <i class="fa fa-flask mID-margin-right-8" aria-hidden="true"></i>
+
+           {{localization.navbar.recipes[lang]}} </span>
         </a>
         <div class="navbar-dropdown">
           <a
@@ -169,7 +175,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-plus"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-plus mID-margin-right-8"></i> 
                   </span>
                 </div>
               </div>
@@ -188,7 +194,7 @@
               <div class="level-left">
                 <div class="level-item">
                   <span class="icon has-text-info">
-                    <i class="fa fa-upload"></i>  &nbsp;&nbsp;
+                    <i class="fa fa-upload mID-margin-right-8"></i> 
                   </span>
                 </div>
               </div>
@@ -204,8 +210,8 @@
             class="navbar-item"
             v-for="aRecipe in recipes"
             :key="aRecipe.key"
-            :class="{'is-active' : (Object.keys(aRecipe)[0] === Object.keys(object)[0])}"
-            @click="changeObj(aRecipe)"
+            :class="{'is-active': isActive(aRecipe,'recipe') }"
+            @click="changeObj(aRecipe,'recipe')"
           >
             <div class="level is-mobile">
               <div class="level-left">
@@ -213,9 +219,9 @@
                   <span class="icon has-text-info">
                     <i
                       class="fa"
-                      :class="[(aRecipe[Object.keys(aRecipe)[0]].running === true ? 'fa-cog fa-spin has-text-danger' : ( Object.keys(aRecipe)[0] === Object.keys(object)[0] ? 'fa-play has-text-primary' : ''))]"
-                       @click="(Object.keys(aRecipe)[0] === Object.keys(object)[0] || aRecipe[Object.keys(aRecipe)[0]].running === true) ? runStopRecipe(aRecipe) : ''"
-                    ></i> &nbsp;&nbsp;&nbsp;&nbsp;
+                      :class="'mID-margin-right-8 ' + [ (isRunning[Object.keys(aRecipe)[0]] === true ? 'fa-flask fa-spin has-text-danger' : ( isActive(aRecipe,'recipe') ? 'fa-flask has-text-primary' : ''))]"
+                       @click="(isActive(aRecipe,'recipe') || isRunning[Object.keys(aRecipe)[0]] === true) ? runStopRecipe(aRecipe) : ''"
+                    ></i> 
                   </span>
                 </div>
               </div>
@@ -234,8 +240,6 @@
       <div class="navbar-item has-text-centered">
         <div class="hero has-text-right">
           <div class="level-item has-text-centered">
-              <i v-show="project != ''" class="fa fa-connectdevelop" @click="graphShow = !graphShow"></i>&nbsp;&nbsp;            
-
             <div>
               <p class="title is-4">  {{project}} </p>
               <p></p>
@@ -292,11 +296,37 @@ export default {
       object: {},
       projects: [],
       project: '',
-      recipes: [],
-      all_recipes: {},
-      datasets: [],
       all_datasets: {},
+      all_recipes: {},
+      isRunning: {},
       source: ''
+    }
+  },
+  computed: {
+    datasets () {
+      var datasets = []
+      for (var dataset in this.all_datasets) {
+        if (this.all_datasets[dataset].project === this.project) {
+          var obj = {}
+          obj[dataset] = this.all_datasets[dataset]
+          obj[dataset].type = 'dataset'
+          datasets.push(obj)
+        }
+      }
+      return datasets
+    },
+    recipes () {
+      var recipes = []
+      for (var recipe in this.all_recipes) {
+        if (this.all_recipes[recipe].project === this.project) {
+          var obj = {}
+          obj[recipe] = this.all_recipes[recipe]
+          obj[recipe].type = 'recipe'
+          this.checkStatus(recipe)
+          recipes.push(obj)
+        }
+      }
+      return recipes
     }
   },
   methods: {
@@ -305,7 +335,11 @@ export default {
       window.bus.$emit('projectChange', this.project)
       this.loadObjectsList()
     },
-    changeObj (anObj) {
+    changeObj (anObj, type) {
+      console.log(anObj)
+      var name = Object.keys(anObj)[0]
+      anObj[name].type = type
+      anObj[name].running = this.isRunning[name] && (type === 'recipe')
       if (this.object !== anObj) {
         this.validation = false
         window.bus.$emit('validationDisplay', false)
@@ -328,84 +362,53 @@ export default {
         .then(response => {
           this.projects = Object.keys(response.body.projects)
         },
-          response => {
-          })
+        response => {
+        })
     },
     loadObjectsList () {
       var vue = this
-      var recipes = []
-      var datasets = []
       this.$http.get(api.url + '/datasets/')
         .then(response => {
           vue.all_datasets = response.body
-          for (var dataset in response.body) {
-            if (response.body[dataset].project === this.project) {
-              var obj = {}
-              obj[dataset] = response.body[dataset]
-              obj[dataset].type = 'dataset'
-              datasets.push(obj)
-            }
-          }
-          vue.datasets = datasets
         },
-          response => {
-          })
+        response => {
+        })
       this.$http.get(api.url + '/recipes/')
         .then(response => {
           vue.all_recipes = response.body
-          for (var recipe in response.body) {
-            if (response.body[recipe].project === this.project) {
-              var obj = {}
-              obj[recipe] = response.body[recipe]
-              obj[recipe].type = 'recipe'
-              obj[recipe].running = false
-              recipes.push(obj)
-            }
-          }
-          vue.recipes = recipes
         },
-          response => {
-          })
+        response => {
+        })
+    },
+    isActive (anObj, type) {
+      return (Object.keys(this.object)[0] === Object.keys(anObj)[0]) &&
+        (this.object[Object.keys(this.object)[0]].type === anObj[Object.keys(anObj)[0]].type)
+    },
+    checkStatus (name) {
+      var vue = this
+      this.$http.get(api.url + 'recipes/' + name + '/status')
+        .then(response => {
+          if (response.body.status === 'up') {
+            vue.isRunning[name] = true
+          } else {
+            vue.isRunning[name] = false
+          }
+        })
     },
     runStopRecipe (aRecipe) {
       var vue = this
       var name = Object.keys(aRecipe)[0]
-      var index = null
-      for (var i in this.recipes) {
-        if (aRecipe === this.recipes[i]) {
-          index = i
-        }
-      }
 
-      if (aRecipe[name].running === true) {
+      if (vue.isRunning[name] === true) {
         this.$http.put(api.url + '/recipes/' + name + '/stop')
           .then(response => {
-            vue.recipes[index][name].running = false
           })
       } else {
         this.$http.put(api.url + '/recipes/' + name + '/run')
           .then(response => {
-            vue.recipes[index][name].running = true
           })
       }
-    },
-    checkRecipesSatus () {
-      for (var index in this.recipes) {
-        var aRecipe = this.recipes[index]
-        this.checkRecipeSatus(aRecipe, index)
-      }
-    },
-    checkRecipeSatus (aRecipe, index) {
-      var vue = this
-      var name = Object.keys(aRecipe)[0]
-      this.$http.get(api.url + '/recipes/' + name + '/status')
-        .then(response => {
-          if (response.body.status === 'up') {
-            vue.recipes[index][name].running = true
-          } else {
-            vue.recipes[index][name].running = false
-          }
-        })
+      vue.isRunning[name] = !vue.isRunning[name]
     }
   },
   mounted () {
