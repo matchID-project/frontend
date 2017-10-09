@@ -10,7 +10,7 @@
           </div>
         </template>
 
-        <div v-else class="stickTable">
+        <div v-show="!loading" class="stickTable">
           <table class='table is-narrow is-bordered'>
             <table-header
               ref="tableHeaderRef"
@@ -219,6 +219,8 @@ export default {
     loading (newValue) {
       if (newValue) {
         this.resetShortcutsMode()
+      } else {
+        this.$refs.tableHeaderRef.justify()
       }
     }
   },
