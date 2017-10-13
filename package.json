@@ -1,9 +1,9 @@
 {
-  "name": "matchID-validation",
+  "name": "matchID-frontend",
   "version": "1.0.0",
-  "description": "Validation Interface for matchID project",
+  "description": "Frontend for matchID project",
   "author": "F.Antoine (@rhanka) & M.Gross (@SuperKiwi)",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "node build/dev-server.js",
     "build": "node build/build.js",
