@@ -149,11 +149,11 @@
         :validationIndecisionDisplay="actions.action.indecision_display"
       ></statistics>
 
-      <keyboard
-        v-show="keyboardShow"
+      <shortcuts
+        v-show="shortcutsShow"
         :validationDisplay="actions.display"
-        @close="keyboardShow = false"
-      ></keyboard>
+        @close="shortcutsShow = false"
+      ></shortcuts>
     </template>
 
     <data-table
@@ -176,7 +176,7 @@ import Message from '../Helpers/Message'
 import DataTable from './DataTable'
 import elasticsearchLib from 'elasticsearch'
 import Statistics from './Statistics'
-import Keyboard from './Keyboard'
+import Shortcuts from './Shortcuts'
 
 export default {
   components: {
@@ -184,7 +184,7 @@ export default {
     DataTable,
     Message,
     Statistics,
-    Keyboard
+    Shortcuts
   },
   props: {
     columns: {
@@ -221,7 +221,7 @@ export default {
       selectedSearchField: 'random',
       displayOnlyUndone: false,
       // KEYBOARD
-      keyboardShow: false,
+      shortcutsShow: false,
       // STATISTICS
       statisticsShow: false,
       statisticsResults: {},
