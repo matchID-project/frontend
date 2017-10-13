@@ -81,7 +81,7 @@
         "mistake": {
           "en": "An error occured",
           "fr": "Une erreur s'est produite"
-        },       
+        },
         "displayUndoneOnly": {
           "en": "Also display already done matchs",
           "fr": "Afficher les matchs déjà traités"
@@ -91,35 +91,35 @@
     "mistake": {
       "en": "An error occured",
       "fr": "Une erreur s'est produite"
-    },     
+    },
     "success": {
           "en": "Operation successful",
           "fr": "Opération réussie"
     },
     "newProject": {
-          "en": "new project",
-          "fr": "nouveau projet"
+          "en": "New project",
+          "fr": "Nouveau projet"
     },
     "newDataset": {
-          "en": "new dataset",
-          "fr": "nouvelle donnée"
+          "en": "New dataset",
+          "fr": "Nouvelle donnée"
     },
     "newRecipe": {
-          "en": "new recipe",
-          "fr": "nouvelle recette"
+          "en": "New recipe",
+          "fr": "Nouvelle recette"
     },
     "importProject": {
-          "en": "import project",
-          "fr": "importer un projet"
+          "en": "Import project",
+          "fr": "Importer un projet"
     },
     "importDataset": {
-          "en": "importer dataset",
-          "fr": "importer une donnée"
+          "en": "Importer dataset",
+          "fr": "Importer une donnée"
     },
     "importRecipe": {
-          "en": "import recipe",
-          "fr": "importer une recette"
-    }            
+          "en": "Import recipe",
+          "fr": "Importer une recette"
+    }
   },
   "viewdata": {
     "page": {
@@ -137,7 +137,7 @@
     "columnsFilter": {
       "en": "Columns filter",
       "fr": "Filtre des colonnes"
-    } 
+    }
   },
   "codemirror": {
     "saved": {
