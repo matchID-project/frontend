@@ -24,10 +24,10 @@
 
                   <defs>
                     <template v-for="color in Object.keys(colors)">
-                      <marker  :id="'arrow-'+color" viewBox="0 0 10 10" refX="1" refY="5"
-                          markerWidth="6" markerHeight="6" orient="auto" 
+                      <marker  :id="'arrow-'+color" viewBox="0 0 20 15" refX="1" refY="5"
+                          markerWidth="9" markerHeight="9" orient="auto"
                           >
-                        <path :fill="colors[color]" d="M 2 0 L 10 5 L 2 10 z"  ></path>
+                        <path :fill="colors[color]" d="M 5 0 L 20 5 L 5 10 z"  ></path>
                       </marker>
                       <marker  :id="'circle-'+color" viewBox="0 0 10 10" refX="5" refY="5"
                           markerWidth="10" markerHeight="10" orient="auto" 
@@ -353,7 +353,7 @@ export default {
               var childIndex = node.next[i]
               let child = this.nodes['' + childIndex]
               if ((node.loop === true) && (child.loop === true) || (!child.show)) {
-                this.nodes[childIndex].depth = Math.max(this.nodes[childIndex].depth, this.depth)
+                this.nodes[childIndex].depth = this.depth + 1
               } else {
                 this.nodes[childIndex].depth = Math.max(this.nodes[childIndex].depth, this.depth + 1)
                 steps += 1
@@ -364,6 +364,7 @@ export default {
         loopWarning += 1
         this.depth += 1
       }
+      this.depth += 1
 
       // beam (width) computation
       this.beam = {}
@@ -452,12 +453,6 @@ export default {
       }
       var a = this.coords[sourceNodeIndex]
       var b = this.coords[targetNodeIndex]
-
-      // if (a.x > b.x) {
-      //   var c = a
-      //   a = b
-      //   b = c
-      // }
 
       var m
       if (a.x === b.x) {
