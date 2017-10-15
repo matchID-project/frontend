@@ -27,7 +27,7 @@
                       <marker  :id="'arrow-'+color" viewBox="0 0 10 10" refX="1" refY="5"
                           markerWidth="6" markerHeight="6" orient="auto" 
                           >
-                        <path :fill="colors[color]" d="M 0 0 L 10 5 L 0 10 z"  ></path>
+                        <path :fill="colors[color]" d="M 2 0 L 10 5 L 2 10 z"  ></path>
                       </marker>
                       <marker  :id="'circle-'+color" viewBox="0 0 10 10" refX="5" refY="5"
                           markerWidth="10" markerHeight="10" orient="auto" 
@@ -38,22 +38,29 @@
                     </template>
                   </defs>
 
-             
-
-                <polyline v-for="link in links"
-                      :points="coords[link.source.index].x + ',' + coords[link.source.index].y
-                       + ' ' + (coords[link.source.index].x+coords[link.target.index].x)/2 + ',' + (coords[link.source.index].y+coords[link.target.index].y)/2
-                       + ' ' + coords[link.target.index].x + ',' + coords[link.target.index].y"
+                <!-- <polyline v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
+                      :points="polyLineFromLink(link)"
                       :stroke="colors[linkStatus(link)]" 
                       :stroke-width="strokes[linkStatus(link)]"
                       :stroke-dasharray="strokeDasharray[linkStatus(link)]"
                       :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
-                      ></polyline>
+                      >
+                </polyline> -->
 
-                <template v-for="(node, i) in nodes" v-show="dynShow[node.name+node.type] != 'hidden'">
-                  <g>
+                <path v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
+                      :d="pathFromLink(link)"
+                      :stroke="colors[linkStatus(link)]" 
+                      :stroke-width="strokes[linkStatus(link)]"
+                      :stroke-dasharray="strokeDasharray[linkStatus(link)]"
+                      :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
+                      fill="None"
+                      >
+                </path>
+
+                <template v-for="(node, i) in nodes" >
+                  <g >
                     <title> {{node.type}}: {{node.name}}</title>
-                    <circle
+                    <circle v-show="node.show"
                             :cx="coords[i].x"
                             :cy="coords[i].y"
                             :r="circles[nodeStatus(node)]" fill="white"
@@ -65,7 +72,7 @@
                     </circle>
                   </g>
                   <icon 
-                        v-show="dynShow[node.name+node.type] === 'active'"
+                        v-show="node.active"
                         :name="icons[node.type]" 
                         :x="coords[i].x-8"
                         :y="coords[i].y-8"
@@ -74,7 +81,7 @@
                   </icon>
 
                   <text 
-                    v-show="dynShow[node.name+node.type] === 'active'"
+                    v-show="node.active"
                     :x="coords[i].x"
                     :y="coords[i].y+25"
                     :fill="colors[node.type]"
@@ -122,37 +129,45 @@ export default {
       langs: localization.available,
       lang: localization.default,
       nodes: []
-        .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
-        .concat(Object.keys(this.datasets).map(i => ({ index: i, name: i, type: 'dataset', props: this.datasets[i], x: this.width / 2, y: this.height / 2, fixed: false, rank: 1 })))
-        .concat(Object.keys(this.recipes).map(i => ({ index: i, name: i, type: 'recipe', props: this.recipes[i], x: this.width / 2, y: this.height / 2, fixed: false, rank: 1 })))
+        // .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
+        .concat(Object.keys(this.datasets).map((name, index) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
+        .concat(Object.keys(this.recipes).map((name, index) => ({name: name, type: 'recipe', active: (this.recipes[name].project === this.project), show: (this.recipes[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
         .concat(),
-      width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * 0.66,
-      height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0) * 0.8,
-      padding: 20,
-      show: {},
+      links: [],
+      width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * 0.7,
+      height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0) * 0.7,
+      padding: 50,
+      detph: -1,
+      coords: {},
       linkStrength: {
         'projectLink': 0.1,
         'link': 1,
         'recipeCall': 0.1,
-        'join': 1
+        'join': 2,
+        'ml': 2
       },
       collide: {
-        'project': 10,
-        'dataset': 3,
-        'recipe': 3,
-        'inactive': 2
+        'project': 5,
+        'dataset': 15,
+        'recipe': 15,
+        'ml': 15,
+        'inactive': 2,
+        'hidden': 0
       },
       charge: {
-        'project': 1,
+        'project': -5,
         'dataset': -10,
         'recipe': -10,
-        'inactive': -1
+        'ml': -10,
+        'inactive': -2,
+        'hidden': 0
       },
       markers: {
         'projectLink': 'arrow',
         'recipeCall': 'circle',
         'join': 'circle',
         'link': 'arrow',
+        'ml': 'arrow',
         'inactive': null
       },
       colors: {
@@ -160,7 +175,8 @@ export default {
         'project': '#00d1b2',
         'projectLink': '#00d1b2',
         'dataset': 'blue',
-        'recipe': 'red',
+        'recipe': 'green',
+        'ml': 'red',
         'link': '#00d1b2',
         'join': 'red',
         'inactive': '#aaa',
@@ -171,23 +187,27 @@ export default {
         'project': 32,
         'dataset': 16,
         'recipe': 16,
+        'ml': 16,
         'inactive': 6
       },
       icons: {
         'project': 'industry',
         'dataset': 'table',
-        'recipe': 'flask'
+        'recipe': 'chain',
+        'ml': 'flask'
       },
       strokeDasharray: {
         'projectLink': '0',
-        'join': '5,5',
+        'join': '0',
+        'ml': '0',
         'recipeCall': '0',
         'link': '0',
         'inactive': '5,5'
       },
       strokes: {
         'link': 1.5,
-        'join': 1,
+        'join': 2,
+        'ml': 2,
         'dataset': 1,
         'recipe': 1,
         'project': 2,
@@ -207,110 +227,283 @@ export default {
         minY: Math.min(...this.nodes.map(n => n.y)),
         maxY: Math.max(...this.nodes.map(n => n.y))
       }
-    },
-    coords () {
-      var vue = this
-      return this.nodes.map(node => {
-        if (node !== undefined) {
-          return {
-            x: this.padding + (node.x - this.bounds.minX) * (this.width - 2 * this.padding) / (this.bounds.maxX - this.bounds.minX),
-            y: this.padding + (node.y - this.bounds.minY) * (this.height - 2 * this.padding) / (this.bounds.maxY - this.bounds.minY)
-          }
-        } else {
-          return { x: vue.width / 2, y: vue.width / 2 }
-        }
-      })
-    },
-    fake_links () {
-      return null
-    },
-    links () {
-      var links = []
-      // project to objects
-      links = links.concat(Object.keys(this.recipes).filter(i => (this.recipes[i].project === this.project)).map(i => ({ source: this.getNodeIndex(this.project, 'project'), target: this.getNodeIndex(i, 'recipe'), type: 'projectLink' })))
-      links = links.concat(Object.keys(this.datasets).filter(i => (this.datasets[i].project === this.project)).map(i => ({ source: this.getNodeIndex(this.project, 'project'), target: this.getNodeIndex(i, 'dataset'), type: 'projectLink' })))
-
-      // adds input dataset to recipe link
-      links = links.concat(Object.keys(this.recipes).map(i => ({source: this.getSourceNode(i), target: this.getNodeIndex(i, 'recipe'), type: 'link'})))
-      // adds output dataset to recipe link
-      links = links.concat(Object.keys(this.recipes).map(i => ({source: this.getNodeIndex(i, 'recipe'), target: this.getTargetNode(i), type: 'link'})))
-
-      // adds call from recipes to recipes
-      for (var recipe in this.recipes) {
-        if ((this.recipes[recipe].steps !== undefined) && (this.recipes[recipe].steps !== null)) {
-          links = links.concat(this.recipes[recipe].steps.map(i => ({source: this.getNodeIndex(recipe, 'recipe'), target: this.getNodeIndex(Object.keys(i)[0], 'recipe'), type: 'recipeCall'})))
-          links = links.concat(this.recipes[recipe].steps.filter(i => (Object.keys(i)[0] === 'join')).map(i => ({source: this.getNodeIndex(recipe, 'recipe'), target: this.getNodeIndex(i.join.dataset, 'dataset'), type: 'join'})))
-        }
-      }
-      links = links.filter(l => (l.source !== null) && (l.source !== undefined) && (l.target !== null) && (l.target !== undefined))
-      return links
-    },
-    dynShow () {
-      var show = this.show
-      for (var key in show) {
-        if (show[key] === 'inactive') {
-          show[key] = 'hidden'
-        }
-      }
-      for (var link in this.links) {
-        // console.log(this.links[link].source.name)
-        if (this.linkStatus(this.links[link]) !== 'hidden') {
-          if (show[this.links[link].source.name + this.links[link].source.type] === 'hidden') {
-            show[this.links[link].source.name + this.links[link].source.type] = 'inactive'
-          }
-          if (show[this.links[link].target.name + this.links[link].target.type] === 'hidden') {
-            show[this.links[link].target.name + this.links[link].target.type] = 'inactive'
-          }
-        }
-      }
-      return show
     }
   },
   created () {
     var vue = this
-    for (var node in this.nodes) {
-      if (this.nodes[node].props.project === this.project) {
-        this.show[this.nodes[node].name + this.nodes[node].type] = 'active'
-      } else {
-        this.show[this.nodes[node].name + this.nodes[node].type] = 'inactive'
-      }
-    }
+    this.links = this.createLinks()
+    var links = this.links.map(l => Object.create(l))
     this.simulation = d3.forceSimulation(vue.nodes)
         .force('collide', d3.forceCollide(function (d) { return vue.collide[vue.nodeStatus(d)] }).iterations(16))
         .force('charge', d3.forceManyBody().strength(d => vue.charge[vue.nodeStatus(d)]))
-        .force('link', d3.forceLink(this.links))
+        .force('link', d3.forceLink(links))
+        // .force('center', d3.forceCenter().x(this.width * 0.5).y(this.height * 0.5))
         .force('y', d3.forceY())
         .force('x', d3.forceX())
-        // .distanceMax(200).distanceMin(100)
-        // .linkDistance(this.height / 12)
-    // vue.simulation = d3.layout.force()
-    //   .linkDistance(200)
-    //   .charge(-500)
-    //   .gravity(0.05)
-    //   .size([this.width, this.height])
+
+    this.showLinkedNodes()
+    this.computeRanks()
+    this.computeCoords()
   },
   methods: {
-    toggle: function (node) {
-      if (this.show[node.name + node.type] === 'active') {
-        this.show[node.name + node.type] = 'inactive'
-      } else if (this.show[node.name + node.type] === 'inactive') {
-        this.show[node.name + node.type] = 'active'
+    computeCoords () {
+      this.coords = this.nodes.map(node => {
+        var xConstraint = ((node.depth) / Math.max(1, this.depth)) * (this.width - 4 * this.padding) + 2 * this.padding
+        var yConstraint = (node.beam === undefined ? 1 : node.beam) / Math.max(1, this.beam[node.depth]) * (this.height - this.padding)
+
+        var c = {
+          x: xConstraint,
+          y: yConstraint
+          // y: this.padding + (node.y - this.bounds.minY) * (this.height - 2 * this.padding) / (this.bounds.maxY - this.bounds.minY)
+        }
+        return c
+      })
+    },
+    showLinkedNodes () {
+      for (var node in this.nodes) {
+        node = this.nodes[node]
+        if (node.active === true) {
+          node.show = true
+        } else {
+          node.show = false
+          for (var link in this.links) {
+            link = this.links[link]
+            if (link.source.index === node.index) {
+              this.nodes[link.source.index].show = this.nodes[link.source.index].show || link.target.active
+            }
+            if (link.target.index === node.index) {
+              this.nodes[link.target.index].show = this.nodes[link.target.index].show || link.source.active
+            }
+          }
+        }
       }
-      this.show = this.dynShow()
+    },
+    computeRanks () {
+      // search for roots and leaves
+      for (let n in this.nodes) {
+        var node = this.nodes[n]
+        n = node.index
+        node.next = []
+        node.previous = []
+        var v = this.links.map(link => {
+          if (link.source.index === n) {
+            node.next.push(link.target.index)
+            return [1, 0]
+          }
+          if (link.target.index === node.index) {
+            node.previous.push(link.source.index)
+            return [0, 1]
+          }
+          return [0, 0]
+        }).reduce((a, b) => [Math.max(a[0], b[0]), Math.max(a[1], b[1]), a[0] + b[0], a[1] + b[1]])
+        if (v[1] < v[0]) {
+          node.root = true
+          node.leave = false
+          node.depth = 0
+        } else if (v[1] > v[0]) {
+          node.root = false
+          node.leave = true
+          node.depth = 1
+        } else {
+          node.root = false
+          node.leave = false
+          node.depth = 1
+        }
+        node.next = [...new Set(node.next)]
+        node.previous = [...new Set(node.previous)]
+      }
+
+      // detect loops
+      for (let n in this.nodes) {
+        node = this.nodes[n]
+        n = node.index
+        node.loop = false
+        var next = [...new Set(node.next)]
+        let count = 0
+        while ((!node.loop) && (next.length > 0) && (count < 10)) {
+          next = [].concat.apply([], next.map(c => this.nodes[c].next))
+          next = [...new Set(next.filter(n => (this.nodes[n].leave === false)))]
+          if (next.includes(n)) {
+            node.loop = true
+          }
+          count += 1
+        }
+      }
+
+      // compute depths
+      this.depth = 0
+      var steps = 1
+      var loopWarning = 0
+      while ((steps > 0) && (loopWarning < 10)) {
+        steps = 0
+        for (let n in this.nodes) {
+          let node = this.nodes[n]
+          if (node.depth === this.depth) {
+            for (var i in node.next) {
+              var childIndex = node.next[i]
+              let child = this.nodes['' + childIndex]
+              if ((node.loop === true) && (child.loop === true)) {
+                this.nodes[childIndex].depth = Math.max(this.nodes[childIndex].depth, this.depth)
+              } else {
+                this.nodes[childIndex].depth = Math.max(this.nodes[childIndex].depth, this.depth + 1)
+                steps += 1
+              }
+            }
+          }
+        }
+        loopWarning += 1
+        this.depth += 1
+      }
+
+      // beam (width) computation
+      this.beam = {}
+      for (var d = 0; d <= this.depth; d++) {
+        var cBeam = 0
+        for (let n in this.nodes) {
+          this.beam[d] = 0
+          node = this.nodes[n]
+          if ((node.depth === d)) {
+            if (node.show) {
+              cBeam++
+              node.beam = cBeam
+            } else {
+              node.beam = 1
+            }
+          }
+        }
+        this.beam[d] = cBeam
+      }
+      console.log(this.coords)
+    },
+    createLinks () {
+      var links = []
+      // project to objects
+      // links = links.concat(Object.keys(this.recipes).map(i => ({ source: this.getNodeIndex(this.project, 'project'), target: this.getNodeIndex(i, 'recipe'), type: 'projectLink' })))
+      // links = links.concat(Object.keys(this.datasets).map(i => ({ source: this.getNodeIndex(this.project, 'project'), target: this.getNodeIndex(i, 'dataset'), type: 'projectLink' })))
+
+      // adds input dataset to recipe link
+      links = links.concat(Object.keys(this.recipes).map(recipe => ({source: this.getNodeIndexFromRecipe(recipe, 'input'), target: this.getNodeIndex(recipe, 'recipe'), type: 'link'})))
+      // adds output dataset to recipe link
+      links = links.concat(Object.keys(this.recipes).map(recipe => ({source: this.getNodeIndex(recipe, 'recipe'), target: this.getNodeIndexFromRecipe(recipe, 'output'), type: 'link'})))
+
+      // adds call from recipes to recipes
+      for (var recipe in this.recipes) {
+        console.log(this.recipes[recipe].project)
+        if ((this.recipes[recipe].steps !== undefined) && (this.recipes[recipe].steps !== null)) {
+          links = links.concat(this.recipes[recipe].steps.map(i => ({target: this.getNodeIndex(recipe, 'recipe'), source: this.getNodeIndex(Object.keys(i)[0], 'recipe'), type: 'recipeCall'})))
+          // join to datasets
+          links = links.concat(this.recipes[recipe].steps.filter(i => (Object.keys(i)[0] === 'join')).map(i => ({target: this.getNodeIndex(recipe, 'recipe'), source: this.getNodeIndex(i.join.dataset, 'dataset'), type: 'join'})))
+          // ml models
+          links = links.concat(this.recipes[recipe].steps.filter(i => (Object.keys(i)[0] === 'build_model')).map(i => ({source: this.getNodeIndex(recipe, 'recipe'), target: this.setNodeIndex(i.build_model.model.name, 'ml', this.recipes[recipe].project), type: 'ml'})))
+          links = links.concat(this.recipes[recipe].steps.filter(i => (Object.keys(i)[0] === 'apply_model')).map(i => ({target: this.getNodeIndex(recipe, 'recipe'), source: this.setNodeIndex(i.apply_model.name, 'ml', this.recipes[recipe].project), type: 'ml'})))
+        }
+      }
+      links = links.filter(l => this.testLink(l))
+      // console.log(links)
+      return links
+    },
+    polyLineFromLink (link) {
+      var sourceNodeIndex
+      var targetNodeIndex
+      if (link.source.index !== undefined) {
+        sourceNodeIndex = link.source.index
+      } else {
+        sourceNodeIndex = this.nodes[link.source].index
+      }
+      if (link.target.index !== undefined) {
+        targetNodeIndex = link.target.index
+      } else {
+        targetNodeIndex = this.nodes[link.source].index
+      }
+      var c = {}
+      c.source = this.coords[sourceNodeIndex]
+      c.target = this.coords[targetNodeIndex]
+      return this.polyline({x: c.source.x, y: c.source.y}, {x: c.target.x, y: c.target.y})
+    },
+    polyline (a, b) {
+      var m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+      return a.x + ',' + a.y +
+        ' ' + m.x + ',' + m.y +
+        ' ' + b.x + ',' + b.y
+        // m 12.121831,312.93054 c 54.548237,0 19.041686,14.05456 52.452326,14.05456 33.41064,0 7.651746,16.25002 41.996933,14.22971
+    },
+    pathFromLink (link) {
+      var sourceNodeIndex
+      var targetNodeIndex
+      if (link.source.index !== undefined) {
+        sourceNodeIndex = link.source.index
+      } else {
+        sourceNodeIndex = this.nodes[link.source].index
+      }
+      if (link.target.index !== undefined) {
+        targetNodeIndex = link.target.index
+      } else {
+        targetNodeIndex = this.nodes[link.source].index
+      }
+      var a = this.coords[sourceNodeIndex]
+      var b = this.coords[targetNodeIndex]
+
+      // if (a.x > b.x) {
+      //   var c = a
+      //   a = b
+      //   b = c
+      // }
+
+      var m
+      if (a.x === b.x) {
+        m = { x: a.x + 30, y: (a.y + b.y) / 2 }
+        return 'M' + a.x + ',' + a.y +
+          ' Q' + (a.x + 30) + ',' + a.y +
+          ' ' + m.x + ',' + m.y +
+          ' Q' + (b.x + 30) + ',' + b.y +
+          ' ' + b.x + ',' + b.y
+      } else {
+        m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+        return 'M' + a.x + ',' + a.y +
+          ' Q' + (a.x + (b.x - a.x) / 3) + ',' + a.y +
+          ' ' + m.x + ',' + m.y +
+          ' Q' + (b.x - (b.x - a.x) / 3) + ',' + b.y +
+          ' ' + b.x + ',' + b.y
+      }
+    },
+    testLink: function (link) {
+      if (link === null) {
+        return false
+      }
+      if ((link.source === null) || (link.target === null)) {
+        return false
+      }
+      // if ((this.nodes[link.source] === undefined) || (this.nodes[link.target] === undefined)) {
+      //   return null
+      // }
+      // if ((this.nodes[link.source] === null) || (this.nodes[link.target] === null)) {
+      //   return null
+      // }
+      return true
+    },
+    toggle: function (node) {
+      node.active = !node.active
+      // update dependent nodes
+      this.showLinkedNodes()
+      this.computeRanks()
+      this.computeCoords()
     },
     nodeStatus: function (node) {
-      if (this.show[node.name + node.type] === 'active') {
+      if (node.active) {
         return node.type
+      } else if (node.show) {
+        return 'inactive'
       } else {
-        return this.show[node.name + node.type]
+        return 'hidden'
       }
     },
     linkStatus: function (link) {
-      if ((this.show[link.source.name + link.source.type] === 'active' &&
-        this.show[link.target.name + link.target.type] === 'active')) {
+      var sourceNode = link.source
+      var targetNode = link.target
+
+      if ((sourceNode.active === true) && (targetNode.active === true)) {
         return link.type
-      } else if ((this.show[link.source.name + link.source.type] === 'active' ||
-        this.show[link.target.name + link.target.type] === 'active')) {
+      } else if ((sourceNode.active === true) || (targetNode.active === true)) {
         return 'inactive'
       } else {
         return 'hidden'
@@ -319,22 +512,28 @@ export default {
     close: function () {
       this.$emit('close')
     },
-    getNodeIndex (name, type) {
+    setNodeIndex (name, type, project) {
+      var i = 0
       for (var node in this.nodes) {
         if ((this.nodes[node].name === name) && (this.nodes[node].type === type)) {
-          return node
+          return i
         }
+        i += 1
+      }
+      this.nodes.push({name: name, type: type, show: (project === this.project), active: (project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})
+      return this.nodes.length - 1
+    },
+    getNodeIndex (name, type) {
+      var i = 0
+      for (var node in this.nodes) {
+        if ((this.nodes[node].name === name) && (this.nodes[node].type === type)) {
+          return i
+        }
+        i += 1
       }
       return null
     },
-    getNodeObject (i) {
-      if (this.nodes[i].type === 'dataset') {
-        return this.datasets[this.nodes[i].name]
-      } else if (this.nodes[i].type === 'recipe') {
-        return this.recipes[this.nodes[i].name]
-      }
-    },
-    getDatasetNode (name) {
+    getDatasetNodeIndex (name) {
       for (var dataset in this.datasets) {
         if (dataset === name) {
           return this.getNodeIndex(dataset, 'dataset')
@@ -342,26 +541,14 @@ export default {
       }
       return null
     },
-    getTargetNode (recipe) {
+    getNodeIndexFromRecipe (recipe, field) {
       recipe = this.recipes[recipe]
-      if (recipe.output === undefined) {
+      if (recipe[field] === undefined) {
         return null
-      } else if (typeof recipe.output === 'string') {
-        return this.getDatasetNode(recipe.output)
-      } else if (recipe.output.dataset !== undefined) {
-        return this.getDatasetNode(recipe.output.dataset)
-      } else {
-        return null
-      }
-    },
-    getSourceNode (recipe) {
-      recipe = this.recipes[recipe]
-      if (recipe.input === undefined) {
-        return null
-      } else if (typeof recipe.input === 'string') {
-        return this.getDatasetNode(recipe.input)
-      } else if (recipe.input.dataset !== undefined) {
-        return this.getDatasetNode(recipe.input.dataset)
+      } else if (typeof recipe[field] === 'string') {
+        return this.getDatasetNodeIndex(recipe[field])
+      } else if (recipe[field].dataset !== undefined) {
+        return this.getDatasetNodeIndex(recipe[field].dataset)
       } else {
         return null
       }
