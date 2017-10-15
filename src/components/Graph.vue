@@ -58,39 +58,38 @@
                 </path>
 
                 <template v-for="(node, i) in nodes" >
-                  <g >
+                  <g :transform="'translate(' + coords[i].x + ',' + coords[i].y + ')'">
                     <title> {{node.type}}: {{node.name}}</title>
                     <circle v-show="node.show"
-                            :cx="coords[i].x"
-                            :cy="coords[i].y"
-                            :r="circles[nodeStatus(node)]" fill="white"
+                            :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
                             :stroke="colors[node.type]" 
                             :stroke-width="strokes[nodeStatus(node)]"
                             @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
                             @click="toggle(node)"
                             >
                     </circle>
+                    <g class="transform-origin: center center">
+                      <icon 
+                            v-show="node.active"
+                            :x="-7.5 * scale[nodeStatus(node)]"
+                            :y="-7.5 * scale[nodeStatus(node)]"
+                            :scale="scale[nodeStatus(node)]"
+                            :name="icons[nodeStatus(node)]" 
+                            :color="colors[nodeStatus(node)]"
+                      >
+                      </icon>
+                    </g>
+                    <text 
+                      v-show="node.active"
+                      :y="25 * scale[nodeStatus(node)]"
+                      :fill="colors[node.type]"
+                      class="is-small"
+                      text-anchor="middle"
+                      > 
+
+                            {{node.name}}
+                    </text>
                   </g>
-                  <icon 
-                        v-show="node.active"
-                        :name="icons[node.type]" 
-                        :x="coords[i].x-8"
-                        :y="coords[i].y-8"
-                        :color="colors[nodeStatus(node)]"
-                  >
-                  </icon>
-
-                  <text 
-                    v-show="node.active"
-                    :x="coords[i].x"
-                    :y="coords[i].y+25"
-                    :fill="colors[node.type]"
-                    class="is-small"
-                    text-anchor="middle"
-                    > 
-
-                          {{node.name}}
-                  </text>
                 </template>
 
 
@@ -130,13 +129,13 @@ export default {
       lang: localization.default,
       nodes: []
         // .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
-        .concat(Object.keys(this.datasets).map((name, index) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
+        .concat(Object.keys(this.datasets).map((name, index) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), dbtype: this.datasets[name].connector, active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
         .concat(Object.keys(this.recipes).map((name, index) => ({name: name, type: 'recipe', active: (this.recipes[name].project === this.project), show: (this.recipes[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
         .concat(),
       links: [],
       width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * 0.7,
       height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0) * 0.7,
-      padding: 50,
+      padding: 80,
       detph: -1,
       coords: {},
       linkStrength: {
@@ -145,6 +144,14 @@ export default {
         'recipeCall': 0.1,
         'join': 2,
         'ml': 2
+      },
+      scale: {
+        'dataset': 1,
+        'recipe': 1,
+        'elasticsearch': 1.5,
+        'ml': 1.5,
+        'hidden': 1,
+        'inactive': 1
       },
       collide: {
         'project': 5,
@@ -175,6 +182,7 @@ export default {
         'project': '#00d1b2',
         'projectLink': '#00d1b2',
         'dataset': 'blue',
+        'elasticsearch': 'blue',
         'recipe': 'green',
         'ml': 'red',
         'link': '#00d1b2',
@@ -187,12 +195,14 @@ export default {
         'project': 32,
         'dataset': 16,
         'recipe': 16,
+        'elasticsearch': 16,
         'ml': 16,
         'inactive': 6
       },
       icons: {
         'project': 'industry',
         'dataset': 'table',
+        'elasticsearch': 'database',
         'recipe': 'chain',
         'ml': 'flask'
       },
@@ -248,8 +258,8 @@ export default {
   methods: {
     computeCoords () {
       this.coords = this.nodes.map(node => {
-        var xConstraint = ((node.depth) / Math.max(1, this.depth)) * (this.width - 4 * this.padding) + 2 * this.padding
-        var yConstraint = (node.beam === undefined ? 1 : node.beam) / Math.max(1, this.beam[node.depth]) * (this.height - this.padding)
+        var xConstraint = ((node.depth) / Math.max(1, this.depth - 1)) * (this.width - 2 * this.padding) + this.padding
+        var yConstraint = (node.beam === undefined ? 1 : node.beam - 0.5) / Math.max(1, this.beam[node.depth]) * (this.height - this.padding)
 
         var c = {
           x: xConstraint,
@@ -286,11 +296,11 @@ export default {
         node.next = []
         node.previous = []
         var v = this.links.map(link => {
-          if (link.source.index === n) {
+          if ((link.source.index === n) && this.nodes[link.source.index].show) {
             node.next.push(link.target.index)
             return [1, 0]
           }
-          if (link.target.index === node.index) {
+          if ((link.target.index === node.index) && this.nodes[link.target.index].show) {
             node.previous.push(link.source.index)
             return [0, 1]
           }
@@ -338,11 +348,11 @@ export default {
         steps = 0
         for (let n in this.nodes) {
           let node = this.nodes[n]
-          if (node.depth === this.depth) {
+          if ((node.depth === this.depth) && node.show) {
             for (var i in node.next) {
               var childIndex = node.next[i]
               let child = this.nodes['' + childIndex]
-              if ((node.loop === true) && (child.loop === true)) {
+              if ((node.loop === true) && (child.loop === true) || (!child.show)) {
                 this.nodes[childIndex].depth = Math.max(this.nodes[childIndex].depth, this.depth)
               } else {
                 this.nodes[childIndex].depth = Math.max(this.nodes[childIndex].depth, this.depth + 1)
@@ -490,7 +500,15 @@ export default {
     },
     nodeStatus: function (node) {
       if (node.active) {
-        return node.type
+        if (node.type === 'dataset') {
+          if (node.dbtype === 'elasticsearch') {
+            return node.dbtype
+          } else {
+            return node.type
+          }
+        } else {
+          return node.type
+        }
       } else if (node.show) {
         return 'inactive'
       } else {
