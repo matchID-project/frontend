@@ -203,8 +203,8 @@ export default {
         'project': 'industry',
         'dataset': 'table',
         'elasticsearch': 'database',
-        'recipe': 'chain',
-        'ml': 'flask'
+        'recipe': 'flask',
+        'ml': 'magic'
       },
       strokeDasharray: {
         'projectLink': '0',
