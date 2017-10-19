@@ -88,13 +88,6 @@
                 :class="{'is-active' : project === $route.params.project}"
                 :to="{ name: 'project', params: { project: project}}"
               >
-                <span class="icon has-text-info">
-                  <i
-                    class="fa"
-                    :class="{'fa-connectdevelop has-text-primary' : project === $route.params.project}"
-                    @click="displayGraph = true"
-                  ></i>
-                </span>
                 {{ project }}
               </router-link>
             </div>
@@ -275,7 +268,17 @@
           </div>
           <div class="navbar-item breadcrumb">
             <ul>
-              <li><a class="mID-unclickable">{{ $route.params.project }}</a></li>
+              <li>
+                <span class="icon has-text-info">
+                  <i
+                    class="fa fa-connectdevelop mID-clickable"
+                    @click="displayGraph = true"
+                  ></i>
+                </span>
+                <a class="mID-unclickable">
+                  <span>{{ $route.params.project }}</span>
+                </a>
+              </li>
               <li v-if="$route.params.recipe || $route.params.dataset">
                 <a class="mID-unclickable">
                   {{ $route.params.recipe ? $route.params.recipe : '' }}{{ $route.params.dataset ? $route.params.dataset : '' }}
