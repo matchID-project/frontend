@@ -24,13 +24,8 @@
 
                   <defs>
                     <template v-for="color in Object.keys(colors)">
-<<<<<<< efbdf2fb4b5cc6ee0252ee83d00745a7b574aaa8
                       <marker  :id="'arrow-'+color" viewBox="0 0 20 15" refX="1" refY="5"
                           markerWidth="9" markerHeight="9" orient="auto"
-=======
-                      <marker  :id="'arrow-'+color" viewBox="0 0 10 10" refX="1" refY="5"
-                          markerWidth="6" markerHeight="6" orient="auto"
->>>>>>> Linter (mostly removed trailing spaces)
                           >
                         <path :fill="colors[color]" d="M 5 0 L 20 5 L 5 10 z"  ></path>
                       </marker>
@@ -45,24 +40,16 @@
 
                 <!-- <polyline v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
                       :points="polyLineFromLink(link)"
-                      :stroke="colors[linkStatus(link)]" 
+                      :stroke="colors[linkStatus(link)]"
                       :stroke-width="strokes[linkStatus(link)]"
                       :stroke-dasharray="strokeDasharray[linkStatus(link)]"
                       :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
                       >
                 </polyline> -->
 
-<<<<<<< efbdf2fb4b5cc6ee0252ee83d00745a7b574aaa8
                 <path v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
                       :d="pathFromLink(link)"
-                      :stroke="colors[linkStatus(link)]" 
-=======
-                <polyline v-for="link in links"
-                      :points="coords[link.source.index].x + ',' + coords[link.source.index].y
-                       + ' ' + (coords[link.source.index].x+coords[link.target.index].x)/2 + ',' + (coords[link.source.index].y+coords[link.target.index].y)/2
-                       + ' ' + coords[link.target.index].x + ',' + coords[link.target.index].y"
                       :stroke="colors[linkStatus(link)]"
->>>>>>> Linter (mostly removed trailing spaces)
                       :stroke-width="strokes[linkStatus(link)]"
                       :stroke-dasharray="strokeDasharray[linkStatus(link)]"
                       :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
@@ -73,61 +60,32 @@
                 <template v-for="(node, i) in nodes" >
                   <g :transform="'translate(' + coords[i].x + ',' + coords[i].y + ')'">
                     <title> {{node.type}}: {{node.name}}</title>
-<<<<<<< efbdf2fb4b5cc6ee0252ee83d00745a7b574aaa8
                     <circle v-show="node.show"
                             :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
-                            :stroke="colors[node.type]" 
-=======
-                    <circle
-                            :cx="coords[i].x"
-                            :cy="coords[i].y"
-                            :r="circles[nodeStatus(node)]" fill="white"
                             :stroke="colors[node.type]"
->>>>>>> Linter (mostly removed trailing spaces)
                             :stroke-width="strokes[nodeStatus(node)]"
                             @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
                             @click="toggle(node)"
                             >
                     </circle>
-<<<<<<< efbdf2fb4b5cc6ee0252ee83d00745a7b574aaa8
                     <g class="transform-origin: center center">
-                      <icon 
+                      <icon
                             v-show="node.active"
                             :x="-7.5 * scale[nodeStatus(node)]"
                             :y="-7.5 * scale[nodeStatus(node)]"
                             :scale="scale[nodeStatus(node)]"
-                            :name="icons[nodeStatus(node)]" 
+                            :name="icons[nodeStatus(node)]"
                             :color="colors[nodeStatus(node)]"
                       >
                       </icon>
                     </g>
-                    <text 
+                    <text
                       v-show="node.active"
                       :y="25 * scale[nodeStatus(node)]"
                       :fill="colors[node.type]"
                       class="is-small"
                       text-anchor="middle"
-                      > 
-=======
-                  </g>
-                  <icon
-                        v-show="dynShow[node.name+node.type] === 'active'"
-                        :name="icons[node.type]"
-                        :x="coords[i].x-8"
-                        :y="coords[i].y-8"
-                        :color="colors[nodeStatus(node)]"
-                  >
-                  </icon>
-
-                  <text
-                    v-show="dynShow[node.name+node.type] === 'active'"
-                    :x="coords[i].x"
-                    :y="coords[i].y+25"
-                    :fill="colors[node.type]"
-                    class="is-small"
-                    text-anchor="middle"
-                    >
->>>>>>> Linter (mostly removed trailing spaces)
+                      >
 
                             {{node.name}}
                     </text>
