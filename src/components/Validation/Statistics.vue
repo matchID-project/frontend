@@ -5,7 +5,10 @@
         <div class="card">
           <div class="card-header">
             <div class="card-header-title">
-              <i class="fa fa-bar-chart-o mID-margin-right-8" aria-hidden="true"></i> {{ localization.navbar.statistics[lang] }}
+              <span class="icon">
+                <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+              </span>
+              {{ localization.validation.statistics[lang] }}
             </div>
             <div class="card-header-icon">
               <button class="delete" @click="$emit('close')"></button>
@@ -28,8 +31,6 @@
 </template>
 
 <script>
-import localization from '../../assets/json/lang.json'
-
 import statsChart from '../../assets/js/charts'
 
 export default {
@@ -48,12 +49,6 @@ export default {
     validationIndecisionDisplay: {
       required: true,
       type: Boolean
-    }
-  },
-  data () {
-    return {
-      localization: localization,
-      lang: localization.default
     }
   },
   computed: {
@@ -170,12 +165,6 @@ export default {
         }
       }
     }
-  },
-  mounted () {
-    let self = this
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
   }
 }
 </script>

@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <div class="card-header-title">
-              <i class="fa fa-bars mID-margin-right-8" aria-hidden="true"></i> {{ localization.newObject[action+type][lang] }}
+              <i class="fa fa-bars mID-margin-right-8" aria-hidden="true"></i> {{ localization.object[action+type][lang] }}
             </div>
             <div class="card-header-icon">
               <button class="delete" @click="close()"></button>
@@ -15,11 +15,11 @@
             <div v-show="action == 'new' || type == 'project'" class="level">
               <div class="level-item has-text centered">
                 <form>
-                  {{ localization.newObject['name'+type][lang] }} &nbsp;
+                  {{ localization.object['name'+type][lang] }} &nbsp;
                   <input name="objectName"
                     @keyup.enter="saveObject(name)"
                     v-model="name"
-                    :placeholder="localization.newObject['name'+type][lang].replace(/[^a-z0-9]/gi, '_').toLowerCase()"
+                    :placeholder="localization.object['name'+type][lang].replace(/[^a-z0-9]/gi, '_').toLowerCase()"
                   >
                 </form>
               </div>
@@ -28,7 +28,7 @@
                   class="button is-primary"
                   @click="saveObject(name)"
                 >
-                  {{ localization.newObject.save[lang] }}
+                  {{ localization.object.save[lang] }}
                 </button>
               </div>
             </div>
@@ -46,8 +46,8 @@
                 :type="error.type"
             >
                 <span slot="header" >
-                    <b v-if="error.type !== 'success' ">{{ localization.dataprep.mistake[lang] }}</b>
-                    <b v-else="error.type ">{{ localization.dataprep.success[lang] }}</b>
+                    <b v-if="error.type !== 'success' ">{{ localization.object.mistake[lang] }}</b>
+                    <b v-else="error.type ">{{ localization.object.success[lang] }}</b>
                 </span>
                 <span slot="button">
                   <button class="delete"  @click="error.display = false"></button>
@@ -69,7 +69,6 @@
 import Message from './Helpers/Message'
 import Dropzone from 'vue2-dropzone'
 
-import localization from '../assets/json/lang.json'
 import apiConf from '../assets/json/backend.json'
 let api = apiConf.api
 
@@ -90,10 +89,8 @@ export default {
         message: ''
       },
       project: '',
-      localization: localization,
-      lang: localization.default,
       customOptionsObject: {
-        language: localization.newObject.dropzoneDict[this.lang]
+        language: this.localization.object.dropzoneDict[this.lang]
       },
       name: null
     }
@@ -194,10 +191,6 @@ export default {
   },
   mounted () {
     let vue = this
-
-    window.bus.$on('langChange', function (value) {
-      vue.lang = value
-    })
 
     window.bus.$on('projectChange', function (value) {
       vue.project = value

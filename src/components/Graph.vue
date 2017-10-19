@@ -15,7 +15,7 @@
           </div>
           <div class="card-content has-text-centered">
             <div id="d3">
-              <svg xmlns="http://www.w3.org/2000/svg" 
+              <svg xmlns="http://www.w3.org/2000/svg"
                    :width="width+'px'"
                    :height="height+'px'"
                    @mousemove="drag($event)"
@@ -30,7 +30,7 @@
                         <path :fill="colors[color]" d="M 5 0 L 20 5 L 5 10 z"  ></path>
                       </marker>
                       <marker  :id="'circle-'+color" viewBox="0 0 10 10" refX="5" refY="5"
-                          markerWidth="10" markerHeight="10" orient="auto" 
+                          markerWidth="10" markerHeight="10" orient="auto"
                           >
                         <circle :fill="colors[color]" cx="5" cy="5" r="3"  ></circle>
                       </marker>
@@ -40,7 +40,7 @@
 
                 <!-- <polyline v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
                       :points="polyLineFromLink(link)"
-                      :stroke="colors[linkStatus(link)]" 
+                      :stroke="colors[linkStatus(link)]"
                       :stroke-width="strokes[linkStatus(link)]"
                       :stroke-dasharray="strokeDasharray[linkStatus(link)]"
                       :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
@@ -49,7 +49,7 @@
 
                 <path v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
                       :d="pathFromLink(link)"
-                      :stroke="colors[linkStatus(link)]" 
+                      :stroke="colors[linkStatus(link)]"
                       :stroke-width="strokes[linkStatus(link)]"
                       :stroke-dasharray="strokeDasharray[linkStatus(link)]"
                       :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
@@ -62,30 +62,30 @@
                     <title> {{node.type}}: {{node.name}}</title>
                     <circle v-show="node.show"
                             :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
-                            :stroke="colors[node.type]" 
+                            :stroke="colors[node.type]"
                             :stroke-width="strokes[nodeStatus(node)]"
                             @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
                             @click="toggle(node)"
                             >
                     </circle>
                     <g class="transform-origin: center center">
-                      <icon 
+                      <icon
                             v-show="node.active"
                             :x="-7.5 * scale[nodeStatus(node)]"
                             :y="-7.5 * scale[nodeStatus(node)]"
                             :scale="scale[nodeStatus(node)]"
-                            :name="icons[nodeStatus(node)]" 
+                            :name="icons[nodeStatus(node)]"
                             :color="colors[nodeStatus(node)]"
                       >
                       </icon>
                     </g>
-                    <text 
+                    <text
                       v-show="node.active"
                       :y="25 * scale[nodeStatus(node)]"
                       :fill="colors[node.type]"
                       class="is-small"
                       text-anchor="middle"
-                      > 
+                      >
 
                             {{node.name}}
                     </text>
@@ -108,7 +108,6 @@
 </template>
 
 <script>
-import localization from '../assets/json/lang.json'
 import * as d3 from 'd3'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -124,9 +123,6 @@ export default {
   },
   data () {
     return {
-      localization: localization,
-      langs: localization.available,
-      lang: localization.default,
       nodes: []
         // .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
         .concat(Object.keys(this.datasets).map((name, index) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), dbtype: this.datasets[name].connector, active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
@@ -584,4 +580,3 @@ export default {
   }
 }
 </script>
-
