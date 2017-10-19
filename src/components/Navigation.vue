@@ -34,7 +34,7 @@
               class="navbar-link"
             >
               <span class="icon">
-                <i class="fa fa-connectdevelop mID-margin-right-8" aria-hidden="true"></i>
+                <i class="fa fa-connectdevelop" aria-hidden="true"></i>
               </span>
               {{localization.navbar.projects[lang]}}
             </router-link>
@@ -42,28 +42,47 @@
             <div class="navbar-dropdown">
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'project', action: 'new'}"
+                @click="newObject={show: true, type: 'Project', action: 'new'}"
               >
                 <span class="icon">
-                  <i class ="fa fa-plus mID-margin-right-8"></i>
+                  <i class ="fa fa-plus"></i>
                 </span>
-                {{ localization.dataprep.newProject[lang] }}
+                {{ localization.object.newProject[lang] }}
               </a>
 
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'project', action: 'import'}"
+                @click="newObject={show: true, type: 'Project', action: 'import'}"
               >
                 <span class="icon">
-                  <i class ="fa fa-download mID-margin-right-8"></i>
+                  <i class ="fa fa-download"></i>
                 </span>
-                {{ localization.dataprep.importProject[lang] }}
+                {{ localization.object.importProject[lang] }}
               </a>
 
               <hr class="dropdown-divider">
 
+              <a
+                class="navbar-item has-text-info"
+                @click="getProjects(); loadingProjects = true"
+              >
+                <span class="icon">
+                  <i class ="fa fa-refresh"></i>
+                </span>
+                {{ localization.global.refresh_list[lang] }}
+              </a>
+
+              <hr class="dropdown-divider">
+
+              <div class="has-text-centered" v-if="loadingProjects">
+                <span class="icon has-text-black-bis is-medium">
+                  <i class="fa fa-spinner fa-2x fa-spin"></i>
+                </span>
+              </div>
+
               <router-link
                 class="navbar-item"
+                v-else
                 v-for="project in projects"
                 :key="project.key"
                 :class="{'is-active' : project === $route.params.project}"
@@ -71,7 +90,7 @@
               >
                 <span class="icon has-text-info">
                   <i
-                    class="fa mID-margin-right-8"
+                    class="fa"
                     :class="{'fa-connectdevelop has-text-primary' : project === $route.params.project}"
                     @click="displayGraph = true"
                   ></i>
@@ -84,7 +103,7 @@
           <div v-if="$route.params.project" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <span class="icon">
-                <i class="fa fa-table mID-margin-right-8" aria-hidden="true"></i>
+                <i class="fa fa-table" aria-hidden="true"></i>
               </span>
               {{localization.navbar.datasets[lang]}}
             </a>
@@ -92,31 +111,50 @@
             <div class="navbar-dropdown">
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'dataset', action: 'new'}"
+                @click="newObject={show: true, type: 'Dataset', action: 'new'}"
               >
                 <span class="icon">
-                  <i class ="fa fa-plus mID-margin-right-8"></i>
+                  <i class ="fa fa-plus"></i>
                 </span>
-                {{ localization.dataprep.newDataset[lang] }}
+                {{ localization.object.newDataset[lang] }}
               </a>
 
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'dataset', action: 'import'}"
+                @click="newObject={show: true, type: 'Dataset', action: 'import'}"
               >
                 <span class="icon">
-                  <i class ="fa fa-download mID-margin-right-8"></i>
+                  <i class ="fa fa-download"></i>
                 </span>
-                {{ localization.dataprep.importDataset[lang] }}
+                {{ localization.object.importDataset[lang] }}
               </a>
 
               <hr class="dropdown-divider">
 
+              <a
+                class="navbar-item has-text-info"
+                @click="getDatasets($route.params.project); loadingDatasets = true"
+              >
+                <span class="icon">
+                  <i class ="fa fa-refresh"></i>
+                </span>
+                {{ localization.global.refresh_list[lang] }}
+              </a>
+
+              <hr class="dropdown-divider">
+
+              <div class="has-text-centered" v-if="loadingDatasets">
+                <span class="icon has-text-black-bis is-medium">
+                  <i class="fa fa-spinner fa-2x fa-spin"></i>
+                </span>
+              </div>
+
               <router-link
                 class="navbar-item"
+                v-else
                 v-for="(dataset, key) in datasets"
                 :key="dataset.table"
-                :class="{'is-active' : dataset === $route.params.dataset}"
+                :class="{'is-active' : key === $route.params.dataset}"
                 :to="{ name: 'dataset', params: { dataset: key}}"
               >
                 <div class="level is-mobile">
@@ -124,7 +162,7 @@
                     <div class="level-item">
                       <span class="icon">
                         <i
-                          class="fa mID-margin-right-8"
+                          class="fa"
                           :class="[
                             {'fa-file-text-o' : dataset.connector == 'upload'},
                             {'fa-database' : dataset.connector == 'elasticsearch'},
@@ -141,7 +179,7 @@
                     <div class="level-item">
                       <span class="icon has-text-info">
                         <i
-                          class="fa mID-margin-right-8"
+                          class="fa"
                           :class="{'fa-check has-text-primary' : dataset.validation}"
                           @click="displayGraph = true"
                         ></i>
@@ -156,7 +194,7 @@
           <div v-if="$route.params.project" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <span class="icon">
-                <i class="fa fa-flask mID-margin-right-8" aria-hidden="true"></i>
+                <i class="fa fa-flask" aria-hidden="true"></i>
               </span>
               {{localization.navbar.recipes[lang]}}
             </a>
@@ -164,31 +202,50 @@
             <div class="navbar-dropdown">
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'recipe', action: 'new'}"
+                @click="newObject={show: true, type: 'Recipe', action: 'new'}"
               >
                 <span class="icon">
-                  <i class ="fa fa-plus mID-margin-right-8"></i>
+                  <i class ="fa fa-plus"></i>
                 </span>
-                {{ localization.dataprep.newRecipe[lang] }}
+                {{ localization.object.newRecipe[lang] }}
               </a>
 
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'recipe', action: 'import'}"
+                @click="newObject={show: true, type: 'Recipe', action: 'import'}"
               >
                 <span class="icon">
-                  <i class ="fa fa-download mID-margin-right-8"></i>
+                  <i class ="fa fa-download"></i>
                 </span>
-                {{ localization.dataprep.importRecipe[lang] }}
+                {{ localization.object.importRecipe[lang] }}
               </a>
 
               <hr class="dropdown-divider">
 
+              <a
+                class="navbar-item has-text-info"
+                @click="getRecipes($route.params.project); loadingRecipes = true"
+              >
+                <span class="icon">
+                  <i class ="fa fa-refresh"></i>
+                </span>
+                {{ localization.global.refresh_list[lang] }}
+              </a>
+
+              <hr class="dropdown-divider">
+
+              <div class="has-text-centered" v-if="loadingRecipes">
+                <span class="icon has-text-black-bis is-medium">
+                  <i class="fa fa-spinner fa-2x fa-spin"></i>
+                </span>
+              </div>
+
               <router-link
                 class="navbar-item"
+                v-else
                 v-for="(recipe, key) in recipes"
                 :key="recipe.table"
-                :class="{'is-active' : recipe === $route.params.recipe}"
+                :class="{'is-active' : key === $route.params.recipe}"
                 :to="{ name: 'recipe', params: { recipe: key}}"
               >
                 {{ key }}
@@ -198,6 +255,24 @@
         </div>
 
         <div class="navbar-end">
+          <div class="navbar-item" v-if="$route.params.dataset && datasets[$route.params.dataset].validation">
+            <router-link
+              v-if="$route.name === 'dataset'"
+              :to="{ name: 'validation'}"
+              class="button is-link is-outlined"
+            >
+              <span class="icon"><i class="fa fa-check" aria-hidden="true"></i></span>
+              <span>Validation</span>
+            </router-link>
+            <router-link
+              v-if="$route.name === 'validation'"
+              :to="{ name: 'dataset'}"
+              class="button is-link is-outlined"
+            >
+              <span class="icon"><i class="fa fa-table" aria-hidden="true"></i></span>
+              <span>Dataset</span>
+            </router-link>
+          </div>
           <div class="navbar-item breadcrumb">
             <ul>
               <li><a class="mID-unclickable">{{ $route.params.project }}</a></li>
@@ -216,7 +291,7 @@
       v-if="displayGraph"
       @close="displayGraph = false"
       :datasets="allDatasets"
-      :recipes="allRecipes"
+      :recipes="allRecipes"loadingRecipes
       :project="this.$route.params.project"
     ></graph-view>
 
@@ -234,11 +309,18 @@ export default {
   data () {
     return {
       langs: [],
+      // projects
       projects: [],
+      loadingProjects: true,
+      // datasets
       datasets: {},
-      recipes: {},
       allDatasets: {},
+      loadingDatasets: true,
+      // recipes
+      recipes: {},
       allRecipes: {},
+      loadingRecipes: true,
+      // graph
       displayGraph: false
     }
   },
@@ -262,9 +344,10 @@ export default {
       window.bus.$emit('langChange', this.lang)
     },
     getProjects () {
-      this.$http.get(this.apiUrl + '/conf')
+      this.$http.get(this.apiUrl + 'conf')
         .then(response => {
           this.projects = Object.keys(response.body.projects)
+          setTimeout(() => { this.loadingProjects = false }, 500)
         })
     },
     getDependencies (project) {
@@ -273,17 +356,19 @@ export default {
       this.getRecipes(project)
     },
     getDatasets (project) {
-      this.$http.get(this.apiUrl + '/datasets')
+      this.$http.get(this.apiUrl + 'datasets')
         .then(response => {
           this.allDatasets = response.body
           this.datasets = _.pickBy(response.body, (v) => v.project === project)
+          setTimeout(() => { this.loadingDatasets = false }, 500)
         })
     },
     getRecipes (project) {
-      this.$http.get(this.apiUrl + '/recipes')
+      this.$http.get(this.apiUrl + 'recipes')
         .then(response => {
           this.allRecipes = response.body
           this.recipes = _.pickBy(response.body, (v) => v.project === project)
+          setTimeout(() => { this.loadingRecipes = false }, 500)
         })
     }
   }

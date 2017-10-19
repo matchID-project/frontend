@@ -4,23 +4,16 @@
     "fr"
   ],
   "default": "fr",
+  "global": {
+    "refresh_list": {
+      "en": "Refresh list",
+      "fr": "Rafraîchir la liste"
+    }
+  },
   "navbar": {
-    "table": {
-      "en": "Table Validation",
-      "fr": "Validation par Table"
-    },
-    "single": {
-      "en": "Single Validation",
-      "fr": "Validation par Fiche"
-    },
     "projects":{
       "en": "Projects",
       "fr": "Projets"
-    },
-
-    "objects":{
-      "en": "Datasets and Recipes",
-      "fr": "Données et Recettes"
     },
     "datasets":{
       "en": "Datasets",
@@ -29,12 +22,26 @@
     "recipes":{
       "en": "Recipes",
       "fr": "Recettes"
+    }
+  },
+  "validation": {
+    "filter": {
+      "en": "Filter",
+      "fr": "Filtre"
+    },
+    "mistake": {
+      "en": "An error occured",
+      "fr": "Une erreur s'est produite"
+    },
+    "displayUndoneOnly": {
+      "en": "Also display already done matchs",
+      "fr": "Afficher les matchs déjà traités"
     },
     "statistics": {
       "en": "Statistics",
       "fr": "Statistiques"
     },
-    "keyboard": {
+    "shortcuts": {
       "title": {
         "en": "Keyboard shortcuts",
         "fr": "Raccourcis clavier"
@@ -73,80 +80,67 @@
       }
     }
   },
-  "validation": {
-        "filter": {
-          "en": "Filter",
-          "fr": "Filtre"
-        },
-        "mistake": {
-          "en": "An error occured",
-          "fr": "Une erreur s'est produite"
-        },
-        "displayUndoneOnly": {
-          "en": "Also display already done matchs",
-          "fr": "Afficher les matchs déjà traités"
-        }
+  "dataViewer": {
+    "colFilter": {
+      "en": "Filter Columns...",
+      "fr": "Filtrer les colonnes..."
     },
-  "dataprep": {
-    "mistake": {
-      "en": "An error occured",
-      "fr": "Une erreur s'est produite"
-    },
-    "success": {
-          "en": "Operation successful",
-          "fr": "Opération réussie"
-    },
-    "newProject": {
-          "en": "New project",
-          "fr": "Nouveau projet"
-    },
-    "newDataset": {
-          "en": "New dataset",
-          "fr": "Nouvelle donnée"
-    },
-    "newRecipe": {
-          "en": "New recipe",
-          "fr": "Nouvelle recette"
-    },
-    "importProject": {
-          "en": "Import project",
-          "fr": "Importer un projet"
-    },
-    "importDataset": {
-          "en": "Importer dataset",
-          "fr": "Importer une donnée"
-    },
-    "importRecipe": {
-          "en": "Import recipe",
-          "fr": "Importer une recette"
-    }
-  },
-  "viewdata": {
-    "page": {
-      "en": "Page",
-      "fr": "Page"
+    "rowSearch": {
+      "en": "Columns for search scope...",
+      "fr": "Colonnes de recherche..."
     },
     "search": {
-      "en": "Search",
-      "fr": "Recherche"
-    },
-    "filter": {
-      "en": "Filter",
-      "fr": "Filtre"
-    },
-    "columnsFilter": {
-      "en": "Columns filter",
-      "fr": "Filtre des colonnes"
+      "en": "Search...",
+      "fr": "Recherche..."
     }
   },
-  "codemirror": {
-    "saved": {
-      "en": "Successfully saved",
-      "fr": "Enregistré"
+  "editor" : {
+    "fullScreen" : {
+      "en" : "Full Screen",
+      "fr": "Plein Écran"
     },
-    "notSaved": {
-      "en": "Not saved",
-      "fr": "Non enregistré"
+    "shortcuts": {
+      "title": {
+        "en": "Shortcuts",
+        "fr": "Raccourcis"
+      },
+      "general": {
+        "en": "Most of standard shortcuts on text editors work when your cursor is inside editor.<br/><br/> Some important ones :",
+        "fr": "La plupart des raccourcis clavier classiques d'un éditeur focntionnent ici.<br/><br/> Quelques raccourcis importants :"
+      },
+      "save": {
+        "en": "Save",
+        "fr": "Enregistrer"
+      },
+      "find": {
+        "cmd": "Ctrl-F (PC), Cmd-F (Mac)",
+        "en": "Find",
+        "fr": "Rechercher"
+      },
+      "findNext": {
+        "cmd": "Ctrl-G (PC), Cmd-G (Mac)",
+        "en": "Find next",
+        "fr": "Rechercher le suivant"
+      },
+      "findPrevious": {
+        "cmd": "Shift-Ctrl-G (PC), Shift-Cmd-G (Mac)",
+        "en": "Find previous",
+        "fr": "Rechercher le précédent"
+      },
+      "replace": {
+        "cmd": "Shift-Ctrl-F (PC), Shift-Cmd-F (Mac)",
+        "en": "Replace",
+        "fr": "Remplacer"
+      },
+      "replaceAll": {
+        "cmd": "Shift-Ctrl-R (PC), Shift-Cmd-R (Mac)",
+        "en": "Replace all",
+        "fr": "Tout remplacer"
+      }
+    },
+    "save": {
+      "en" : "Save",
+      "fr": "Enregistrer"
     }
   },
   "viewlog": {
@@ -155,54 +149,50 @@
       "fr": "Attention - bug dans la recette, regardez le journal d'exécution"
     }
   },
-  "newObject": {
-    "newproject": {
+  "object": {
+    "newProject": {
       "en": "New project",
       "fr": "Nouveau projet"
     },
-    "newrecipe": {
-      "en": "New recipe",
-      "fr": "Nouvelle recette"
-    },
-    "newdataset": {
+    "newDataset": {
       "en": "New dataset",
       "fr": "Nouvelle donnée"
     },
-    "importproject": {
+    "newRecipe": {
+      "en": "New recipe",
+      "fr": "Nouvelle recette"
+    },
+    "importProject": {
       "en": "Import project",
       "fr": "Importer un projet"
     },
-    "importrecipe": {
+    "importDataset": {
+      "en": "Importer dataset",
+      "fr": "Importer un dataset"
+    },
+    "importRecipe": {
       "en": "Import recipe",
       "fr": "Importer une recette"
     },
-    "importdataset": {
-      "en": "Import dataset",
-      "fr": "Importer une donnée"
-    },
     "nameproject": {
-      "en": "project name",
-      "fr": "nom du projet"
+      "en": "Project name",
+      "fr": "Nom du projet"
     },
     "namerecipe": {
-      "en": "recipe name",
-      "fr": "nom de la recette"
+      "en": "Recipe name",
+      "fr": "Nom de la recette"
     },
     "namedataset": {
-      "en": "dataset name",
-      "fr": "nom de la donnée"
+      "en": "Dataset name",
+      "fr": "Nom du dataset"
     },
     "save": {
-      "en": "save",
-      "fr": "enregistrer"
+      "en": "Save",
+      "fr": "Enregistrer"
     },
     "dropzoneDict": {
-      "en": {
-        "dictDefaultMessage": "drag'n'drop a data file here"
-      },
-      "fr": {
-        "dictDefaultMessage": "glissez-déposez un fichier donnée ici"
-      }
+      "en": "drag'n'drop a data file here",
+      "fr": "glissez-déposez un fichier donnée ici"
     }
    },
    "graph": {

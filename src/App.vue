@@ -5,7 +5,6 @@
     </header>
 
     <router-view></router-view>
-
   </div>
 </template>
 
@@ -13,11 +12,13 @@
 import matchIdNavigation from './components/Navigation'
 import Vue from 'vue'
 import VueCodeMirror from 'vue-codemirror'
+import VueClipboard from 'vue-clipboard2'
 
 import apiConf from './assets/json/backend.json'
 import localization from './assets/json/lang.json'
 
 Vue.use(VueCodeMirror)
+Vue.use(VueClipboard)
 
 window.bus = new Vue()
 

@@ -1,9 +1,9 @@
 <template>
     <div id="table-wrapper">
-      <div id="content">
+      <div class="is-fullwidth">
 
         <template v-if="loading">
-          <div id="loading-spinner" class="has-text-centered">
+          <div class="has-text-centered loading-spinner">
             <span class="icon has-text-black-bis is-large">
               <i class="fa fa-3x fa-spinner fa-pulse"></i>
             </span>
@@ -222,15 +222,14 @@ export default {
       this.elasticsearchResponseData = entry
     },
     initShortcuts () {
-      let self = this
-      self.screenHeightMiddle = window.screen.availHeight / 3
+      this.screenHeightMiddle = window.screen.availHeight / 3
 
-      document.addEventListener('keydown', (event) => {
+      document.addEventListener('keydown', event => {
         if (event.ctrlKey && event.altKey) {
-          self.shortcutsActivation = !self.shortcutsActivation
+          this.shortcutsActivation = !this.shortcutsActivation
         }
 
-        if (self.shortcutsActivation) {
+        if (this.shortcutsActivation) {
           if (event.keyCode === 40) { // down arrow
             this.moveDown()
             this.elasticsearchResponseShow = false
@@ -241,18 +240,18 @@ export default {
 
           if (this.actions.display) {
             if (event.keyCode === 32) { // spacebar
-              self.data[self.activeRow].validation_done = true
-              this.updateData(self.data[self.activeRow], 'done')
+              this.data[this.activeRow].validation_done = true
+              this.updateData(this.data[this.activeRow], 'done')
               this.moveDown()
               this.elasticsearchResponseShow = false
             }
 
             if (event.keyCode === 65) { // change decision
-              self.data[self.activeRow].validation_decision = !self.data[self.activeRow].validation_decision
+              this.data[this.activeRow].validation_decision = !this.data[this.activeRow].validation_decision
             }
 
-            if (event.keyCode === 69 && self.actions.action.indecision_display) { // change indecision
-              self.data[self.activeRow].validation_indecision = !self.data[self.activeRow].validation_indecision
+            if (event.keyCode === 69 && this.actions.action.indecision_display) { // change indecision
+              this.data[this.activeRow].validation_indecision = !this.data[this.activeRow].validation_indecision
             }
 
             if (event.keyCode === 73) { // reload with random data
@@ -264,7 +263,7 @@ export default {
               if (this.elasticsearchResponseShow) {
                 this.elasticsearchResponseShow = false
               } else {
-                this.getElasticsearchResponse(self.data[self.activeRow])
+                this.getElasticsearchResponse(this.data[this.activeRow])
               }
             }
           }
@@ -297,34 +296,34 @@ export default {
     updateData (entry, type) {
       if (type === 'done') {
         if (entry.validation_done) {
-          this.updateDone(entry, this.actions.action.indecision_display).then(function (response) {
+          this.updateDone(entry, this.actions.action.indecision_display).then(response => {
             entry.validation = 'success'
-          }, function (error) {
+          }, error => {
             console.log(error)
             entry.validation = 'fail'
             entry.validation_done = false
           })
         } else {
-          this.updateCancel(entry).then(function (response) {
+          this.updateCancel(entry).then(response => {
             entry.validation = 'success'
-          }, function (error) {
+          }, error => {
             console.log(error)
             entry.validation = 'fail'
             entry.validation_done = true
           })
         }
       } else {
-        this.updateDone(entry, this.actions.action.indecision_display).then(function (response) {
+        this.updateDone(entry, this.actions.action.indecision_display).then(response => {
           entry.validation = 'success'
           entry.validation_done = true
-        }, function (error) {
+        }, error => {
           console.log(error)
           entry.validation = 'fail'
           entry.validation_done = false
         })
       }
 
-      setTimeout(function () {
+      setTimeout(() => {
         entry.validation = null
       }, 3000)
     },

@@ -34,7 +34,7 @@ export default {
     }
   },
   created () {
-    this.$http.get(this.apiUrl + '/conf')
+    this.$http.get(this.apiUrl + 'conf')
       .then(response => {
         this.projects = Object.keys(response.body.projects)
       })

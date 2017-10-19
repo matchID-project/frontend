@@ -1,5 +1,5 @@
 <template>
-  <div id="validationWrapper">
+  <div id="validationWrapper" v-if="connectionMade">
 
     <div id="controller" v-show="!error.display">
       <div class="box">
@@ -104,7 +104,7 @@
           <div class="column is-1">
             <div class="field">
               <p class="control has-text-centered">
-                <a class="button is-outlined mID-margin-right-8" @click="keyboardShow = true">
+                <a class="button is-outlined mID-margin-right-8" @click="shortcutsShow = true">
                   <span class="icon">
                     <i class="fa fa-keyboard-o"></i>
                   </span>
@@ -186,30 +186,15 @@ export default {
     Statistics,
     Shortcuts
   },
-  props: {
-    columns: {
-      required: true,
-      type: Array
-    },
-    scores: {
-      required: true,
-      type: Object
-    },
-    view: {
-      required: true,
-      type: Object
-    },
-    actions: {
-      required: true,
-      type: Object
-    },
-    elasticsearch: {
-      required: true,
-      type: Object
-    }
-  },
   data () {
     return {
+      // CONF
+      columns: null,
+      scores: null,
+      view: null,
+      actions: null,
+      elasticsearch: null,
+      connectionMade: false,
       // OUTPUT PROPS DATA-TABLE + ALL PROPS INCOMING
       loading: false,
       dataTable: [],
@@ -236,17 +221,26 @@ export default {
     }
   },
   created () {
-    this.valuesRangeSlider = this.scores.range
+    this.$http.put(this.apiUrl + 'datasets/' + this.$route.params.dataset + '/validation')
+      .then(response => {
+        this.columns = response.body.props.columns
+        this.scores = response.body.props.scores
+        this.view = response.body.props.view
+        this.actions = response.body.props.actions
+        this.elasticsearch = response.body.props.elasticsearch
 
-    this.esClient = new elasticsearchLib.Client(this.elasticsearch.connection)
+        this.connectionMade = true
+
+        this.valuesRangeSlider = this.scores.range
+
+        this.esClient = new elasticsearchLib.Client(this.elasticsearch.connection)
+
+        this.refreshData()
+      })
   },
   mounted () {
-    this.refreshData()
-
-    let self = this
-
-    window.bus.$on('reloadData', function () {
-      self.refreshData()
+    window.bus.$on('reloadData', () => {
+      this.refreshData()
     })
   },
   computed: {
@@ -255,15 +249,15 @@ export default {
       let data = this.dataTable
 
       if (filterQuery) {
-        data = data.filter((row) => {
-          return Object.keys(row).some((key) => {
+        data = data.filter(row => {
+          return Object.keys(row).some(key => {
             return String(row[key]).toLowerCase().indexOf(filterQuery) > -1
           })
         })
       }
 
       if (this.valuesRangeSlider[0] !== 0 || this.valuesRangeSlider[1] !== 100) {
-        data = data.filter((row) => {
+        data = data.filter(row => {
           return row.confiance >= this.valuesRangeSlider[0] && row.confiance <= this.valuesRangeSlider[1]
         })
       }
@@ -279,37 +273,36 @@ export default {
       this.getData()
     },
     getData () {
-      let self = this
-      self.loading = true
-      return this.search(self.searchString, self.selectedSearchField).then(function (response) {
-        response.hits.hits.forEach(function (element) {
-          if (self.displayOnlyUndone || !element._source.validation_done) {
-            if (self.actions.display) {
-              if (self.scores.column) {
-                element._source.validation_decision = !element._source.validation_decision ? element._source[self.scores.column] > self.scores.preComputed.decision : element._source.validation_decision
+      this.loading = true
+      return this.search(this.searchString, this.selectedSearchField).then(response => {
+        response.hits.hits.forEach(element => {
+          if (this.displayOnlyUndone || !element._source.validation_done) {
+            if (this.actions.display) {
+              if (this.scores.column) {
+                element._source.validation_decision = !element._source.validation_decision ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
 
                 element._source.validation_done = !element._source.validation_done ? false : element._source.validation_done
 
-                if (self.actions.action.indecision_display) {
-                  element._source.validation_indecision = !element._source.validation_indecision ? Array.isArray(self.scores.preComputed.indecision) && element._source[self.scores.column] <= self.scores.preComputed.indecision[1] && element._source[self.scores.column] >= self.scores.preComputed.indecision[0] : element._source.validation_indecision
+                if (this.actions.action.indecision_display) {
+                  element._source.validation_indecision = !element._source.validation_indecision ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
                 }
               } else {
                 element._source.validation_decision = !element._source.validation_decision ? false : element._source.validation_decision
 
                 element._source.validation_done = !element._source.validation_done ? false : element._source.validation_done
 
-                if (self.actions.action.indecision_display) {
+                if (this.actions.action.indecision_display) {
                   element._source.validation_indecision = !element._source.validation_indecision ? false : element._source.validation_indecision
                 }
               }
 
               element._source.validation = false
             }
-            self.dataTable.push(Object.assign(element._source, {_id: element._id}))
+            this.dataTable.push(Object.assign(element._source, {_id: element._id}))
           }
         })
-        self.loading = false
-      }, function (error) {
+        this.loading = false
+      }, error => {
         this.manageError(error)
       })
     },
@@ -355,7 +348,7 @@ export default {
       })
     },
     updateValuesRangeSlider (valueRange) {
-      this.valuesRangeSlider = valueRange.map((v) => {
+      this.valuesRangeSlider = valueRange.map(v => {
         return Number.parseInt(v)
       })
     },
@@ -365,10 +358,9 @@ export default {
       this.getStatistics()
     },
     getStatistics () {
-      let self = this
-      this.getElasticsearchStatistics().then(function (response) {
-        self.statisticsResults = Object.assign({}, self.statisticsResults, response)
-      }, function (error) {
+      this.getElasticsearchStatistics().then(response => {
+        this.statisticsResults = Object.assign({}, this.statisticsResults, response)
+      }, error => {
         this.manageError(error)
       })
     },
