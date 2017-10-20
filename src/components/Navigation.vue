@@ -443,7 +443,7 @@ export default {
     },
     runRecipe (recipe) {
       this.clickPossible = false
-
+      this.stoppingStatus = false
       this.$http.put(this.apiUrl + 'recipes/' + recipe + '/run')
         .then(response => {
           setTimeout(() => { this.clickPossible = true }, 3 * 1000)
