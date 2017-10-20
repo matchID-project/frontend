@@ -1,109 +1,105 @@
 <template>
   <div class="modal is-active ">
     <div class="modal-background" @click="close()"></div>
-    <div class="column is-9">
-      <div class="modal-content is-12">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title" >
-              <i class="fa fa-connectdevelop mID-margin-right-8" aria-hidden="true"></i> {{ localization.graph.title[lang] }}
-              <span class="title is-4"> &nbsp; {{project}} </span>
-            </div>
-            <div class="card-header-icon">
-              <button class="delete" @click="close()"></button>
-            </div>
+    <div class="modal-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-title" >
+            <i class="fa fa-connectdevelop mID-margin-right-8" aria-hidden="true"></i> {{ localization.graph.title[lang] }}
+            <span class="title is-4"> &nbsp; {{project}} </span>
           </div>
-          <div class="card-content has-text-centered">
-            <div id="d3">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   :width="width+'px'"
-                   :height="height+'px'"
-                   @mousemove="drag($event)"
-                   @mouseup="drop()"
-                   v-if="bounds.minX">
+          <div class="card-header-icon">
+            <button class="delete" @click="close()"></button>
+          </div>
+        </div>
+        <div class="card-content has-text-centered">
+          <div id="d3">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 :width="width+'px'"
+                 :height="height+'px'"
+                 @mousemove="drag($event)"
+                 @mouseup="drop()"
+                 v-if="bounds.minX">
 
-                  <defs>
-                    <template v-for="color in Object.keys(colors)">
-                      <marker  :id="'arrow-'+color" viewBox="0 0 20 15" refX="1" refY="5"
-                          markerWidth="9" markerHeight="9" orient="auto"
+                <defs>
+                  <template v-for="color in Object.keys(colors)">
+                    <marker  :id="'arrow-'+color" viewBox="0 0 20 15" refX="1" refY="5"
+                        markerWidth="9" markerHeight="9" orient="auto"
+                        >
+                      <path :fill="colors[color]" d="M 5 0 L 20 5 L 5 10 z"  ></path>
+                    </marker>
+                    <marker  :id="'circle-'+color" viewBox="0 0 10 10" refX="5" refY="5"
+                        markerWidth="10" markerHeight="10" orient="auto"
+                        >
+                      <circle :fill="colors[color]" cx="5" cy="5" r="3"  ></circle>
+                    </marker>
+
+                  </template>
+                </defs>
+
+              <!-- <polyline v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
+                    :points="polyLineFromLink(link)"
+                    :stroke="colors[linkStatus(link)]"
+                    :stroke-width="strokes[linkStatus(link)]"
+                    :stroke-dasharray="strokeDasharray[linkStatus(link)]"
+                    :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
+                    >
+              </polyline> -->
+
+              <path v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
+                    :d="pathFromLink(link)"
+                    :stroke="colors[linkStatus(link)]"
+                    :stroke-width="strokes[linkStatus(link)]"
+                    :stroke-dasharray="strokeDasharray[linkStatus(link)]"
+                    :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
+                    fill="None"
+                    >
+              </path>
+
+              <template v-for="(node, i) in nodes" >
+                <g :transform="'translate(' + coords[i].x + ',' + coords[i].y + ')'">
+                  <title> {{node.type}}: {{node.name}}</title>
+                  <circle v-show="node.show"
+                          :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
+                          :stroke="colors[node.type]"
+                          :stroke-width="strokes[nodeStatus(node)]"
+                          @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
+                          @click="toggle(node)"
                           >
-                        <path :fill="colors[color]" d="M 5 0 L 20 5 L 5 10 z"  ></path>
-                      </marker>
-                      <marker  :id="'circle-'+color" viewBox="0 0 10 10" refX="5" refY="5"
-                          markerWidth="10" markerHeight="10" orient="auto"
-                          >
-                        <circle :fill="colors[color]" cx="5" cy="5" r="3"  ></circle>
-                      </marker>
-
-                    </template>
-                  </defs>
-
-                <!-- <polyline v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
-                      :points="polyLineFromLink(link)"
-                      :stroke="colors[linkStatus(link)]"
-                      :stroke-width="strokes[linkStatus(link)]"
-                      :stroke-dasharray="strokeDasharray[linkStatus(link)]"
-                      :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
-                      >
-                </polyline> -->
-
-                <path v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
-                      :d="pathFromLink(link)"
-                      :stroke="colors[linkStatus(link)]"
-                      :stroke-width="strokes[linkStatus(link)]"
-                      :stroke-dasharray="strokeDasharray[linkStatus(link)]"
-                      :marker-mid="'url(#' + markers[linkStatus(link)] + '-' + linkStatus(link) + ')'"
-                      fill="None"
-                      >
-                </path>
-
-                <template v-for="(node, i) in nodes" >
-                  <g :transform="'translate(' + coords[i].x + ',' + coords[i].y + ')'">
-                    <title> {{node.type}}: {{node.name}}</title>
-                    <circle v-show="node.show"
-                            :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
-                            :stroke="colors[node.type]"
-                            :stroke-width="strokes[nodeStatus(node)]"
-                            @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
-                            @click="toggle(node)"
-                            >
-                    </circle>
-                    <g class="transform-origin: center center">
-                      <icon
-                            v-show="node.active"
-                            :x="-7.5 * scale[nodeStatus(node)]"
-                            :y="-7.5 * scale[nodeStatus(node)]"
-                            :scale="scale[nodeStatus(node)]"
-                            :name="icons[nodeStatus(node)]"
-                            :color="colors[nodeStatus(node)]"
-                      >
-                      </icon>
-                    </g>
-                    <text
-                      v-show="node.active"
-                      :y="25 * scale[nodeStatus(node)]"
-                      :fill="colors[node.type]"
-                      class="is-small"
-                      text-anchor="middle"
-                      >
-
-                            {{node.name}}
-                    </text>
+                  </circle>
+                  <g class="transform-origin: center center">
+                    <icon
+                          v-show="node.active"
+                          :x="-7.5 * scale[nodeStatus(node)]"
+                          :y="-7.5 * scale[nodeStatus(node)]"
+                          :scale="scale[nodeStatus(node)]"
+                          :name="icons[nodeStatus(node)]"
+                          :color="colors[nodeStatus(node)]"
+                    >
+                    </icon>
                   </g>
-                </template>
+                  <text
+                    v-show="node.active"
+                    :y="25 * scale[nodeStatus(node)]"
+                    :fill="colors[node.type]"
+                    class="is-small"
+                    text-anchor="middle"
+                    >
+
+                          {{node.name}}
+                  </text>
+                </g>
+              </template>
 
 
-              </svg>
-            </div>
-
+            </svg>
           </div>
-          <div class="card-footer has-text-centered">
-          </div>
+
         </div>
       </div>
     </div>
-    <button class="modal-close is-large" @click="close()"></button>
 
+    <button class="modal-close is-large" @click="close()"></button>
   </div>
 </template>
 
@@ -580,3 +576,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.modal-content {
+  width: 90%
+}
+</style>

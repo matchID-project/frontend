@@ -119,7 +119,7 @@ export default {
   mounted () {
     this.initCode(this.$route.params.dataset)
 
-    window.bus.$on('codeSaved', newCode => {
+    window.bus.$on('codeSaved-dataset', newCode => {
       this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
         .then(response => {
           var msg = response.body[Object.keys(response.body)[0]].yaml_validator

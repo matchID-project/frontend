@@ -84,7 +84,7 @@ export default {
   watch: {
     saveCode (newVal) {
       if (newVal) {
-        window.bus.$emit('codeSaved', this.code)
+        window.bus.$emit('codeSaved-' + this.$route.name, this.code)
       }
     },
     showFullScreen (newVal) {
