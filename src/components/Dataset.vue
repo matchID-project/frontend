@@ -3,9 +3,10 @@
     <div class="column is-3 is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingCode">
         <div class="level-item">
-          <span class="icon has-text-black-bis is-medium">
+          <span class="icon has-text-black-bis is-medium mID-margin-right-8">
             <i class="fa fa-spinner fa-2x fa-spin"></i>
           </span>
+          <span class="is-size-5">Loading Code</span>
         </div>
       </div>
 
@@ -62,9 +63,10 @@
     <div class="column is-9 is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingData">
         <div class="level-item">
-          <span class="icon has-text-black-bis is-medium">
+          <span class="icon has-text-black-bis is-medium mID-margin-right-8">
             <i class="fa fa-spinner fa-2x fa-spin"></i>
           </span>
+          <span class="is-size-5">Loading Data</span>
         </div>
       </div>
 
