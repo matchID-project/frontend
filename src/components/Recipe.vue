@@ -3,9 +3,10 @@
     <div class="column is-3 is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingCode">
         <div class="level-item">
-          <span class="icon has-text-black-bis is-medium">
+          <span class="icon has-text-black-bis is-medium mID-margin-right-8">
             <i class="fa fa-spinner fa-2x fa-spin"></i>
           </span>
+          <span class="is-size-5">Loading Code</span>
         </div>
       </div>
 
@@ -65,19 +66,28 @@
     <div class="column is-9 is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingData">
         <div class="level-item">
-          <span class="icon has-text-black-bis is-medium">
+          <span class="icon has-text-black-bis is-medium mID-margin-right-8">
             <i class="fa fa-spinner fa-2x fa-spin"></i>
           </span>
+          <span class="is-size-5">Loading Data</span>
         </div>
       </div>
 
-      <div class="card is-fullheight" v-else>
-        <data-viewer
-          v-if="!loadingData"
-          :data="data"
-          :columns="columns"
-        ></data-viewer>
-      </div>
+      <template v-else>
+        <div class="card" style="height: 80%">
+          <data-viewer
+            v-if="!loadingData"
+            :data="data"
+            :columns="columns"
+          ></data-viewer>
+        </div>
+        <div class="card" style="height: 20%">
+          <logs-viewer
+            :loading="loadingLogs"
+            :content="logs"
+          ></logs-viewer>
+        </div>
+    </template>
     </div>
 
     <shortcuts
@@ -91,12 +101,14 @@
 import YamlEditor from './Editor/YamlEditor'
 import Shortcuts from './Editor/Shortcuts'
 import DataViewer from './DataViewer'
+import LogsViewer from './LogsViewer'
 
 export default {
   components: {
     YamlEditor,
     Shortcuts,
-    DataViewer
+    DataViewer,
+    LogsViewer
   },
   data () {
     return {
@@ -112,7 +124,10 @@ export default {
       showFullScreen: false,
       // data
       loadingData: true, // indicator of loading data
-      data: null
+      data: null,
+      // logs
+      logs: '',
+      loadingLogs: false
     }
   },
   watch: {
@@ -175,10 +190,13 @@ export default {
       this.saveCode = true
     },
     getData (recipe) {
+      this.loadingLogs = true
       this.$http.put(this.apiUrl + 'recipes/' + recipe + '/test')
         .then(response => {
           this.data = response.body.data
+          this.logs = response.body.log
           this.columns = Object.keys(this.data[0])
+          this.loadingLogs = false
           setTimeout(() => {
             this.loadingData = false
           }, 1500)
