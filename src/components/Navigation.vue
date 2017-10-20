@@ -248,7 +248,7 @@
         </div>
 
         <div class="navbar-end">
-          <div class="navbar-item" v-if="$route.params.dataset && datasets[$route.params.dataset].validation">
+          <div class="navbar-item" v-if="!loadingDatasets && $route.params.dataset && datasets[$route.params.dataset].validation">
             <router-link
               v-if="$route.name === 'dataset'"
               :to="{ name: 'validation'}"
@@ -257,6 +257,7 @@
               <span class="icon"><i class="fa fa-check" aria-hidden="true"></i></span>
               <span>Validation</span>
             </router-link>
+
             <router-link
               v-if="$route.name === 'validation'"
               :to="{ name: 'dataset'}"
@@ -266,6 +267,55 @@
               <span>Dataset</span>
             </router-link>
           </div>
+
+          <div class="navbar-item" v-if="$route.params.recipe">
+            <template v-if="recipeStatus === 'up'">
+              <a
+                v-if="stoppingStatus"
+                class="button is-outlined is-danger"
+                disabled
+              >
+                <span class="icon">
+                  <i class="fa fa-spin fa-spinner"></i>
+                </span>
+                <span>Stopping ...</span>
+              </a>
+              <a
+                v-else
+                @mouseover="recipeState = 'stop'"
+                @mouseleave="recipeState = 'running'"
+                class="button is-outlined"
+                :disabled="!clickPossible"
+                :class="[
+                  {'is-danger': recipeState === 'stop'},
+                  {'is-warning' : recipeState === 'running'}
+                ]"
+                @click="stopRecipe($route.params.recipe)"
+              >
+                <span class="icon">
+                  <i
+                    class="fa"
+                    :class="[
+                      {'fa-ban': recipeState === 'stop'},
+                      {'fa-spin fa-spinner' : recipeState === 'running'}
+                    ]"
+                  ></i>
+                </span>
+                <span v-if="recipeState === 'stop'">Stop</span>
+                <span v-else-if="recipeState === 'running'">Running ...</span>
+              </a>
+            </template>
+            <a
+              v-else
+              class="button is-success is-outlined"
+              :disabled="!clickPossible"
+              @click="runRecipe($route.params.recipe)"
+            >
+              <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
+              <span>Run</span>
+            </a>
+          </div>
+
           <div class="navbar-item breadcrumb">
             <ul>
               <li>
@@ -279,6 +329,7 @@
                   <span>{{ $route.params.project }}</span>
                 </a>
               </li>
+
               <li v-if="$route.params.recipe || $route.params.dataset">
                 <a class="mID-unclickable">
                   {{ $route.params.recipe ? $route.params.recipe : '' }}{{ $route.params.dataset ? $route.params.dataset : '' }}
@@ -323,6 +374,11 @@ export default {
       recipes: {},
       allRecipes: {},
       loadingRecipes: true,
+      recipeStatus: null,
+      clickPossible: true,
+      recipeState: 'running',
+      stoppingStatus: false,
+      interval: null,
       // graph
       displayGraph: false
     }
@@ -335,6 +391,17 @@ export default {
     this.getProjects()
 
     this.getDependencies(this.$route.params.project)
+
+    if (this.$route.params.recipe) {
+      this.getStatus(this.$route.params.recipe)
+
+      this.interval = setInterval(() => {
+        this.getStatus(this.$route.params.recipe)
+      }, 3000)
+    }
+  },
+  beforeDestroy () {
+    clearInterval(this.interval)
   },
   watch: {
     '$route.params.project' () {
@@ -372,6 +439,32 @@ export default {
           this.allRecipes = response.body
           this.recipes = _.pickBy(response.body, (v) => v.project === project)
           setTimeout(() => { this.loadingRecipes = false }, 500)
+        })
+    },
+    runRecipe (recipe) {
+      this.clickPossible = false
+
+      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/run')
+        .then(response => {
+          setTimeout(() => { this.clickPossible = true }, 3 * 1000)
+        })
+    },
+    stopRecipe (recipe) {
+      this.clickPossible = false
+      this.stoppingStatus = true
+
+      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/stop')
+        .then(response => {
+          this.clickPossible = true
+        })
+    },
+    getStatus (recipe) {
+      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
+        .then(response => {
+          this.recipeStatus = response.body.status
+          if (this.recipeStatus === 'down') {
+            this.stoppingStatus = false
+          }
         })
     }
   }
