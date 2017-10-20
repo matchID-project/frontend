@@ -406,6 +406,15 @@ export default {
   watch: {
     '$route.params.project' () {
       this.getDependencies(this.$route.params.project)
+    },
+    '$route.name' (newVal) {
+      if (newVal === 'recipe') {
+        this.interval = setInterval(() => {
+          this.getStatus(this.$route.params.recipe)
+        }, 3000)
+      } else {
+        clearInterval(this.interval)
+      }
     }
   },
   methods: {
@@ -446,7 +455,7 @@ export default {
       this.stoppingStatus = false
       this.$http.put(this.apiUrl + 'recipes/' + recipe + '/run')
         .then(response => {
-          setTimeout(() => { this.clickPossible = true }, 3 * 1000)
+          setTimeout(() => { this.clickPossible = true }, 6 * 1000)
         })
     },
     stopRecipe (recipe) {
