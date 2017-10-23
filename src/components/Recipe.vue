@@ -171,7 +171,7 @@ export default {
       this.$http.get(this.apiUrl + 'recipes/' + recipe)
         .then(response => {
           this.source = response.body.source
-          this.getRecipeYaml(this.source)
+          this.getRecipeYaml(response.body.source)
         })
 
       this.getData(this.$route.params.recipe)
