@@ -1,5 +1,5 @@
 <template>
-  <section class="section">
+  <section class="section" id="home">
     <div class="container">
       <div class="columns is-multiline is-9">
         <div class="column is-half" v-for="project in projects" :key="project.key">
