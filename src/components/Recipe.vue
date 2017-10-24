@@ -169,12 +169,9 @@ export default {
       this.loadingData = true
 
       this.$http.get(this.apiUrl + 'recipes/' + recipe)
-        .then(response => {
-          this.source = response.body.source
-          this.getRecipeYaml(response.body.source)
-        })
-
-      this.getData(this.$route.params.recipe)
+        .then(response => { this.source = response.body.source })
+        .then(() => this.getRecipeYaml(this.source))
+        .then(() => this.getData(this.$route.params.recipe))
     },
     getRecipeYaml (nameOfFile) {
       return this.$http.get(this.apiUrl + 'conf/' + this.$route.params.project + '/' + nameOfFile)
