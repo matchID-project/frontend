@@ -9,11 +9,11 @@ html, body {
 }
 
 #app {
-  height: calc(100% - 56px);
-  width: 100%;
-  // display: flex;
-  // flex-flow: column;
-  // flex-wrap: none;
+  height: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-flow: column;
+  flex-wrap: nowrap;
 
   #table-wrapper {
     flex-grow: 1;
@@ -24,14 +24,16 @@ html, body {
 }
 
 #project {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: 100%;
   background-color: $grey-lighter;
 }
 
 #home {
   padding-top: 3rem;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: 100%;
   background-color: $grey-lighter;
 }

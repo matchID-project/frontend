@@ -479,13 +479,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.nav {
-  height: 2.75rem;
-  > .container {
-    min-height: 2.75rem;
-  }
-}
-.nav-toggle {
-  height: 2.75rem;
-}
+
 </style>
