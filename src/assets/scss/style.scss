@@ -11,9 +11,9 @@ html, body {
 #app {
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-flow: column;
-  flex-wrap: none;
+  // display: flex;
+  // flex-flow: column;
+  // flex-wrap: none;
 
   #table-wrapper {
     flex-grow: 1;
@@ -23,13 +23,16 @@ html, body {
   }
 }
 
-.full-size-wrapper {
-  height: 100%;
-  width: 100%;
+#project {
   overflow: auto;
+  height: 100%;
+  background-color: $grey-lighter;
 }
 
-#project {
+#home {
+  padding-top: 3rem;
+  overflow: auto;
+  height: 100%;
   background-color: $grey-lighter;
 }
 
@@ -183,4 +186,12 @@ html, body {
 
 .is-overflowed {
   overflow: auto;
+}
+
+.is-overflowed-x {
+  overflow-x: auto;
+}
+
+.is-overflowed-y {
+  overflow-y: auto;
 }

@@ -17,6 +17,10 @@ import VueClipboard from 'vue-clipboard2'
 import apiConf from './assets/json/backend.json'
 import localization from './assets/json/lang.json'
 
+import lodash from 'lodash'
+
+Vue.prototype.$lodash = lodash
+
 Vue.use(VueCodeMirror)
 Vue.use(VueClipboard)
 

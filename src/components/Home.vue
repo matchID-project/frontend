@@ -1,32 +1,26 @@
 <template>
-  <div>
-    <div class="hero">
-      <section class="hero is-info">
-        <div class="hero-body">
-          <div class="container">
-            <h1 class="title">
-              LIST ALL PROJECTS
-            </h1>
-          </div>
+  <section class="section" id="home">
+    <div class="container">
+      <div class="columns is-multiline is-9">
+        <div class="column is-half" v-for="project in projects" :key="project.key">
+          <router-link :to="{ name: 'project', params: { project: project}}">
+            <section class="hero is-primary box">
+              <div class="hero-body">
+                <div class="container">
+                  <h1 class="title">
+                    {{ project }}
+                  </h1>
+                </div>
+              </div>
+            </section>
+          </router-link>
         </div>
-      </section>
-    </div>
-    <div class="box">
-      <div class="container">
-        <ul>
-          <li v-for="project in projects" :key="project.key">
-            <router-link :to="{ name: 'project', params: { project: project}}">
-              {{ project }}
-            </router-link>
-          </li>
-        </ul>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
-
 export default {
   data () {
     return {

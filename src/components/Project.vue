@@ -1,5 +1,5 @@
 <template>
-  <div class="full-size-wrapper" id="project">
+  <div id="project">
     <div class="hero">
       <section class="hero is-info">
         <div class="hero-body">

@@ -12,7 +12,7 @@
           <a class="navbar-link is-active">
             <span class="icon"><i class="fa fa-globe"></i></span>
           </a>
-          <div class="navbar-dropdown">
+          <div class="navbar-dropdown is-boxed">
             <a
               class="navbar-item"
               v-for="availableLang in langs"
@@ -39,7 +39,7 @@
               {{localization.navbar.projects[lang]}}
             </router-link>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown is-boxed">
               <a
                 class="navbar-item has-text-info"
                 @click="newObject={show: true, type: 'Project', action: 'new'}"
@@ -101,7 +101,7 @@
               {{localization.navbar.datasets[lang]}}
             </a>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown is-boxed">
               <a
                 class="navbar-item has-text-info"
                 @click="newObject={show: true, type: 'Dataset', action: 'new'}"
@@ -192,7 +192,7 @@
               {{localization.navbar.recipes[lang]}}
             </a>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown is-boxed">
               <a
                 class="navbar-item has-text-info"
                 @click="newObject={show: true, type: 'Recipe', action: 'new'}"
@@ -315,7 +315,6 @@
               <span>Run</span>
             </a>
           </div>
-
           <div class="navbar-item breadcrumb">
             <ul>
               <li>
@@ -345,7 +344,7 @@
       v-if="displayGraph"
       @close="displayGraph = false"
       :datasets="allDatasets"
-      :recipes="allRecipes"loadingRecipes
+      :recipes="allRecipes"
       :project="this.$route.params.project"
     ></graph-view>
 
@@ -353,7 +352,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import GraphView from './Graph'
 
 export default {
@@ -438,7 +436,7 @@ export default {
       this.$http.get(this.apiUrl + 'datasets')
         .then(response => {
           this.allDatasets = response.body
-          this.datasets = _.pickBy(response.body, (v) => v.project === project)
+          this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
           setTimeout(() => { this.loadingDatasets = false }, 500)
         })
     },
@@ -446,7 +444,7 @@ export default {
       this.$http.get(this.apiUrl + 'recipes')
         .then(response => {
           this.allRecipes = response.body
-          this.recipes = _.pickBy(response.body, (v) => v.project === project)
+          this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
           setTimeout(() => { this.loadingRecipes = false }, 500)
         })
     },
