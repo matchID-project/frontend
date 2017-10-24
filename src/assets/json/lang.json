@@ -143,6 +143,24 @@
       "fr": "Enregistrer"
     }
   },
+  "recipe": {
+    "run": {
+      "en": "run",
+      "fr": "Lancer"
+    },
+    "running": {
+      "en": "Running",
+      "fr": "En cours"
+    },
+    "stop": {
+      "en": "Stop",
+      "fr": "Arrêter"
+    },
+    "stopping": {
+      "en": "Stopping",
+      "fr": "Arrêt"
+    }
+  },
   "viewlog": {
     "recipeError": {
       "en": "Bug in recipe : please check log",

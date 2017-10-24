@@ -278,7 +278,7 @@
                 <span class="icon">
                   <i class="fa fa-spin fa-spinner"></i>
                 </span>
-                <span>Stopping ...</span>
+                <span>{{localization.recipe.stopping[lang]}} ...</span>
               </a>
               <a
                 v-else
@@ -301,8 +301,8 @@
                     ]"
                   ></i>
                 </span>
-                <span v-if="recipeState === 'stop'">Stop</span>
-                <span v-else-if="recipeState === 'running'">Running ...</span>
+                <span v-if="recipeState === 'stop'">{{localization.recipe.stop[lang]}}</span>
+                <span v-else-if="recipeState === 'running'">{{localization.recipe.running[lang]}} ...</span>
               </a>
             </template>
             <a
@@ -312,7 +312,7 @@
               @click="runRecipe($route.params.recipe)"
             >
               <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
-              <span>Run</span>
+              <span>{{localization.recipe.run[lang]}}</span>
             </a>
           </div>
           <div class="navbar-item breadcrumb">
