@@ -14,10 +14,10 @@ export default new Router({
   routes: [
     {name: 'root', path: '/', redirect: { name: 'home' }},
     {name: 'home', path: '/projects', component: Home},
+    {name: 'jobs', path: '/jobs', component: Jobs},
     {name: 'project', path: '/projects/:project', component: Project},
     {name: 'recipe', path: '/projects/:project/recipes/:recipe', component: Recipe},
     {name: 'dataset', path: '/projects/:project/datasets/:dataset', component: Dataset},
-    {name: 'validation', path: '/projects/:project/datasets/:dataset/validation', component: ValidationController},
-    {name: 'jobs', path: '/jobs', component: Jobs}
+    {name: 'validation', path: '/projects/:project/datasets/:dataset/validation', component: ValidationController}
   ]
 })

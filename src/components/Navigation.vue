@@ -29,6 +29,25 @@
       <div class="navbar-menu">
         <div class="navbar-start">
           <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
+              <span>Jobs</span>
+            </a>
+
+            <div class="navbar-dropdown is-boxed">
+              <a class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index">
+                {{ job.date }} <br/> {{ job.file }}
+              </a>
+              <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
+                Empty
+              </div>
+              <hr class="dropdown-divider">
+              <a class="navbar-item" v-for="(job, index) in doneJobs" :key="job.index">
+                {{ job.date }} <br/> {{ job.file }}
+              </a>
+            </div>
+          </div>
+          <div class="navbar-item has-dropdown is-hoverable">
             <router-link
               :to="{ name: 'home'}"
               class="navbar-link"
@@ -381,13 +400,18 @@ export default {
       newObject: {
         display: false,
         type: null
-      }
+      },
+      // jobs
+      runningJobs: {},
+      doneJobs: {}
     }
   },
   mounted () {
     this.langs = this.localization.available
 
     this.changeLang(this.lang)
+
+    this.getJobs()
 
     this.getProjects()
 
@@ -398,6 +422,8 @@ export default {
 
       this.interval = setInterval(() => {
         this.getStatus(this.$route.params.recipe)
+
+        this.getJobs()
       }, 3000)
     }
 
@@ -480,6 +506,13 @@ export default {
           if (this.recipeStatus === 'down') {
             this.stoppingStatus = false
           }
+        })
+    },
+    getJobs () {
+      this.$http.get(this.apiUrl + 'jobs')
+        .then(response => {
+          this.runningJobs = response.body.running
+          this.doneJobs = response.body.done
         })
     }
   }
