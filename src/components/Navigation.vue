@@ -339,7 +339,7 @@
     ></graph-view>
 
     <new-object
-      v-if="newObject.display"
+      :display="newObject.display"
       :type="newObject.type"
       @close="newObject.display = false"
     ></new-object>
@@ -401,7 +401,10 @@ export default {
       }, 3000)
     }
 
-    this.$on()
+    window.bus.$on('reloadNav', () => {
+      this.getProjects()
+      this.getDependencies(this.$route.params.project)
+    })
   },
   beforeDestroy () {
     clearInterval(this.interval)
