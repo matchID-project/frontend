@@ -159,7 +159,7 @@ export default {
           }, 1500)
         })
     },
-    saveCode (newCode) {
+    sendCodeSaving (newCode) {
       this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
         .then(response => {
           var msg = response.body[Object.keys(response.body)[0]].yaml_validator
