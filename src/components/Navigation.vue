@@ -42,22 +42,12 @@
             <div class="navbar-dropdown is-boxed">
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'Project', action: 'new'}"
+                @click="newObject = {display: true, type: 'project'}"
               >
                 <span class="icon">
                   <i class ="fa fa-plus"></i>
                 </span>
-                {{ localization.object.newProject[lang] }}
-              </a>
-
-              <a
-                class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'Project', action: 'import'}"
-              >
-                <span class="icon">
-                  <i class ="fa fa-download"></i>
-                </span>
-                {{ localization.object.importProject[lang] }}
+                {{ localization.object.new.project[lang] }}
               </a>
 
               <hr class="dropdown-divider">
@@ -104,22 +94,22 @@
             <div class="navbar-dropdown is-boxed">
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'Dataset', action: 'new'}"
+                @click="newObject = {display: true, type: 'dataset'}"
               >
                 <span class="icon">
                   <i class ="fa fa-plus"></i>
                 </span>
-                {{ localization.object.newDataset[lang] }}
+                {{ localization.object.new.dataset[lang] }}
               </a>
 
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'Dataset', action: 'import'}"
+                @click="importObject={type: 'Dataset'}"
               >
                 <span class="icon">
                   <i class ="fa fa-download"></i>
                 </span>
-                {{ localization.object.importDataset[lang] }}
+                {{ localization.object.import.dataset[lang] }}
               </a>
 
               <hr class="dropdown-divider">
@@ -195,22 +185,22 @@
             <div class="navbar-dropdown is-boxed">
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'Recipe', action: 'new'}"
+                @click="newObject = {display: true, type: 'recipe'}"
               >
                 <span class="icon">
                   <i class ="fa fa-plus"></i>
                 </span>
-                {{ localization.object.newRecipe[lang] }}
+                {{ localization.object.new.recipe[lang] }}
               </a>
 
               <a
                 class="navbar-item has-text-info"
-                @click="newObject={show: true, type: 'Recipe', action: 'import'}"
+                @click="importObject={type: 'Recipe'}"
               >
                 <span class="icon">
                   <i class ="fa fa-download"></i>
                 </span>
-                {{ localization.object.importRecipe[lang] }}
+                {{ localization.object.import.recipe[lang] }}
               </a>
 
               <hr class="dropdown-divider">
@@ -278,7 +268,7 @@
                 <span class="icon">
                   <i class="fa fa-spin fa-spinner"></i>
                 </span>
-                <span>Stopping ...</span>
+                <span>{{localization.recipe.stopping[lang]}} ...</span>
               </a>
               <a
                 v-else
@@ -301,8 +291,8 @@
                     ]"
                   ></i>
                 </span>
-                <span v-if="recipeState === 'stop'">Stop</span>
-                <span v-else-if="recipeState === 'running'">Running ...</span>
+                <span v-if="recipeState === 'stop'">{{localization.recipe.stop[lang]}}</span>
+                <span v-else-if="recipeState === 'running'">{{localization.recipe.running[lang]}} ...</span>
               </a>
             </template>
             <a
@@ -312,7 +302,7 @@
               @click="runRecipe($route.params.recipe)"
             >
               <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
-              <span>Run</span>
+              <span>{{localization.recipe.run[lang]}}</span>
             </a>
           </div>
           <div class="navbar-item breadcrumb">
@@ -348,15 +338,23 @@
       :project="this.$route.params.project"
     ></graph-view>
 
+    <new-object
+      v-if="newObject.display"
+      :type="newObject.type"
+      @close="newObject.display = false"
+    ></new-object>
+
   </div>
 </template>
 
 <script>
 import GraphView from './Graph'
+import NewObject from './Object/New'
 
 export default {
   components: {
-    GraphView
+    GraphView,
+    NewObject
   },
   data () {
     return {
@@ -378,7 +376,12 @@ export default {
       stoppingStatus: false,
       interval: null,
       // graph
-      displayGraph: false
+      displayGraph: false,
+      // new object
+      newObject: {
+        display: false,
+        type: null
+      }
     }
   },
   mounted () {
@@ -397,6 +400,8 @@ export default {
         this.getStatus(this.$route.params.recipe)
       }, 3000)
     }
+
+    this.$on()
   },
   beforeDestroy () {
     clearInterval(this.interval)
@@ -479,13 +484,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.nav {
-  height: 2.75rem;
-  > .container {
-    min-height: 2.75rem;
-  }
-}
-.nav-toggle {
-  height: 2.75rem;
-}
+
 </style>

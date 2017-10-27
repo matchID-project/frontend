@@ -11,6 +11,7 @@
               <button class="delete" @click="close()"></button>
             </div>
           </div>
+
           <div class="card-content has-text-centered">
             <div v-show="action == 'new' || type == 'project'" class="level">
               <div class="level-item has-text centered">
@@ -57,8 +58,6 @@
                 </slot>
             </message>
           </div>
-          <div class="card-footer has-text-centered">
-          </div>
         </div>
       </div>
     <button class="modal-close is-large" @click="close()"></button>
@@ -68,9 +67,6 @@
 <script>
 import Message from './Helpers/Message'
 import Dropzone from 'vue2-dropzone'
-
-import apiConf from '../assets/json/backend.json'
-let api = apiConf.api
 
 export default {
   components: {
@@ -96,26 +92,26 @@ export default {
     }
   },
   computed: {
-    url: function () {
+    url () {
       if (this.type === 'dataset') {
-        return api.url + 'upload/'
+        return this.apiUrl + 'upload/'
       }
-      return api.url + 'upload/'
+      return this.apiUrl + 'upload/'
     //   else if (this.type === 'recipe') {
-    //     return api.url + 'conf/' + this.project + '/recipes/'
+    //     return this.apiUrl + 'conf/' + this.project + '/recipes/'
     //   } else if (this.type === 'project') {
     //     var name = this.name === null ? 'defaut_project' : this.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-    //     return api.url + 'conf/' + name + '/'
+    //     return this.apiUrl + 'conf/' + name + '/'
     //   }
     }
   },
   methods: {
-    showSuccess: function (file) {
+    showSuccess (file) {
       if (this.type === 'dataset') {
         this.saveObject(file.upload.filename)
       }
     },
-    close: function () {
+    close () {
       this.$emit('close')
       this.error = {
         display: false,
@@ -124,8 +120,7 @@ export default {
       }
       this.name = null
     },
-    saveObject: function (name) {
-      var vue = this
+    saveObject (name) {
       var table = name
       name = name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
       var url
@@ -134,10 +129,10 @@ export default {
       var yaml
       console.log(this.project + '/' + name)
       if (this.type === 'project') {
-        url = api.url + 'conf/' + name + '/'
+        url = this.apiUrl + 'conf/' + name + '/'
         method = 'put'
       } else if (this.type === 'dataset') {
-        url = api.url + 'conf/' + this.project + '/datasets/' + name + '.yml'
+        url = this.apiUrl + 'conf/' + this.project + '/datasets/' + name + '.yml'
         method = 'post'
         yaml = `datasets:
   {name}:
@@ -153,7 +148,7 @@ export default {
           yaml: yaml
         }
       } else if (this.type === 'recipe') {
-        url = api.url + 'conf/' + this.project + '/recipes/' + name + '.yml'
+        url = this.apiUrl + 'conf/' + this.project + '/recipes/' + name + '.yml'
         method = 'post'
         yaml = `recipes:
   {}:
@@ -172,14 +167,14 @@ export default {
         this.$http[method](url, data)
           .then(
             response => {
-              vue.error = {
+              this.error = {
                 display: 'true',
                 type: 'success',
                 message: response.body
               }
             },
             response => {
-              vue.error = {
+              this.error = {
                 display: 'true',
                 type: 'danger',
                 message: response.body
@@ -190,10 +185,8 @@ export default {
     }
   },
   mounted () {
-    let vue = this
-
-    window.bus.$on('projectChange', function (value) {
-      vue.project = value
+    window.bus.$on('projectChange', value => {
+      this.project = value
     })
   }
 }
