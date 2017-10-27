@@ -24,7 +24,8 @@
                 </div>
               </div>
             </section>
-            <div class="box">
+
+            <div class="box" v-if="!$lodash.isEmpty(datasets)">
               <div class="menu">
                 <template
                   v-for="type in ['upload', 'elasticsearch']"
@@ -52,6 +53,33 @@
                 </template>
               </div>
             </div>
+
+            <div class="columns">
+              <div class="column is-half">
+                <a class="hero is-small is-light box" @click="newObject={display: true, type: 'dataset'}">
+                  <div class="hero-body">
+                    <div class="container">
+                      <h5 class="title is-5">
+                        <span class="icon mID-margin-right-8"><i class="fa fa-download" aria-hidden="true"></i></span>
+                        <span>{{ localization.object.import.dataset[lang] }}</span>
+                      </h5>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div class="column is-half">
+                <a class="hero is-small is-light box" @click="newObject={display: true, type: 'dataset'}">
+                  <div class="hero-body">
+                    <div class="container">
+                      <h5 class="title is-5">
+                        <span class="icon mID-margin-right-8"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span>{{ localization.object.new.dataset[lang] }}</span>
+                      </h5>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
 
           <div class="column is-half">
@@ -64,7 +92,8 @@
                 </div>
               </div>
             </section>
-            <div class="box">
+
+            <div class="box" v-if="!$lodash.isEmpty(recipes)">
               <div class="menu">
                 <ul class="menu-list">
                   <li
@@ -84,21 +113,62 @@
                 </ul>
               </div>
             </div>
+
+            <div class="columns">
+              <div class="column is-half">
+                <a class="hero is-small is-light box" @click="newObject={display: true, type: 'recipe'}">
+                  <div class="hero-body">
+                    <div class="container">
+                      <h5 class="title is-5">
+                        <span class="icon mID-margin-right-8"><i class="fa fa-download" aria-hidden="true"></i></span>
+                        <span>{{ localization.object.import.recipe[lang] }}</span>
+                      </h5>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div class="column is-half">
+                <a class="hero is-small is-light box" @click="newObject={display: true, type: 'recipe'}">
+                  <div class="hero-body">
+                    <div class="container">
+                      <h5 class="title is-5">
+                        <span class="icon mID-margin-right-8"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span>{{ localization.object.new.recipe[lang] }}</span>
+                      </h5>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
+
+    <new-object
+      v-if="newObject.display"
+      :type="newObject.type"
+      @close="newObject.display = false"
+    ></new-object>
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
+import NewObject from './Object/New'
 
 export default {
+  components: {
+    NewObject
+  },
   data () {
     return {
       datasets: {},
-      recipes: {}
+      recipes: {},
+      // new object
+      newObject: {
+        display: false,
+        type: null
+      }
     }
   },
   watch: {
@@ -120,13 +190,13 @@ export default {
     getDatasets (project) {
       this.$http.get(this.apiUrl + 'datasets')
         .then(response => {
-          this.datasets = _.pickBy(response.body, (v) => v.project === project)
+          this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
         })
     },
     getRecipes (project) {
       this.$http.get(this.apiUrl + 'recipes')
         .then(response => {
-          this.recipes = _.pickBy(response.body, (v) => v.project === project)
+          this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
         })
     }
   }
@@ -134,4 +204,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hero.is-small > .hero-body{
+  padding: 1rem 1.5rem;
+}
 </style>

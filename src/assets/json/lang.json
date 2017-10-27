@@ -168,45 +168,51 @@
     }
   },
   "object": {
-    "newProject": {
-      "en": "New project",
-      "fr": "Nouveau projet"
+    "new": {
+      "project": {
+        "en": "New project",
+        "fr": "Nouveau projet"
+      },
+      "recipe": {
+        "en": "New recipe",
+        "fr": "Nouvelle recette"
+      },
+      "dataset": {
+        "en": "New dataset",
+        "fr": "Nouveau dataset"
+      },
+      "action": {
+        "en": "Create",
+        "fr": "Créer"
+      }
     },
-    "newDataset": {
-      "en": "New dataset",
-      "fr": "Nouvelle donnée"
+    "import": {
+      "recipe": {
+        "en": "Import recipe",
+        "fr": "Importer une recette"
+      },
+      "dataset": {
+        "en": "Importer dataset",
+        "fr": "Importer un dataset"
+      },
+      "action": {
+        "en": "Import",
+        "fr": "Importer"
+      }
     },
-    "newRecipe": {
-      "en": "New recipe",
-      "fr": "Nouvelle recette"
-    },
-    "importProject": {
-      "en": "Import project",
-      "fr": "Importer un projet"
-    },
-    "importDataset": {
-      "en": "Importer dataset",
-      "fr": "Importer un dataset"
-    },
-    "importRecipe": {
-      "en": "Import recipe",
-      "fr": "Importer une recette"
-    },
-    "nameproject": {
-      "en": "Project name",
-      "fr": "Nom du projet"
-    },
-    "namerecipe": {
-      "en": "Recipe name",
-      "fr": "Nom de la recette"
-    },
-    "namedataset": {
-      "en": "Dataset name",
-      "fr": "Nom du dataset"
-    },
-    "save": {
-      "en": "Save",
-      "fr": "Enregistrer"
+    "name": {
+      "project": {
+        "en": "Project name",
+        "fr": "Nom du projet"
+      },
+      "recipe": {
+        "en": "Recipe name",
+        "fr": "Nom de la recette"
+      },
+      "dataset": {
+        "en": "Dataset name",
+        "fr": "Nom du dataset"
+      }
     },
     "dropzoneDict": {
       "en": "drag'n'drop a data file here",
