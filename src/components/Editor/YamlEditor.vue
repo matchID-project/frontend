@@ -73,6 +73,9 @@ export default {
           'Esc': (cm) => {
             if (cm.getOption('fullScreen')) cm.setOption('fullScreen', false)
             this.isFullScreen = false
+          },
+          'Tab': (cm) => {
+            cm.replaceSelection(Array(cm.getOption('indentUnit') + 1).join(' '))
           }
         },
         mode: 'text/yaml',
