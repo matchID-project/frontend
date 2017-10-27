@@ -84,14 +84,14 @@ export default {
   watch: {
     saveCode (newVal) {
       if (newVal) {
-        window.bus.$emit('codeSaved-' + this.$route.name, this.code)
+        this.$emit('codeSaved-' + this.$route.name, this.code)
       }
     },
     showFullScreen (newVal) {
       if (newVal) {
         this.isFullScreen = true
         this.editor.setOption('fullScreen', true)
-        window.bus.$emit('showedFullScreen')
+        this.$emit('showedFullScreen')
       }
     }
   },
