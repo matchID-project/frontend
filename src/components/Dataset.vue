@@ -16,7 +16,7 @@
             :codeData="code"
             :saveCode="saveCode"
             :showFullScreen="showFullScreen"
-            @codeSaved-dataset="sendCodeSaving(newCode)"
+            @codeSaved-dataset="sendCodeSaving"
             @showedFullScreen="showFullScreen = false"
           ></yaml-editor>
         </div>

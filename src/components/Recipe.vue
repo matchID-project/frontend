@@ -16,7 +16,7 @@
             :codeData="code"
             :saveCode="saveCode"
             :showFullScreen="showFullScreen"
-            @codeSaved-recipe="sendCodeSaving(newCode)"
+            @codeSaved-recipe="sendCodeSaving"
             @showedFullScreen="showFullScreen = false"
           ></yaml-editor>
         </div>
