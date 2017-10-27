@@ -66,15 +66,15 @@ export default {
         showCursorWhenSelecting: true,
         tabSize: 2,
         extraKeys: {
-          'F11': (cm) => {
+          'F11': cm => {
             this.isFullScreen = !cm.getOption('fullScreen')
             cm.setOption('fullScreen', !cm.getOption('fullScreen'))
           },
-          'Esc': (cm) => {
+          'Esc': cm => {
             if (cm.getOption('fullScreen')) cm.setOption('fullScreen', false)
             this.isFullScreen = false
           },
-          'Tab': (cm) => {
+          'Tab': cm => {
             cm.replaceSelection(Array(cm.getOption('indentUnit') + 1).join(' '))
           }
         },

@@ -35,7 +35,7 @@ Vue.mixin({
     }
   },
   mounted () {
-    window.bus.$on('langChange', function (value) {
+    window.bus.$on('langChange', value => {
       this.lang = value
     })
   }
