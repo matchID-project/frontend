@@ -16,6 +16,8 @@
             :codeData="code"
             :saveCode="saveCode"
             :showFullScreen="showFullScreen"
+            @codeSaved-recipe="sendCodeSaving(newCode)"
+            @showedFullScreen="showFullScreen = false"
           ></yaml-editor>
         </div>
         <footer class="card-footer">
@@ -137,31 +139,6 @@ export default {
   },
   mounted () {
     this.initCode(this.$route.params.recipe)
-
-    window.bus.$on('codeSaved-recipe', newCode => {
-      this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
-        .then(response => {
-          var msg = response.body[Object.keys(response.body)[0]].yaml_validator
-          if (msg !== 'yaml is ok') {
-            this.loadingSave = false
-            this.saveCode = false
-            this.failedSave = true
-            setTimeout(() => {
-              this.failedSave = false
-            }, 3000)
-          } else {
-            this.loadingSave = false
-            this.completedSave = true
-            this.saveCode = false
-            setTimeout(() => {
-              this.completedSave = false
-            }, 3000)
-            this.getData(this.$route.params.recipe)
-          }
-        })
-    })
-
-    window.bus.$on('showedFullScreen', () => { this.showFullScreen = false })
   },
   methods: {
     initCode (recipe) {
@@ -200,6 +177,28 @@ export default {
           setTimeout(() => {
             this.loadingData = false
           }, 1500)
+        })
+    }
+    sendCodeSaving (newCode) {
+      this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
+        .then(response => {
+          var msg = response.body[Object.keys(response.body)[0]].yaml_validator
+          if (msg !== 'yaml is ok') {
+            this.loadingSave = false
+            this.saveCode = false
+            this.failedSave = true
+            setTimeout(() => {
+              this.failedSave = false
+            }, 3000)
+          } else {
+            this.loadingSave = false
+            this.completedSave = true
+            this.saveCode = false
+            setTimeout(() => {
+              this.completedSave = false
+            }, 3000)
+            this.getData(this.$route.params.recipe)
+          }
         })
     }
   }

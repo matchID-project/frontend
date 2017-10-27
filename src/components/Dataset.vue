@@ -16,6 +16,8 @@
             :codeData="code"
             :saveCode="saveCode"
             :showFullScreen="showFullScreen"
+            @codeSaved-dataset="sendCodeSaving(newCode)"
+            @showedFullScreen="showFullScreen = false"
           ></yaml-editor>
         </div>
         <footer class="card-footer">
@@ -120,26 +122,6 @@ export default {
   },
   mounted () {
     this.initCode(this.$route.params.dataset)
-
-    window.bus.$on('codeSaved-dataset', newCode => {
-      this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
-        .then(response => {
-          var msg = response.body[Object.keys(response.body)[0]].yaml_validator
-          if (msg !== 'yaml is ok') {
-            console.log('error')
-          } else {
-            this.loadingSave = false
-            this.completedSave = true
-            this.saveCode = false
-            setTimeout(() => {
-              this.completedSave = false
-            }, 3000)
-            this.getData(this.$route.params.dataset)
-          }
-        })
-    })
-
-    window.bus.$on('showedFullScreen', () => { this.showFullScreen = false })
   },
   methods: {
     initCode (dataset) {
@@ -175,6 +157,23 @@ export default {
           setTimeout(() => {
             this.loadingData = false
           }, 1500)
+        })
+    },
+    saveCode (newCode) {
+      this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
+        .then(response => {
+          var msg = response.body[Object.keys(response.body)[0]].yaml_validator
+          if (msg !== 'yaml is ok') {
+            console.log('error')
+          } else {
+            this.loadingSave = false
+            this.completedSave = true
+            this.saveCode = false
+            setTimeout(() => {
+              this.completedSave = false
+            }, 3000)
+            this.getData(this.$route.params.dataset)
+          }
         })
     }
   }
