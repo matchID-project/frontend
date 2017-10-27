@@ -175,7 +175,7 @@ export default {
             this.loadingData = false
           }, 1500)
         })
-    }
+    },
     sendCodeSaving (newCode) {
       this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
         .then(response => {
