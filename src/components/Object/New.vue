@@ -1,7 +1,7 @@
 <template>
-  <div class="modal is-active">
+  <div class="modal" :class="{'is-active' : display}">
     <div class="modal-background" @click="$emit('close')"></div>
-      <div class="modal-card">
+      <div class="modal-card" v-if="display">
         <header class="modal-card-head">
           <p class="modal-card-title">
             <span class="icon">
@@ -50,6 +50,7 @@
 
 export default {
   props: {
+    display: Boolean,
     type: String
   },
   data () {
@@ -105,12 +106,15 @@ export default {
             this.actionFinished = true
           }, 500)
 
+          window.bus.$emit('reloadNav')
+
           setTimeout(() => {
+            this.$emit('close')
+            this.actionFinished = false
+
             if (this.type === 'project') return this.$router.push({ name: 'project', params: { project: name } })
             if (this.type === 'recipe') return this.$router.push({ name: 'recipe', params: { project: this.$route.params.project, recipe: name } })
             if (this.type === 'dataset') return this.$router.push({ name: 'dataset', params: { project: this.$route.params.project, dataset: name } })
-            this.actionFinished = false
-            this.$emit('close')
           }, 1000)
         })
     }
