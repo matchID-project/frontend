@@ -88,7 +88,7 @@ export default {
 
             for (let i = 0; i < choice.length; i++) {
               for (let j = 0; j < pick.length; j++) {
-                let val = find[choice[i]].buckets[find[choice[i]].buckets.findIndex(x => x.key === pick[j])]
+                let val = find[choice[i]].buckets[find[choice[i]].buckets.findIndex(x => (x.key === pick[j]) || (x.key_as_string === pick[j]))]
                 data[choice[i]][pick[j]].push(val === void 0 ? 0 : val.doc_count)
               }
             }
