@@ -106,31 +106,42 @@ export default {
       let datasets = [
         {
           label: 'Total',
-          backgroundColor: '#f87979',
+          borderColor: 'rgba(192,192,192,1)',
+          backgroundColor: 'rgba(192,192,192,0.5)',
           data: statistics.intervals_count,
+          borderDash: [10, 5],
           fill: false,
           yAxisID: 'y-total'
         },
         {
+          type: 'line',
           label: 'Done',
-          backgroundColor: '#79abff',
+          borderColor: 'rgba(0,49,137,1)',
+          backgroundColor: 'rgba(0,49,137,1)',
           data: statistics.done_count,
+          stack: false,
           fill: false,
           yAxisID: 'y-done'
         },
         {
+          type: 'line',
           label: 'Decision True',
-          backgroundColor: '#d17e64',
+          borderColor: 'rgba(150,177,224,1)',
+          backgroundColor: 'rgba(150,177,224,1)',
           data: statistics.decision.true,
-          fill: false,
-          yAxisID: 'y-done'
+          fill: true,
+          stack: 'decision',
+          yAxisID: 'y-decision'
         },
         {
+          type: 'line',
           label: 'Decision False',
-          backgroundColor: '#b2d164',
+          borderColor: 'rgba(254,80,101,1)',
+          backgroundColor: 'rgba(254,80,101,1)',
           data: statistics.decision.false,
-          fill: false,
-          yAxisID: 'y-done'
+          fill: true,
+          stack: 'decision',
+          yAxisID: 'y-decision'
         }
       ]
 
@@ -154,9 +165,21 @@ export default {
             },
             {
               type: 'linear',
+              display: false,
+              position: 'left',
+              stacked: true,
+              id: 'y-done',
+              gridLines: {
+                drawOnChartArea: false // only want the grid lines for one axis to show up
+              }
+            },
+            {
+              type: 'linear',
               display: true,
               position: 'left',
-              id: 'y-done',
+              id: 'y-decision',
+              scaleOverride: true,
+              stacked: true,
               gridLines: {
                 drawOnChartArea: false // only want the grid lines for one axis to show up
               }
