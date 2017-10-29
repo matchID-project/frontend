@@ -153,6 +153,7 @@ export default {
     optionsForChartJs () {
       return {
         responsive: true,
+        maintainAspectRatio: false,
         hoverMode: 'index',
         stacked: false,
         scales: {
@@ -193,4 +194,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.modal-content {
+  width: 75%
+}
 </style>
