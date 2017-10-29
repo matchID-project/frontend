@@ -58,13 +58,15 @@
         <div class="column is-11">
             <div
               v-for="(line, index) in arrayRealLogs"
-              v-if="index + 1 !== arrayRealLogs.length"
+              v-if="(index + 1 !== arrayRealLogs.length) && ((index <= 100) || (index > (arrayRealLogs.length - 100)))"
               :key="line.index"
               :class="{'has-text-danger is-size-6' : line.match('Ooops')}"
             >
               <span class="icon is-small" v-if="line.match('Ooops')"><i class="fa fa-warning" aria-hidden="true"></i></span>
               <span class="icon is-small" v-else><i class="fa fa-circle-o" aria-hidden="true"></i></span>
-              <span>{{ line }}</span>
+              <span v-if="index != 100">{{ line }}</span>
+              <span v-else> <<< complete logs were cut for display performance >>> </span>
+
             </div>
         </div>
         <div
