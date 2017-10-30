@@ -68,7 +68,7 @@
               <pagination
                 :pageSize="pageSize"
                 :lengthData="arrLength"
-                @pageChanged="setPageCurrent"
+                @pageChanged="v => {pageCurrent = v}"
               ></pagination>
               <div
                 v-for="line in parsedLog"
@@ -132,9 +132,6 @@ export default {
     }
   },
   methods: {
-    setPageCurrent (v) {
-      this.pageCurrent = v
-    },
     getJobs () {
       this.$http.get(this.apiUrl + 'jobs')
         .then(response => {
