@@ -448,12 +448,12 @@ export default {
     if (this.$route.params.recipe) {
       this.getStatus(this.$route.params.recipe)
 
-      this.interval = setInterval(() => {
+      this.interval.status = setInterval(() => {
         this.getStatus(this.$route.params.recipe)
       }, 3000)
     }
 
-    this.interval = setInterval(() => {
+    this.interval.jobs = setInterval(() => {
       this.getJobs()
     }, 3000)
 
@@ -471,7 +471,7 @@ export default {
     },
     '$route.name' (newVal) {
       if (newVal === 'recipe') {
-        this.interval = setInterval(() => {
+        this.interval.status = setInterval(() => {
           this.getStatus(this.$route.params.recipe)
         }, 3000)
       } else {
@@ -543,6 +543,9 @@ export default {
         .then(response => {
           this.runningJobs = response.body.running
           this.doneJobs = response.body.done
+          if (this.$route.name === 'jobs' || this.$route.name === 'job') {
+            window.bus.$emit('updateJobs', {running: response.body.running, done: response.body.done})
+          }
         })
     }
   }
