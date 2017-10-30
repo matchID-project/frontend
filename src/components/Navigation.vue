@@ -341,7 +341,7 @@
               </a>
             </template>
             <a
-              v-else
+              v-else-if="recipeStatus"
               class="button is-success is-outlined"
               :disabled="!clickPossible"
               @click="runRecipe($route.params.recipe)"
@@ -421,7 +421,7 @@ export default {
       clickPossible: true,
       recipeState: 'running',
       stoppingStatus: false,
-      interval: null,
+      interval: {},
       // graph
       displayGraph: false,
       // new object
@@ -468,6 +468,9 @@ export default {
   watch: {
     '$route.params.project' () {
       this.getDependencies(this.$route.params.project)
+    },
+    '$route.params.recipe' () {
+      this.recipeStatus = null
     },
     '$route.name' (newVal) {
       if (newVal === 'recipe') {
