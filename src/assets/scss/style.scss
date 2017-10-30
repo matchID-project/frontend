@@ -30,6 +30,13 @@ html, body {
   background-color: $grey-lighter;
 }
 
+#jobs {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  background-color: $grey-lighter;
+}
+
 #home {
   padding-top: 3rem;
   overflow-x: hidden;

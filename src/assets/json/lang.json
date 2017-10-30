@@ -8,9 +8,27 @@
     "refresh_list": {
       "en": "Refresh list",
       "fr": "Rafraîchir la liste"
+    },
+    "see_more": {
+      "en": "See more",
+      "fr": "Voir plus"
     }
   },
   "navbar": {
+    "jobs": {
+      "running": {
+        "en": "Running",
+        "fr": "En cours"
+      },
+      "done": {
+        "en": "Done",
+        "fr": "Finis"
+      },
+      "empty": {
+        "en": "Empty",
+        "fr": "Aucun"
+      }
+    },
     "projects":{
       "en": "Projects",
       "fr": "Projets"
@@ -161,8 +179,8 @@
       "fr": "Arrêt"
     }
   },
-  "viewlog": {
-    "recipeError": {
+  "viewLog": {
+    "error": {
       "en": "Bug in recipe : please check log",
       "fr": "Attention - bug dans la recette, regardez le journal d'exécution"
     }
