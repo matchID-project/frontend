@@ -58,7 +58,7 @@
               </ul>
             </div>
           </aside>
-          <div class="column is-8" v-if="$route.name === 'job'">
+          <div class="column is-8" v-if="$route.name === 'job' && log">
             <div class="box is-size-7">
               <article class="message is-danger" v-show="warningIndicator">
                 <div class="message-header">
@@ -107,12 +107,18 @@ export default {
       pageCurrent: 1
     }
   },
+  watch: {
+    '$route.params.job' () {
+      this.getLog(this.$route.params.job)
+    }
+  },
   mounted () {
     this.getJobs()
 
-    this.interval = setInterval(() => {
-      this.getJobs()
-    }, 3000)
+    window.bus.$on('updateJobs', v => {
+      this.runningJobs = v.running
+      this.doneJobs = v.done
+    })
 
     if (this.$route.name === 'job') {
       this.getLog(this.$route.params.job)
