@@ -118,7 +118,7 @@
               <router-link
                 class="navbar-item"
                 v-else
-                v-for="project in projects"
+                v-for="project in orderedProjects"
                 :key="project.key"
                 :class="{'is-active' : project === $route.params.project}"
                 :to="{ name: 'project', params: { project: project}}"
@@ -180,7 +180,7 @@
               <router-link
                 class="navbar-item"
                 v-else
-                v-for="(dataset, key) in datasets"
+                v-for="(dataset, key) in orderedDatasets"
                 :key="dataset.table"
                 :class="{'is-active' : key === $route.params.dataset}"
                 :to="{ name: 'dataset', params: { dataset: key}}"
@@ -271,7 +271,7 @@
               <router-link
                 class="navbar-item"
                 v-else
-                v-for="(recipe, key) in recipes"
+                v-for="(recipe, key) in orderedRecipes"
                 :key="recipe.table"
                 :class="{'is-active' : key === $route.params.recipe}"
                 :to="{ name: 'recipe', params: { recipe: key}}"
@@ -480,6 +480,25 @@ export default {
       } else {
         clearInterval(this.interval)
       }
+    }
+  },
+  computed: {
+    orderedProjects () {
+      return this.$lodash.sortBy(this.projects)
+    },
+    orderedDatasets () {
+      let ordered = {}
+      this.$lodash(this.datasets).keys().sort().each(key => {
+        ordered[key] = this.datasets[key]
+      })
+      return ordered
+    },
+    orderedRecipes () {
+      let ordered = {}
+      this.$lodash(this.recipes).keys().sort().each(key => {
+        ordered[key] = this.recipes[key]
+      })
+      return ordered
     }
   },
   methods: {
