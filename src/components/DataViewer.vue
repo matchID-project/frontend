@@ -17,73 +17,11 @@
               </div>
             </div>
           </div>
-          <nav
-            v-if="pageMax > 1"
-            class="field pagination is-narrow is-small is-centered"
-          >
-            <a
-              class="pagination-previous is-paddingless is-marginless"
-              @click="pageCurrent > 1 ? pageCurrent-- : null"
-            >
-              <span class="icon is-small"><i class="fa fa-chevron-left" aria-hidden="true"></i></span>
-            </a>
-            <a
-              class="pagination-next is-paddingless is-marginless"
-              @click="pageCurrent < pageMax ? pageCurrent++ : null"
-            >
-              <span class="icon is-small"><i class="fa fa-chevron-right" aria-hidden="true"></i></span>
-            </a>
-            <ul class="pagination-list">
-              <li>
-                <a
-                  class="pagination-link"
-                  :class="{'is-current' : 1 === pageCurrent}"
-                  @click="pageCurrent = 1"
-                >1</a>
-              </li>
-              <template v-if="pageMax <= 7">
-                <li v-for="n in pageMax - 1" v-if="n > 1">
-                  <a
-                    class="pagination-link"
-                    :class="{'is-current' : n === pageCurrent}"
-                    @click="pageCurrent = n"
-                  >{{n}}</a>
-                </li>
-              </template>
-              <template v-else>
-                <li v-if="pageCurrent > 4"><span class="pagination-ellipsis">&hellip;</span></li>
-                <template v-if="pageCurrent > 4 && pageCurrent < pageMax - 3">
-                  <li><a class="pagination-link" @click="pageCurrent--">{{pageCurrent - 1}}</a></li>
-                  <li><a class="pagination-link is-current">{{pageCurrent}}</a></li>
-                  <li><a class="pagination-link" @click="pageCurrent++">{{pageCurrent + 1}}</a></li>
-                </template>
-                <template v-else>
-                  <li v-for="n in 4">
-                    <a
-                      class="pagination-link"
-                      :class="{'is-current' : n + 1 === pageCurrent}"
-                      v-if="pageCurrent <= 4"
-                      @click="pageCurrent = n + 1"
-                    >{{n + 1}}</a>
-                    <a
-                      class="pagination-link"
-                      :class="{'is-current' : pageMax - (4 - n) - 1 === pageCurrent}"
-                      v-else
-                      @click="pageCurrent = pageMax - (4 - n) - 1"
-                    >{{pageMax - (4 - n) - 1}}</a>
-                  </li>
-                </template>
-                <li v-if="pageCurrent < pageMax - 3"><span class="pagination-ellipsis">&hellip;</span></li>
-              </template>
-              <li>
-                <a
-                  class="pagination-link"
-                  :class="{'is-current' : pageMax === pageCurrent}"
-                  @click="pageCurrent = pageMax"
-                >{{pageMax}}</a>
-              </li>
-            </ul>
-          </nav>
+          <pagination
+            :pageSize="pageSize"
+            :lengthData="dataLength"
+            @pageChanged="v => {pageCurrent = v}"
+          ></pagination>
           <!-- <div class="field is-narrow">
             <div class="control">
               <div class="select is-small">
@@ -217,7 +155,12 @@
 </template>
 
 <script>
+import Pagination from './Helpers/Pagination'
+
 export default {
+  components: {
+    Pagination
+  },
   props: {
     data: Array,
     columns: Array
@@ -240,7 +183,7 @@ export default {
       // pagination
       pageSize: 50,
       pageCurrent: 1,
-      pageMax: 1
+      dataLength: 1
     }
   },
   computed: {
@@ -277,9 +220,7 @@ export default {
         })
       }
 
-      let resultPage = data.length / this.pageSize
-      let floorPage = Math.floor(resultPage)
-      this.pageMax = resultPage === floorPage ? floorPage : floorPage + 1
+      this.dataLength = data.length
 
       return data.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
     }
