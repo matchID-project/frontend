@@ -35,7 +35,7 @@
                   </p>
                   <ul class="menu-list">
                     <li
-                      v-for="(dataset, key) in datasets"
+                      v-for="(dataset, key) in orderedDatasets"
                       :key="dataset.table"
                       v-if="dataset.connector == type"
                     >
@@ -97,7 +97,7 @@
               <div class="menu">
                 <ul class="menu-list">
                   <li
-                    v-for="(recipe, key) in recipes"
+                    v-for="(recipe, key) in orderedRecipes"
                     :key="recipe.table"
                   >
                     <router-link
@@ -169,6 +169,22 @@ export default {
         display: false,
         type: null
       }
+    }
+  },
+  computed: {
+    orderedDatasets () {
+      let ordered = {}
+      this.$lodash(this.datasets).keys().sort().each(key => {
+        ordered[key] = this.datasets[key]
+      })
+      return ordered
+    },
+    orderedRecipes () {
+      let ordered = {}
+      this.$lodash(this.recipes).keys().sort().each(key => {
+        ordered[key] = this.recipes[key]
+      })
+      return ordered
     }
   },
   watch: {
