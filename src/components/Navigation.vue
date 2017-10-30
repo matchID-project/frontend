@@ -29,24 +29,50 @@
       <div class="navbar-menu">
         <div class="navbar-start">
           <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
+            <router-link
+              :to="{ name: 'jobs'}"
+              class="navbar-link"
+            >
               <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
               <span>Jobs</span>
-            </a>
+            </router-link>
 
-            <div class="navbar-dropdown is-boxed">
-              <a class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index">
-                {{ job.date }} <br/> {{ job.file }}
-              </a>
-              <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
-                Empty
+            <div class="navbar-dropdown is-boxed is-overflowed-y"  :style="dropdownMaxHeight">
+              <div class="dropdown-item">
+                <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
               </div>
               <hr class="dropdown-divider">
-              <a class="navbar-item" v-for="(job, index) in doneJobs" :key="job.index">
-                {{ job.date }} <br/> {{ job.file }}
+              <a class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index">
+                {{ job.recipe }} <br/> {{ job.date }}
               </a>
+              <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
+                {{localization.navbar.jobs.empty[lang]}}
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.done[lang]}}</h6>
+              </div>
+              <hr class="dropdown-divider">
+              <div class="navbar-item" v-if="$lodash.isEmpty(doneJobs)">
+                {{localization.navbar.jobs.empty[lang]}}
+              </div>
+              <router-link
+                :to="{ name: 'job', params: { job: job.recipe}}"
+                v-else
+                class="navbar-item" v-for="(job, index) in doneJobs.slice(0,10)" :key="job.index"
+              >
+                {{ job.recipe }} <br/> {{ job.date }}
+              </router-link>
+              <router-link
+                :to="{ name: 'jobs' }"
+                class="navbar-item has-text-link"
+                v-if="doneJobs.length > 10"
+              >
+                {{localization.global.see_more[lang]}} ...
+              </router-link>
             </div>
           </div>
+
           <div class="navbar-item has-dropdown is-hoverable">
             <router-link
               :to="{ name: 'home'}"
@@ -58,7 +84,7 @@
               {{localization.navbar.projects[lang]}}
             </router-link>
 
-            <div class="navbar-dropdown is-boxed">
+            <div class="navbar-dropdown is-boxed is-overflowed-y" :style="dropdownMaxHeight">
               <a
                 class="navbar-item has-text-info"
                 @click="newObject = {display: true, type: 'project'}"
@@ -110,7 +136,7 @@
               {{localization.navbar.datasets[lang]}}
             </a>
 
-            <div class="navbar-dropdown is-boxed">
+            <div class="navbar-dropdown is-boxed is-overflowed-y" :style="dropdownMaxHeight">
               <a
                 class="navbar-item has-text-info"
                 @click="newObject = {display: true, type: 'dataset'}"
@@ -201,7 +227,7 @@
               {{localization.navbar.recipes[lang]}}
             </a>
 
-            <div class="navbar-dropdown is-boxed">
+            <div class="navbar-dropdown is-boxed is-overflowed-y" :style="dropdownMaxHeight">
               <a
                 class="navbar-item has-text-info"
                 @click="newObject = {display: true, type: 'recipe'}"
@@ -376,8 +402,10 @@ export default {
     NewObject
   },
   data () {
+    let maxHeightCalc = window.screen.availHeight - 200
     return {
       langs: [],
+      dropdownMaxHeight: {maxHeight: maxHeightCalc + 'px'},
       // projects
       projects: [],
       loadingProjects: true,
@@ -422,10 +450,12 @@ export default {
 
       this.interval = setInterval(() => {
         this.getStatus(this.$route.params.recipe)
-
-        this.getJobs()
       }, 3000)
     }
+
+    this.interval = setInterval(() => {
+      this.getJobs()
+    }, 3000)
 
     window.bus.$on('reloadNav', () => {
       this.getProjects()
