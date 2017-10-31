@@ -152,7 +152,7 @@
 
               <a
                 class="navbar-item has-text-info"
-                @click="importObject={type: 'Dataset'}"
+                @click="importObjectDisplay = true"
               >
                 <span class="icon">
                   <i class ="fa fa-download"></i>
@@ -239,16 +239,6 @@
                   <i class ="fa fa-plus"></i>
                 </span>
                 {{ localization.object.new.recipe[lang] }}
-              </a>
-
-              <a
-                class="navbar-item has-text-info"
-                @click="importObject={type: 'Recipe'}"
-              >
-                <span class="icon">
-                  <i class ="fa fa-download"></i>
-                </span>
-                {{ localization.object.import.recipe[lang] }}
               </a>
 
               <hr class="dropdown-divider">
@@ -392,17 +382,23 @@
       @close="newObject.display = false"
     ></new-object>
 
+    <import-object
+      :display="importObjectDisplay"
+      @close="importObjectDisplay = false"
+    ></import-object>
   </div>
 </template>
 
 <script>
 import GraphView from './Graph'
 import NewObject from './Object/New'
+import ImportObject from './Object/Import'
 
 export default {
   components: {
     GraphView,
-    NewObject
+    NewObject,
+    ImportObject
   },
   data () {
     let maxHeightCalc = window.screen.availHeight - 200
@@ -427,11 +423,12 @@ export default {
       interval: {},
       // graph
       displayGraph: false,
-      // new object
+      // object
       newObject: {
         display: false,
         type: null
       },
+      importObjectDisplay: false,
       // jobs
       runningJobs: {},
       doneJobs: {}
