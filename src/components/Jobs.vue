@@ -23,14 +23,14 @@
                 <li v-if="$lodash.isEmpty(runningJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </li>
-                <li v-else v-for="(job, index) in runningJobs" :key="job.index">
+                <li v-else v-for="(job, key) in runningJobs" :key="key">
                   <router-link
                     :to="{ name: 'job', params: { job: job.recipe}}"
                   >
                   <span class="icon">
                     <i class="fa fa-spinner fa-spin"></i>
                   </span>
-                  <span>{{ job.recipe }}<br/> {{ job.date }}</span>
+                  <span>{{ job.recipe }} <br/> {{ job.date }}</span>
                   </router-link>
                 </li>
               </ul>
