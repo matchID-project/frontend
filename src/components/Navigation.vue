@@ -42,9 +42,12 @@
                 <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
               </div>
               <hr class="dropdown-divider">
-              <a class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index">
+              <router-link
+                :to="{ name: 'job', params: { job: job.recipe}}"
+                class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index"
+              >
                 {{ job.recipe }} <br/> {{ job.date }}
-              </a>
+              </router-link>
               <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
                 {{localization.navbar.jobs.empty[lang]}}
               </div>
