@@ -56,7 +56,7 @@
 
             <div class="columns">
               <div class="column is-half">
-                <a class="hero is-small is-light box" @click="newObject={display: true, type: 'dataset'}">
+                <a class="hero is-small is-light box" @click="importObjectDisplay = true">
                   <div class="hero-body">
                     <div class="container">
                       <h5 class="title is-5">
@@ -138,15 +138,22 @@
       :type="newObject.type"
       @close="newObject.display = false"
     ></new-object>
+
+    <import-object
+      :display="importObjectDisplay"
+      @close="importObjectDisplay = false"
+    ></import-object>
   </div>
 </template>
 
 <script>
 import NewObject from './Object/New'
+import ImportObject from './Object/Import'
 
 export default {
   components: {
-    NewObject
+    NewObject,
+    ImportObject
   },
   data () {
     return {
@@ -156,7 +163,8 @@ export default {
       newObject: {
         display: false,
         type: null
-      }
+      },
+      importObjectDisplay: false
     }
   },
   computed: {

@@ -227,10 +227,6 @@
         "en": "Dataset name",
         "fr": "Nom du dataset"
       }
-    },
-    "dropzoneDict": {
-      "en": "drag'n'drop a data file here",
-      "fr": "glissez-déposez un fichier donnée ici"
     }
    },
    "graph": {
