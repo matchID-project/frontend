@@ -241,16 +241,6 @@
                 {{ localization.object.new.recipe[lang] }}
               </a>
 
-              <a
-                class="navbar-item has-text-info"
-                @click="importObject={type: 'Recipe'}"
-              >
-                <span class="icon">
-                  <i class ="fa fa-download"></i>
-                </span>
-                {{ localization.object.import.recipe[lang] }}
-              </a>
-
               <hr class="dropdown-divider">
 
               <a

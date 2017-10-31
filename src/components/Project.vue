@@ -115,19 +115,7 @@
             </div>
 
             <div class="columns">
-              <div class="column is-half">
-                <a class="hero is-small is-light box" @click="newObject={display: true, type: 'recipe'}">
-                  <div class="hero-body">
-                    <div class="container">
-                      <h5 class="title is-5">
-                        <span class="icon mID-margin-right-8"><i class="fa fa-download" aria-hidden="true"></i></span>
-                        <span>{{ localization.object.import.recipe[lang] }}</span>
-                      </h5>
-                    </div>
-                  </div>
-                </a>
-              </div>
-              <div class="column is-half">
+              <div class="column is-12">
                 <a class="hero is-small is-light box" @click="newObject={display: true, type: 'recipe'}">
                   <div class="hero-body">
                     <div class="container">

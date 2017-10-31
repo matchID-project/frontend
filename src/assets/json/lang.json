@@ -205,10 +205,6 @@
       }
     },
     "import": {
-      "recipe": {
-        "en": "Import recipe",
-        "fr": "Importer une recette"
-      },
       "dataset": {
         "en": "Importer dataset",
         "fr": "Importer un dataset"
