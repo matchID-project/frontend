@@ -1,13 +1,13 @@
 <template>
+
   <div id="navigationWrapper">
     <nav class="navbar is-transparent">
+        <router-link class="logo" :to="{ name: 'root'}">
+          <img class="logo mID-margin-right-8" src="../assets/img/matchID-logo.svg">
+          <span class="logo mID-margin-right-8"/>
+        </router-link> 
       <div class="navbar-brand">
-        <router-link
-          class="navbar-item logo"
-          :to="{ name: 'root'}"
-        >
-          matchID
-        </router-link>
+
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link is-active">
             <span class="icon"><i class="fa fa-globe"></i></span>
