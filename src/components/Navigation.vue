@@ -575,5 +575,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+a {
+  line-height: 0;
+    }
 </style>
