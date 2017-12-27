@@ -575,7 +575,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-a {
+a.logo {
   line-height: 0;
     }
 </style>
