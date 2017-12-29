@@ -5,7 +5,10 @@
         <div class="card">
           <div class="card-header">
             <div class="card-header-title">
-              <i class="fa fa-bar-chart-o mID-margin-right-8" aria-hidden="true"></i> {{ localization.navbar.statistics[lang] }}
+              <span class="icon">
+                <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+              </span>
+              {{ localization.validation.statistics[lang] }}
             </div>
             <div class="card-header-icon">
               <button class="delete" @click="$emit('close')"></button>
@@ -28,8 +31,6 @@
 </template>
 
 <script>
-import localization from '../../assets/json/lang.json'
-
 import statsChart from '../../assets/js/charts'
 
 export default {
@@ -48,12 +49,6 @@ export default {
     validationIndecisionDisplay: {
       required: true,
       type: Boolean
-    }
-  },
-  data () {
-    return {
-      localization: localization,
-      lang: localization.default
     }
   },
   computed: {
@@ -93,7 +88,7 @@ export default {
 
             for (let i = 0; i < choice.length; i++) {
               for (let j = 0; j < pick.length; j++) {
-                let val = find[choice[i]].buckets[find[choice[i]].buckets.findIndex(x => x.key === pick[j])]
+                let val = find[choice[i]].buckets[find[choice[i]].buckets.findIndex(x => (x.key === pick[j]) || (x.key_as_string === pick[j]))]
                 data[choice[i]][pick[j]].push(val === void 0 ? 0 : val.doc_count)
               }
             }
@@ -111,31 +106,42 @@ export default {
       let datasets = [
         {
           label: 'Total',
-          backgroundColor: '#f87979',
+          borderColor: 'rgba(192,192,192,1)',
+          backgroundColor: 'rgba(192,192,192,0.5)',
           data: statistics.intervals_count,
+          borderDash: [10, 5],
           fill: false,
           yAxisID: 'y-total'
         },
         {
+          type: 'line',
           label: 'Done',
-          backgroundColor: '#79abff',
+          borderColor: 'rgba(0,49,137,1)',
+          backgroundColor: 'rgba(0,49,137,1)',
           data: statistics.done_count,
+          stack: false,
           fill: false,
           yAxisID: 'y-done'
         },
         {
+          type: 'line',
           label: 'Decision True',
-          backgroundColor: '#d17e64',
+          borderColor: 'rgba(150,177,224,1)',
+          backgroundColor: 'rgba(150,177,224,1)',
           data: statistics.decision.true,
-          fill: false,
-          yAxisID: 'y-done'
+          fill: true,
+          stack: 'decision',
+          yAxisID: 'y-decision'
         },
         {
+          type: 'line',
           label: 'Decision False',
-          backgroundColor: '#b2d164',
+          borderColor: 'rgba(254,80,101,1)',
+          backgroundColor: 'rgba(254,80,101,1)',
           data: statistics.decision.false,
-          fill: false,
-          yAxisID: 'y-done'
+          fill: true,
+          stack: 'decision',
+          yAxisID: 'y-decision'
         }
       ]
 
@@ -147,6 +153,7 @@ export default {
     optionsForChartJs () {
       return {
         responsive: true,
+        maintainAspectRatio: false,
         hoverMode: 'index',
         stacked: false,
         scales: {
@@ -159,9 +166,21 @@ export default {
             },
             {
               type: 'linear',
+              display: false,
+              position: 'left',
+              stacked: true,
+              id: 'y-done',
+              gridLines: {
+                drawOnChartArea: false // only want the grid lines for one axis to show up
+              }
+            },
+            {
+              type: 'linear',
               display: true,
               position: 'left',
-              id: 'y-done',
+              id: 'y-decision',
+              scaleOverride: true,
+              stacked: true,
               gridLines: {
                 drawOnChartArea: false // only want the grid lines for one axis to show up
               }
@@ -170,15 +189,12 @@ export default {
         }
       }
     }
-  },
-  mounted () {
-    let self = this
-    window.bus.$on('langChange', function (value) {
-      self.lang = value
-    })
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.modal-content {
+  width: 75%
+}
 </style>
