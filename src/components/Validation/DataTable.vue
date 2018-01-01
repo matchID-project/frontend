@@ -287,7 +287,13 @@ export default {
       document.getElementById('table-wrapper').scrollTop = (upOffsetTop - this.screenHeightMiddle)
     },
     formattedField (value, callback) {
-      if ((value instanceof Array && value.includes(undefined)) || typeof value === 'undefined') return '<strong>ERROR :</strong><br/>' + value
+      if ((value instanceof Array && value.includes(undefined)) || typeof value === 'undefined') {
+        if (formatCell['formatUndefined']) {
+          return formatCell['formatUndefined']()
+        } else {
+          return '<strong>ERROR :</strong><br/>' + value
+        }
+      }
 
       if (callback) return formatCell[callback](value)
 

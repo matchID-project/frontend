@@ -1,7 +1,7 @@
 import {diffChars} from 'diff'
 import moment from 'moment'
 
-export default {coloredDiff, brDiff, formatSex, formatDiff, formatDistance, formatNumber, formatRank, formatDate}
+export default {coloredDiff, brDiff, formatSex, formatDiff, formatDistance, formatNumber, formatUndefined, formatRank, formatDate}
 
 // CUSTOM FUNCTION
 function formatDiff (strArray) {
@@ -53,7 +53,11 @@ function array2str (strArray) {
 
 // BASE FUNCTION
 function formatNumber (value) {
-  return Number(value)
+  return (value === undefined) ? '' : String(value)
+}
+
+function formatUndefined (value) {
+  return '<span class="has-text-grey-light">NA</span>'
 }
 
 // BASE FUNCTION
