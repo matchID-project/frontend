@@ -27,6 +27,10 @@
       "empty": {
         "en": "Empty",
         "fr": "Aucun"
+      },
+      "filter": {
+        "en": "search",
+        "fr": "filtre"
       }
     },
     "projects":{
@@ -181,8 +185,8 @@
   },
   "viewLog": {
     "error": {
-      "en": "Bug in recipe : please check log",
-      "fr": "Attention - bug dans la recette, regardez le journal d'exécution"
+      "en": "Warning - bug(s) in recipe : please check log",
+      "fr": "Attention - bug(s) dans la recette, regardez le journal d'exécution"
     }
   },
   "object": {
@@ -206,7 +210,7 @@
     },
     "import": {
       "dataset": {
-        "en": "Importer dataset",
+        "en": "Import dataset",
         "fr": "Importer un dataset"
       },
       "action": {

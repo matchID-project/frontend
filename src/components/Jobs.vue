@@ -25,7 +25,7 @@
                 </li>
                 <li v-else v-for="(job, key) in runningJobs" :key="key">
                   <router-link
-                    :to="{ name: 'job', params: { job: job.recipe}}"
+                    :to="{ name: 'job', params: { job: job.recipe }}"
                   >
                   <span class="icon">
                     <i class="fa fa-spinner fa-spin"></i>
@@ -65,11 +65,29 @@
                   <p><span class="icon"><i class="fa fa-warning"></i></span> {{localization.viewLog.error[lang]}}</p>
                 </div>
               </article>
-              <pagination
-                :pageSize="pageSize"
-                :lengthData="arrLength"
-                @pageChanged="v => {pageCurrent = v}"
-              ></pagination>
+              <div class="field is-horizontal">
+                <div class="field-body">
+                  <pagination
+                    :pageSize="pageSize"
+                    :lengthData="arrLength"
+                    @pageChanged="v => {pageCurrent = v}"
+                  ></pagination>
+                  <div class="field is-narrow">
+                    <p class="control is-expanded has-icons-left">
+                      <input
+                        v-model="filter"
+                        class="input is-small"
+                        type="text"
+                        :placeholder="localization.navbar.jobs.filter[lang]"
+                      >
+                      <span class="icon is-small is-left">
+                        <i class="fa fa-filter"></i>
+                      </span>
+                    </p>
+                  </div>
+
+                </div>
+              </div>
               <div
                 v-for="line in parsedLog"
                 v-show="line"
@@ -102,8 +120,11 @@ export default {
       log: null,
       arrLength: 1,
       warningIndicator: false,
+      warningNumber: 0,
+      warningFilter: false,
+      filter: '',
       // pagination
-      pageSize: 100,
+      pageSize: 20,
       pageCurrent: 1
     }
   },
@@ -128,7 +149,9 @@ export default {
     parsedLog () {
       if (this.log) {
         let arr = this.log.split('\n')
-        this.warningIndicator = arr.some(v => { return v.match('Ooops') })
+        arr = arr.filter(v => { return v.match(this.filter) })
+        this.warningNumber = arr.filter(v => { return v.match('Ooops') }).length
+        this.warningIndicator = (this.warningNumber > 0)
         this.arrLength = arr.length
         return arr.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
       }
