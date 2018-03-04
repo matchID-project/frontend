@@ -99,7 +99,7 @@ export default {
 
     this.interval = setInterval(() => {
       this.getRealLogs(this.$route.params.recipe)
-    }, 3000)
+    }, 10000)
   },
   beforeDestroy () {
     clearInterval(this.interval)
