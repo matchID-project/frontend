@@ -20,6 +20,7 @@
           <pagination
             :pageSize="pageSize"
             :lengthData="dataLength"
+            :pageCurrent="pageCurrent"
             @pageChanged="v => {pageCurrent = v}"
           ></pagination>
           <!-- <div class="field is-narrow">

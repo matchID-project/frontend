@@ -72,12 +72,12 @@
 export default {
   props: {
     pageSize: Number,
-    lengthData: Number
+    lengthData: Number,
+    pageCurrent: Number
   },
   data () {
     return {
-      pageMax: 1,
-      pageCurrent: 1
+      pageMax: 1
     }
   },
   computed: {
@@ -92,6 +92,9 @@ export default {
       this.pageCurrent = page
       this.$emit('pageChanged', page)
     }
+  },
+  mounted: function () {
+    this.pageCurrent = 1
   }
 }
 </script>
