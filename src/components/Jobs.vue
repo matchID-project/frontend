@@ -126,8 +126,12 @@ export default {
       filter: '',
       // pagination
       pageSize: 20,
-      pageCurrent: 1
+      pageCurrent: 1,
+      interval: {}
     }
+  },
+  beforeDestroy () {
+    clearInterval(this.interval)
   },
   watch: {
     '$route.params.job' () {
@@ -143,7 +147,9 @@ export default {
     })
 
     if (this.$route.name === 'job') {
-      this.getLog(this.$route.params.job)
+      this.interval.jobs = setInterval(() => {
+        this.getLog(this.$route.params.job)
+      }, 5000)
     }
   },
   computed: {

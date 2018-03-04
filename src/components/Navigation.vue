@@ -455,7 +455,7 @@ export default {
 
     this.interval.jobs = setInterval(() => {
       this.getJobs()
-    }, 3000)
+    }, 5000)
 
     window.bus.$on('reloadNav', () => {
       this.getProjects()
