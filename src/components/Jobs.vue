@@ -162,7 +162,7 @@ export default {
         this.warningNumber = arr.filter(v => { return v.match('Ooops') }).length
         this.warningIndicator = (this.warningNumber > 0)
         this.arrLength = arr.length
-        let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil(arr.length / this.pageSize)))
+        let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil((arr.length - 1) / this.pageSize)))
         if (pageMax < this.pageCurrent) {
           this.setPageCurrent(pageMax)
         }
