@@ -70,7 +70,8 @@
                   <pagination
                     :pageSize="pageSize"
                     :lengthData="arrLength"
-                    @pageChanged="v => {pageCurrent = v}"
+                    :pageCurrent="pageCurrent"
+                    @pageChanged="setPageCurrent"
                   ></pagination>
                   <div class="field is-narrow">
                     <p class="control is-expanded has-icons-left">
@@ -146,13 +147,19 @@ export default {
     }
   },
   computed: {
+    filteredLog () {
+      return this.log.filter(v => { return v.match(this.filter) })
+    },
     parsedLog () {
       if (this.log) {
-        let arr = this.log.split('\n')
-        arr = arr.filter(v => { return v.match(this.filter) })
+        let arr = this.filteredLog
         this.warningNumber = arr.filter(v => { return v.match('Ooops') }).length
         this.warningIndicator = (this.warningNumber > 0)
         this.arrLength = arr.length
+        let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil(arr.length / this.pageSize)))
+        if (pageMax < this.pageCurrent) {
+          this.setPageCurrent(pageMax)
+        }
         return arr.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
       }
     },
@@ -161,6 +168,10 @@ export default {
     }
   },
   methods: {
+    setPageCurrent (page) {
+      this.pageCurrent = page
+      this.$emit('pageChanged', page)
+    },
     getJobs () {
       this.$http.get(this.apiUrl + 'jobs')
         .then(response => {
@@ -171,7 +182,8 @@ export default {
     getLog (recipe) {
       this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
         .then(response => {
-          this.log = response.body
+          this.log = response.body.split('\n')
+          this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
         })
     }
   }
