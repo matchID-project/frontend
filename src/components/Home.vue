@@ -14,7 +14,7 @@
           </router-link>
         </div>
         <div class="column is-half">
-          <a class="hero is-light box" @click="newObject={display: true, type: 'project'}">
+          <a class="hero is-light box" @click="newObject = {display: true, type: 'project'}">
             <div class="hero-body">
               <div class="container">
                 <h1 class="title">
@@ -29,7 +29,7 @@
     </div>
 
     <new-object
-      v-if="newObject.display"
+      :display="newObject.display"
       :type="newObject.type"
       @close="newObject.display = false"
     ></new-object>
