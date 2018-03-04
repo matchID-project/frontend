@@ -82,9 +82,8 @@ export default {
   },
   computed: {
     maxPage () {
-      let resultPage = this.lengthData / this.pageSize
-      let floorPage = Math.floor(resultPage)
-      return resultPage === floorPage ? floorPage : floorPage + 1
+      let resultPage = (this.lengthData - 1) / this.pageSize
+      return Math.ceil(resultPage)
     }
   },
   methods: {
