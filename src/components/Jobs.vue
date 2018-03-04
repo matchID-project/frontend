@@ -26,22 +26,34 @@
                 <li v-else v-for="(job, key) in runningJobs" :key="key">
                   <router-link
                     :to="{ name: 'job', params: { job: job.recipe }}"
+                    :class="{'is-active' : job.recipe === $route.params.job}"
                   >
-                  <span class="icon">
-                    <i class="fa fa-spinner fa-spin"></i>
-                  </span>
-                  <span>{{ job.recipe }} <br/> {{ job.date }}</span>
+                    <div class="level ">
+                      <div class="level-left">
+                        <div class="level-item">
+                          <div>
+                            <p>{{ job.recipe }}</p>
+                            <p class="heading">{{ job.date }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="level-right">
+                        <div class="icon">
+                          <i class="fa fa-spinner fa-spin"></i>
+                        </div>
+                      </div>                      
+                   </div>
                   </router-link>
                 </li>
               </ul>
               <p class="menu-label">
                 {{localization.navbar.jobs.done[lang]}}
               </p>
-              <ul class="menu-list">
-                <li v-if="$lodash.isEmpty(doneJobs)">
+              <div class="menu-list">
+                <p v-if="$lodash.isEmpty(doneJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
-                </li>
-                <li v-else v-for="(recipe, key) in groupedRecipes" :key="key">
+                </p>
+                <p v-else v-for="(recipe, key) in groupedRecipes" :key="key">
                   <router-link
                     :to="{ name: 'job', params: { job: key}}"
                     :class="{'is-active' : key === $route.params.job}"
@@ -49,13 +61,13 @@
                     {{ key }}
                   </router-link>
                   <ul>
-                    <li v-for="(joba, index) in recipe.slice(0,6)" :key="index">
-                      <a class="mID-unclickable">{{ joba.date }}</a>
-                    </li>
-                    <li v-if="recipe.length > 6"><a class="mID-unclickable">...</a></li>
+                    <p v-for="(joba, index) in recipe.slice(0,6)" :key="index" class="heading">
+                       &nbsp; &nbsp; {{ joba.date }}
+                    </p>
+                    <p v-if="recipe.length > 6" class="heading">&nbsp; &nbsp; ...</p>
                   </ul>
-                </li>
-              </ul>
+                </p>
+              </div>
             </div>
           </aside>
           <div class="column is-8" v-if="$route.name === 'job' && log">
@@ -126,8 +138,12 @@ export default {
       filter: '',
       // pagination
       pageSize: 20,
-      pageCurrent: 1
+      pageCurrent: 1,
+      interval: {}
     }
+  },
+  beforeDestroy () {
+    clearInterval(this.interval)
   },
   watch: {
     '$route.params.job' () {
@@ -143,7 +159,9 @@ export default {
     })
 
     if (this.$route.name === 'job') {
-      this.getLog(this.$route.params.job)
+      this.interval.jobs = setInterval(() => {
+        this.getLog(this.$route.params.job)
+      }, 5000)
     }
   },
   computed: {
@@ -156,7 +174,7 @@ export default {
         this.warningNumber = arr.filter(v => { return v.match('Ooops') }).length
         this.warningIndicator = (this.warningNumber > 0)
         this.arrLength = arr.length
-        let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil(arr.length / this.pageSize)))
+        let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil((arr.length - 1) / this.pageSize)))
         if (pageMax < this.pageCurrent) {
           this.setPageCurrent(pageMax)
         }
