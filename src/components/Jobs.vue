@@ -200,8 +200,11 @@ export default {
     getLog (recipe) {
       this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
         .then(response => {
-          this.log = response.body.split('\n')
-          this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
+          let arr = response.body.split('\n')
+          if ((this.log === null) || (arr.length !== this.log.length)) {
+            this.log = arr
+            this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
+          }
         })
     }
   }
