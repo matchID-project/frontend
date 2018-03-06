@@ -233,6 +233,9 @@ export default {
 
         this.valuesRangeSlider = this.scores.range
 
+        if (this.elasticsearch.connection.host.match(/^\//) || this.elasticsearch.connection.host === '') {
+          this.elasticsearch.connection.host = window.location.host + this.elasticsearch.connection.host
+        }
         this.esClient = new elasticsearchLib.Client(this.elasticsearch.connection)
 
         this.refreshData()
