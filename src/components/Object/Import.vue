@@ -54,8 +54,8 @@ export default {
   methods: {
     createDatasetYaml (file) {
       this.loadingAction = true
-      let table = file.upload.filename
-      let name = table.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+      let table = file.upload.filename.normalize('NFKD').replace(/[^a-zA-Z0-9.]+/gi, '_').replace(/_\./g, '.')
+      let name = table.replace(/[^a-zA-Z0-9]+/gi, '_').toLowerCase()
       let url
       let data
 
