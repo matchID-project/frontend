@@ -189,14 +189,14 @@ export default {
     }
   },
   created () {
-    this.getDatasets(this.$route.params.project)
-
-    this.getRecipes(this.$route.params.project)
+    this.getDependencies(this.$route.params.project)
+    window.bus.$on('reloadNav', () => {
+      this.getDependencies(this.$route.params.project)
+    })
   },
   methods: {
     getDependencies (project) {
       this.getDatasets(project)
-
       this.getRecipes(project)
     },
     getDatasets (project) {
