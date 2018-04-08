@@ -155,7 +155,7 @@
                 @click="importObjectDisplay = true"
               >
                 <span class="icon">
-                  <i class ="fa fa-download"></i>
+                  <i class ="fa fa-cloud-upload"></i>
                 </span>
                 {{ localization.object.import.dataset[lang] }}
               </a>

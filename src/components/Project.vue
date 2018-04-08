@@ -60,7 +60,7 @@
                   <div class="hero-body">
                     <div class="container">
                       <h5 class="title is-5">
-                        <span class="icon mID-margin-right-8"><i class="fa fa-download" aria-hidden="true"></i></span>
+                        <span class="icon mID-margin-right-8"><i class="fa fa-cloud-upload" aria-hidden="true"></i></span>
                         <span>{{ localization.object.import.dataset[lang] }}</span>
                       </h5>
                     </div>
