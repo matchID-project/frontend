@@ -1,6 +1,10 @@
 <template>
   <div id="recipe" class="columns is-fullheight is-gapless">
-    <div class="column is-3 is-fullheight">
+    <div class="column 
+      is-half-mobile
+      is-one-third-tablet
+      is-one-quarter-desktop
+      is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingCode">
         <div class="level-item">
           <span class="icon has-text-black-bis is-medium mID-margin-right-8">
@@ -11,7 +15,14 @@
       </div>
 
       <div class="card is-fullheight" v-else>
-        <div class="card-content is-paddingless" style="height: calc(100% - 48px)">
+        <header class="card-header">
+          <div class="button is-primary is-fullwidth">
+            <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
+            <p class="card-header-title is-centered">{{this.$route.params.recipe}}</p>
+            <i @click="showFullScreen = true" class="card-header-icon fa fa-expand" aria-hidden="true"></i>
+          </div>
+        </header>        
+        <div class="card-content is-paddingless" style="height: calc(100% - 72px)">
           <yaml-editor
             :codeData="code"
             :saveCode="saveCode"
@@ -20,52 +31,31 @@
             @showedFullScreen="showFullScreen = false"
           ></yaml-editor>
         </div>
-        <footer class="card-footer">
-          <a
-            @click="showFullScreen = true"
-            class="card-footer-item"
-          >
-            <span class="icon">
-              <i class="fa fa-expand" aria-hidden="true"></i>
-            </span>
-            {{ localization.editor.fullScreen[lang] }}
-          </a>
-          <a
-            @click="showShortcuts = true"
-            class="card-footer-item"
-          >
-            <span class="icon">
-              <i class="fa fa-keyboard-o" aria-hidden="true"></i>
-            </span>
-            {{ localization.editor.shortcuts.title[lang] }}
-          </a>
-          <a
-            @click="fireCodeSaving()"
-            class="card-footer-item"
-            v-shortkey="['ctrl', 's']"
-            @shortkey="fireCodeSaving()"
-          >
-            <span class="icon">
-              <i class="fa fa-save" aria-hidden="true"></i>
-            </span>
-             {{ localization.editor.save[lang] }}
-             <span class="icon" v-if="loadingSave">
-               <i class="fa fa-spinner fa-spin"></i>
-             </span>
-             <transition name="fade">
-               <span class="icon" v-if="completedSave">
-                 <i class="fa fa-check"></i>
-               </span>
-               <span class="icon" v-if="failedSave">
-                 <i class="fa fa-times"></i>
-               </span>
-             </transition>
-          </a>
-        </footer>
+        <div class="card-footer">
+          <div  class="button is-fullwidth"
+                :class="[{'is-info' : loadingSave === false},
+                        {'is-success': completedSave === true},
+                        {'is-danger': failedSave === true}
+                        ]"
+                @click="fireCodeSaving()"
+                v-shortkey="['ctrl', 's']"
+                @shortkey="fireCodeSaving()">
+            <i class="card-footer-icon" 
+              :class="[{'fa fa-times': (failedSave === true)},
+                       {'fa fa-save': (loadingSave === false) && (completedSave === false) && (failedSave === false)},
+                       {'fa fa-spinner fa-spin': loadingSave === true},
+                       {'fa fa-check': (completedSave === true)}
+                       ]"
+              aria-hidden="true"></i>
+             <p>&nbsp;{{ localization.editor.save[lang] }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="column is-9 is-fullheight">
+    <div class="column is-half-mobile
+      is-two-third-tablet
+      is-three-quarter-desktop is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingData">
         <div class="level-item">
           <span class="icon has-text-black-bis is-medium mID-margin-right-8">
@@ -191,11 +181,21 @@ export default {
             this.loadingSave = false
             this.completedSave = true
             this.saveCode = false
+            this.failedSave = false
             setTimeout(() => {
               this.completedSave = false
             }, 3000)
             this.getData(this.$route.params.recipe)
           }
+        },
+        () => {
+          this.loadingSave = false
+          this.completedSave = false
+          this.saveCode = false
+          this.failedSave = true
+          setTimeout(() => {
+            this.failedSave = false
+          }, 3000)
         })
     }
   }

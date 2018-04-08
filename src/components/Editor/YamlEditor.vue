@@ -4,6 +4,7 @@
       ref="myEditor"
       :code="code"
       :options="editorOptions"
+      @beforeChange="beforeCodeChange"
       @change="onEditorCodeChange"
       class="is-fullheight"
     ></codemirror>
@@ -104,6 +105,12 @@ export default {
     }
   },
   methods: {
+    beforeCodeChange (cm, change) {
+      let readOnlyLines = [0, 1]
+      if (~readOnlyLines.indexOf(change.from.line)) {
+        change.cancel()
+      }
+    },
     onEditorCodeChange (newCode) {
       this.code = newCode
     }
