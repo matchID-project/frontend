@@ -75,7 +75,7 @@
   }
 
   .noUi-handle {
-    border-radius: 15px;,
+    border-radius: 15px;
     &:after, &:before {
       content: normal;
     }
