@@ -363,6 +363,13 @@
                 </a>
               </li>
             </ul>
+            <span class="icon has-text-info">
+                  <i
+                    class="fa fa-sign-in mID-clickable"
+                    @click="logged = false"
+                  ></i>
+                </span>              
+
           </div>
         </div>
       </div>
@@ -375,6 +382,9 @@
       :recipes="allRecipes"
       :project="this.$route.params.project"
     ></graph-view>
+
+    <login
+    ></login>
 
     <new-object
       :display="newObject.display"
@@ -391,12 +401,14 @@
 
 <script>
 import GraphView from './Graph'
+import Login from './Login'
 import NewObject from './Object/New'
 import ImportObject from './Object/Import'
 
 export default {
   components: {
     GraphView,
+    Login,
     NewObject,
     ImportObject
   },
@@ -423,6 +435,7 @@ export default {
       interval: {},
       // graph
       displayGraph: false,
+      logged: false,
       // object
       newObject: {
         display: false,
