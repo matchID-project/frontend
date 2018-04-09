@@ -14,7 +14,9 @@
         <header class="card-header">
           <div class="button is-primary is-fullwidth">
             <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
-            <p class="card-header-title is-centered">{{this.$route.params.dataset}}</p>
+            <p class="card-header-title is-centered">
+              <i class="fa fa-table mID-margin-right-8" aria-hidden="true"/>
+              {{this.$route.params.dataset}}</p>
             <i @click="showFullScreen = true" class="card-header-icon fa fa-expand" aria-hidden="true"></i>
           </div>
         </header>
