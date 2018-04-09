@@ -121,18 +121,22 @@ export default {
       this.$http.get(this.apiUrl + 'datasets/' + dataset)
         .then(response => {
           this.source = response.body.source
-          this.getDatasetYaml(this.source)
         })
-
+      this.getDatasetYaml(this.$route.params.dataset)
       this.getData(this.$route.params.dataset)
     },
-    getDatasetYaml (nameOfFile) {
-      return this.$http.get(this.apiUrl + 'conf/' + this.$route.params.project + '/' + nameOfFile)
+    getDatasetYaml (dataset) {
+      return this.$http.get(this.apiUrl + 'datasets/' + dataset + '/yaml')
         .then(response => {
           this.code = response.body
           setTimeout(() => {
             this.loadingCode = false
           }, 800)
+        },
+        (err) => {
+          this.loadingCode = false
+          this.failedSave = true
+          window.bus.$emit('message', {'title': 'error loading yaml of ' + dataset, type: 'is-danger', message: err.body})
         })
     },
     fireCodeSaving () {

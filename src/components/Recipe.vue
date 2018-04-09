@@ -133,16 +133,21 @@ export default {
 
       this.$http.get(this.apiUrl + 'recipes/' + recipe)
         .then(response => { this.source = response.body.source })
-        .then(() => this.getRecipeYaml(this.source))
-        .then(() => this.getData(this.$route.params.recipe))
+      this.getRecipeYaml(this.$route.params.recipe)
+      this.getData(this.$route.params.recipe)
     },
-    getRecipeYaml (nameOfFile) {
-      return this.$http.get(this.apiUrl + 'conf/' + this.$route.params.project + '/' + nameOfFile)
+    getRecipeYaml (recipe) {
+      return this.$http.get(this.apiUrl + 'recipes/' + recipe + '/yaml')
         .then(response => {
           this.code = response.body
           setTimeout(() => {
             this.loadingCode = false
           }, 800)
+        },
+        (err) => {
+          this.loadingCode = false
+          this.failedSave = true
+          window.bus.$emit('message', {'title': 'error loading yaml of ' + recipe, type: 'is-danger', message: err.body})
         })
     },
     fireCodeSaving () {
@@ -160,6 +165,10 @@ export default {
           setTimeout(() => {
             this.loadingData = false
           }, 1500)
+        },
+        (err) => {
+          this.loadingLogs = false
+          window.bus.$emit('message', {'title': 'error executing ' + recipe, type: 'is-danger', message: err.body})
         })
     },
     sendCodeSaving (newCode) {
