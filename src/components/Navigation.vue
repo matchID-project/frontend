@@ -454,7 +454,7 @@ export default {
 
     this.getDependencies(this.$route.params.project)
 
-    if (this.$route.params.recipe) {
+    if (this.$route.params.recipe !== undefined) {
       this.getStatus(this.$route.params.recipe)
 
       this.interval.status = setInterval(() => {
