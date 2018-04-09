@@ -134,7 +134,7 @@
           <div v-if="$route.params.project" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <span class="icon">
-                <i class="fa fa-table" aria-hidden="true"></i>
+                <i class="fa fa-table" aria-hidden="true"/>
               </span>
               {{localization.navbar.datasets[lang]}}
             </a>
@@ -225,7 +225,7 @@
           <div v-if="$route.params.project" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <span class="icon">
-                <i class="fa fa-flask" aria-hidden="true"></i>
+                <i class="fa fa-flask" aria-hidden="true"/>
               </span>
               {{localization.navbar.recipes[lang]}}
             </a>
@@ -357,16 +357,10 @@
                 </a>
               </li>
 
-              <li v-if="$route.params.recipe || $route.params.dataset">
-                <a class="mID-unclickable">
-                  {{ $route.params.recipe ? $route.params.recipe : '' }}{{ $route.params.dataset ? $route.params.dataset : '' }}
-                </a>
-              </li>
             </ul>
             <span class="icon has-text-info">
                   <i
-                    class="fa fa-sign-in mID-clickable"
-                    @click="logged = false"
+                    class="fa fa-sign-out mID-clickable"
                   ></i>
                 </span>              
 
