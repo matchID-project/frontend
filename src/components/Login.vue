@@ -98,13 +98,21 @@ export default {
     }
   },
   created () {
-    this.$http.get(this.apiUrl + 'login/').then((response) => {
-      this.logged = true
-      window.bus.$emit('reloadNav')
+    this.$http.post(this.apiUrl + 'login/').then((response) => {
+      this.$http.get(this.apiUrl + 'login/').then((response) => {
+        this.logged = true
+        window.bus.$emit('reloadNav')
+      })
     },
     () => {
-      this.logged = false
-      window.bus.$emit('reloadNav')
+      this.$http.get(this.apiUrl + 'login/').then((response) => {
+        this.logged = true
+        window.bus.$emit('reloadNav')
+      },
+      () => {
+        this.logged = false
+        window.bus.$emit('reloadNav')
+      })
     })
   }
 }
