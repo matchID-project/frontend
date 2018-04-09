@@ -361,6 +361,7 @@
             <span class="icon has-text-info">
                   <i
                     class="fa fa-sign-out mID-clickable"
+                    @click="logout"
                   ></i>
                 </span>              
 
@@ -511,6 +512,12 @@ export default {
     }
   },
   methods: {
+    logout () {
+      this.$http.post(this.apiUrl + 'logout/')
+        .then(response => {
+          this.$router.push({name: 'login'})
+        })
+    },
     changeLang (newLang) {
       this.lang = newLang
       window.bus.$emit('langChange', this.lang)
