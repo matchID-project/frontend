@@ -383,8 +383,8 @@
       :project="this.$route.params.project"
     ></graph-view>
 
-    <login
-    ></login>
+    <login></login>
+    <message></message>
 
     <new-object
       :display="newObject.display"
@@ -402,12 +402,14 @@
 <script>
 import GraphView from './Graph'
 import Login from './Login'
+import Message from './Message'
 import NewObject from './Object/New'
 import ImportObject from './Object/Import'
 
 export default {
   components: {
     GraphView,
+    Message,
     Login,
     NewObject,
     ImportObject

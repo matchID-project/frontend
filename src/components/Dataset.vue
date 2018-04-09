@@ -169,17 +169,19 @@ export default {
             this.completedSave = true
             this.saveCode = false
             this.failedSave = false
+            window.bus.$emit('message', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
             setTimeout(() => {
               this.completedSave = false
             }, 3000)
             this.getData(this.$route.params.dataset)
           }
         },
-        () => {
+        (err) => {
           this.loadingSave = false
           this.completedSave = false
           this.saveCode = false
           this.failedSave = true
+          window.bus.$emit('message', {'title': 'error saving ' + this.source, type: 'is-danger', message: err.body})
           setTimeout(() => {
             this.failedSave = false
           }, 3000)
