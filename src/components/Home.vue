@@ -63,6 +63,12 @@ export default {
       .then(response => {
         this.projects = Object.keys(response.body.projects)
       })
+    window.bus.$on('reloadNav', () => {
+      this.$http.get(this.apiUrl + 'conf')
+        .then(response => {
+          this.projects = Object.keys(response.body.projects)
+        })
+    })
   }
 }
 </script>
