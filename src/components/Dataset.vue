@@ -1,10 +1,6 @@
 <template>
   <div id="dataset" class="columns is-mobile is-fullheight is-gapless">
-    <div class="column 
-      is-half-mobile
-      is-one-third-tablet
-      is-one-quarter-desktop
-      is-fullheight">
+    <div class="column is-3 is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingCode">
         <div class="level-item">
           <span class="icon has-text-black-bis is-medium mID-margin-right-8">
@@ -40,22 +36,20 @@
                 @click="fireCodeSaving()"
                 v-shortkey="['ctrl', 's']"
                 @shortkey="fireCodeSaving()">
-            <i class="card-footer-icon" 
+            <i class="card-footer-icon mID-margin-right-8" 
               :class="[{'fa fa-times': (failedSave === true)},
                        {'fa fa-save': (loadingSave === false) && (completedSave === false) && (failedSave === false)},
                        {'fa fa-spinner fa-spin': loadingSave === true},
                        {'fa fa-check': (completedSave === true)}
                        ]"
               aria-hidden="true"></i>
-             <p>&nbsp;{{ localization.editor.save[lang] }}</p>
+             <p>{{ localization.editor.save[lang] }}</p>
           </div>
         </footer>
       </div>
     </div>
 
-    <div class="column is-half-mobile
-      is-two-third-tablet
-      is-three-quarter-desktop is-fullheight">
+    <div class="column is-9 is-fullheight">
       <div class="level is-fullheight loading-border" v-if="loadingData">
         <div class="level-item">
           <span class="icon has-text-black-bis is-medium mID-margin-right-8">
