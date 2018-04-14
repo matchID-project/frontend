@@ -3,10 +3,22 @@
     <div class="hero">
       <section class="hero is-info">
         <div class="hero-body">
-          <div class="container">
-            <h1 class="title">
-              {{ $route.params.project }}
-            </h1>
+          <div class="level">
+            <div class="level-left">
+              <p class="level-item mID-margin-right-8"></p>
+              <h1 class="level-item title">
+                {{ $route.params.project }}
+              </h1>
+            </div>
+            <div class="level-item level-right">
+              <h1 class="title"
+                  @click="deleteObject = { name: $route.params.project,
+                                           type: 'project',
+                                           display: true }">
+                <i class="fa fa-trash"/>
+              </h1>
+              <p class="level-item mID-margin-right-8"></p>
+            </div>
           </div>
         </div>
       </section>
@@ -143,17 +155,27 @@
       :display="importObjectDisplay"
       @close="importObjectDisplay = false"
     ></import-object>
+
+    <delete-object
+      :display="deleteObject.display"
+      :type="deleteObject.type"
+      :name="deleteObject.name"
+      @close="deleteObject.display = false"
+    ></delete-object>
+
   </div>
 </template>
 
 <script>
 import NewObject from './Object/New'
 import ImportObject from './Object/Import'
+import DeleteObject from './Object/Delete'
 
 export default {
   components: {
     NewObject,
-    ImportObject
+    ImportObject,
+    DeleteObject
   },
   data () {
     return {
@@ -163,6 +185,11 @@ export default {
       newObject: {
         display: false,
         type: null
+      },
+      deleteObject: {
+        display: false,
+        type: null,
+        name: null
       },
       importObjectDisplay: false
     }
