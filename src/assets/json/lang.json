@@ -218,6 +218,34 @@
         "fr": "Importer"
       }
     },
+    "cancel": {
+      "action": {
+        "en": "Cancel",
+        "fr": "Annuler"
+      }
+    },
+    "delete": {
+      "project": {
+        "en": "Delete project",
+        "fr": "Supprimer le projet"
+      },
+      "recipe": {
+        "en": "Delete recipe",
+        "fr": "Supprimer la recette"
+      },
+      "dataset": {
+        "en": "Delete dataset",
+        "fr": "Supprimer le dataset"
+      },
+      "action": {
+        "en": "Delete",
+        "fr": "Supprimer"
+      },
+      "message": {
+        "en": "It will not be possible to roll back after this deletion",
+        "fr": "L'action entraînera une suppresssion définitive"
+      }
+    },
     "name": {
       "project": {
         "en": "Project name",

@@ -397,7 +397,7 @@
 <script>
 import GraphView from './Graph'
 import Login from './Login'
-import Message from './Message'
+import Message from './Helpers/FloatingMessage'
 import NewObject from './Object/New'
 import ImportObject from './Object/Import'
 
