@@ -1,7 +1,7 @@
 <template>
   <nav
     v-if="maxPage > 1"
-    class="field pagination is-narrow is-small is-centered"
+    class="field pagination is-small is-centered"
   >
     <a
       class="pagination-previous is-paddingless is-marginless"
