@@ -45,7 +45,7 @@
                        {'fa fa-check': (completedSave === true)}
                        ]"
               aria-hidden="true"></i>
-             <p>&{{ localization.editor.save[lang] }}</p>
+             <p>{{ localization.editor.save[lang] }}</p>
           </div>
         </div>
       </div>
