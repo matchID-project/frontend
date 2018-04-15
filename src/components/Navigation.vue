@@ -347,7 +347,7 @@
             <ul>
               <li>
                 <span class="icon has-text-info">
-                  <i
+                  <i v-if="$route.params.project !== undefined"
                     class="fa fa-connectdevelop mID-clickable"
                     @click="displayGraph = true"
                   ></i>
@@ -356,15 +356,13 @@
                   <span>{{ $route.params.project }}</span>
                 </a>
               </li>
-
             </ul>
-            <span class="icon has-text-info">
-                  <i
-                    class="fa fa-sign-out mID-clickable"
-                    @click="logout"
-                  ></i>
-                </span>              
-
+            <a v-if="user !== null"
+              class="button is-rounded"
+              @click="logout">
+              <span class="mID-margin-right-8"> {{user}} </span>
+              <i class="fa fa-sign-out mID-clickable"></i>
+              </a>
           </div>
         </div>
       </div>
@@ -432,6 +430,7 @@ export default {
       interval: {},
       // graph
       displayGraph: false,
+      user: null,
       logged: false,
       // object
       newObject: {
@@ -467,7 +466,8 @@ export default {
       this.getJobs()
     }, 5000)
 
-    window.bus.$on('reloadNav', () => {
+    window.bus.$on('reloadNav', (user) => {
+      this.user = user
       this.getProjects()
       this.getDependencies(this.$route.params.project)
     })

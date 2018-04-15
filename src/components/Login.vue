@@ -4,22 +4,25 @@
     <div class="modal-background"></div>
     <div class="modal-content has-text-centered">
       <div class="modal-card column is-8">
-        <header class="modal-card-head">
-          <div class="container has-text-grey">
+        <header class="modal-card-head" >
+          <div class="container has-text-grey has-text-centered">
             <h3 class="title has-text-grey">
               <i class="icon fa fa-sign-in"/>&nbsp;
-            login</h3>
+            {{localization.login.title[lang]}}</h3>
             <p> </p>
-            <p class="subtitle has-text-grey">please login to proceed</p>
+            <p class="is-small has-text-grey">{{localization.login.subtitle[lang]}}</p>
           </div>
         </header>
         <section class="modal-card-body">
+          <figure class="avatar">
+            <img class="image is-128x128" src="../assets/img/matchID-logo-square.png">
+          </figure>
           <div class="field">
             <div class="control is-large">
               <input
                 class="input"
                 type="text"
-                placeholder="enter your login here"
+                :placeholder="localization.login.placeholder.id[lang]"
                 @keyup.enter="login()"
                 @keyup="error=false"
                 v-model="user"
@@ -31,7 +34,7 @@
               <input
                 class="input"
                 type="password"
-                placeholder="and your password here"
+                :placeholder="localization.login.placeholder.password[lang]"
                 @keyup.enter="login()"
                 @keyup="error=false"
                 v-model="password"
@@ -40,23 +43,28 @@
           </div>
           <div class="field is-small">
             <label class="checkbox is-small">
-              <input type="checkbox"/>
-              remember me
+              <input type="checkbox">
+              {{ localization.login.remember[lang] }}
+            </input>
             </label>
           </div>
         </section>
         <footer class="modal-card-foot">
           <div class="field is-fullwidth">
-            <p class="control is-large">
-              <a class="button is-fullwidth " 
-                :class="[{'is-info': (error === false) && (logged === false)},
-                         {'is-danger shake': error === true},
+            <p class="control">
+              <a class="button is-large is-fullwidth"
+                :class="[{'is-primary': (error === false) && (logged === false)},
+                         {'is-danger': error === true},
                          {'is-success': logged === true}]"
                 @click="login()">
                 <span class="icon" v-show="isLogginIn"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i></span>
                 <span class="icon" v-show="logged"><i class="fa fa-check" aria-hidden="true"></i></span>
                 <span class="icon" v-show="error"><i class="fa fa-times" aria-hidden="true"></i></span>
-                <span> login </span>
+                <span> {{ localization.login.button[lang] }} </span>
+              </a>
+              <a class="button is-fullwidth is-dark"
+                 :href="apiUrl+'authorize/github'">
+              <span> <i class="icon fa fa-github"/> {{ localization.login.github[lang] }} </span>
               </a>
             </p>
           </div>
@@ -90,10 +98,9 @@ export default {
       this.isLoggingIn = true
       this.$http.post(this.apiUrl + 'login/', { user: this.user, password: CryptoJS.SHA384(this.password).toString(CryptoJS.enc.Hex) }).then((response) => {
         this.logged = true
+        window.bus.$emit('reloadNav', response.body.user)
         if (this.$route.name === 'login') {
           this.$router.push({name: 'home'})
-        } else {
-          window.bus.$emit('reloadNav')
         }
       },
       () => {
@@ -105,13 +112,14 @@ export default {
     this.$http.post(this.apiUrl + 'login/').then((response) => {
       this.$http.get(this.apiUrl + 'login/').then((response) => {
         this.logged = true
-        window.bus.$emit('reloadNav')
+        window.bus.$emit('reloadNav', response.body.user)
       })
     },
     () => {
       this.$http.get(this.apiUrl + 'login/').then((response) => {
+        console.log(response)
         this.logged = true
-        window.bus.$emit('reloadNav')
+        window.bus.$emit('reloadNav', response.body.user)
       },
       () => {
         this.logged = false
@@ -123,10 +131,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .shake {
-      -webkit-animation: kf_shake 0.4s 1 linear;
-      -moz-animation: kf_shake 0.4s 1 linear;
-      -o-animation: kf_shake 0.4s 1 linear;
-    }
+html, body {
+  font-family: 'Open Sans', serif;
+  font-size: 14px;
+  font-weight: 300;
+}
+.modal-card-body {
+  z-index: 10000;
+}
+.avatar {
+  margin-top: 0px;
+  padding-bottom: 20px;
+}
+.avatar img {
+  padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #fff;
+  border-radius: 50%;
+  -webkit-box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
+  box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
+}
+.span {
+  font-weight: 300;
+}
+.input {
+  font-weight: 300;
+}
+.button {
+  font-weight: 700;
+}
 
 </style>

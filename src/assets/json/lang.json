@@ -266,5 +266,45 @@
       "en": "Project graph",
       "fr": "Graphe du projet"
     }
+  },
+  "login": {
+    "title": {
+      "en": "Log in",
+      "fr": "Connexion"
+    },
+    "subtitle": {
+      "en": "Please enter your id and password",
+      "fr": "Saisissez votre identifiant et mot de passe"
+    },
+    "placeholder": {
+      "id": {
+        "en": "enter your id here",
+        "fr": "votre identifiant"
+      },
+      "password": {
+        "en": "your password here",
+        "fr": "votre mot de passe"
+      }
+    },
+    "button": {
+      "en": "Log in",
+      "fr": "Connectez-vous"
+    },
+    "remember": {
+      "en": "Remember me",
+      "fr": "Se souvenir de moi"
+    },
+    "github": {
+      "en": "with GitHub",
+      "fr": "avec GitHub"
+    },
+    "facebook": {
+      "en": "with Facebook",
+      "fr": "avec Facebook"
+    },
+    "twitter": {
+      "en": "with Twitter",
+      "fr": "avec Twitter"
+    }
   }
 }
