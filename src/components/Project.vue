@@ -210,34 +210,13 @@ export default {
       return ordered
     }
   },
-  watch: {
-    '$route.params.project' () {
-      this.getDependencies(this.$route.params.project)
-    }
-  },
   created () {
-    this.getDependencies(this.$route.params.project)
-    window.bus.$on('reloadNav', () => {
-      this.getDependencies(this.$route.params.project)
+    window.bus.$on('reloadDatasets', (datasets) => {
+      this.datasets = datasets
     })
-  },
-  methods: {
-    getDependencies (project) {
-      this.getDatasets(project)
-      this.getRecipes(project)
-    },
-    getDatasets (project) {
-      this.$http.get(this.apiUrl + 'datasets')
-        .then(response => {
-          this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
-        })
-    },
-    getRecipes (project) {
-      this.$http.get(this.apiUrl + 'recipes')
-        .then(response => {
-          this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
-        })
-    }
+    window.bus.$on('reloadRecipes', (recipes) => {
+      this.recipes = recipes
+    })
   }
 }
 </script>

@@ -109,22 +109,12 @@ export default {
     }
   },
   created () {
-    this.$http.post(this.apiUrl + 'login/').then((response) => {
-      this.$http.get(this.apiUrl + 'login/').then((response) => {
-        this.logged = true
-        window.bus.$emit('reloadNav', response.body.user)
-      })
+    this.$http.get(this.apiUrl + 'login/').then((response) => {
+      this.logged = true
+      window.bus.$emit('reloadNav', response.body.user)
     },
     () => {
-      this.$http.get(this.apiUrl + 'login/').then((response) => {
-        console.log(response)
-        this.logged = true
-        window.bus.$emit('reloadNav', response.body.user)
-      },
-      () => {
-        this.logged = false
-        window.bus.$emit('reloadNav')
-      })
+      this.logged = false
     })
   }
 }

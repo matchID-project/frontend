@@ -5,7 +5,7 @@
         <router-link class="logo" :to="{ name: 'root'}">
           <img class="logo mID-margin-right-8" src="../assets/img/matchID-logo.svg">
           <span class="logo mID-margin-right-8"/>
-        </router-link> 
+        </router-link>
       <div class="navbar-brand">
 
         <div class="navbar-item has-dropdown is-hoverable">
@@ -102,7 +102,7 @@
 
               <a
                 class="navbar-item has-text-info"
-                @click="getProjects(); loadingProjects = true"
+                @click="getProjects()"
               >
                 <span class="icon">
                   <i class ="fa fa-refresh"></i>
@@ -448,28 +448,23 @@ export default {
 
     this.changeLang(this.lang)
 
-    this.getJobs()
-
-    this.getProjects()
-
-    this.getDependencies(this.$route.params.project)
-
-    if (this.$route.params.recipe !== undefined) {
-      this.getStatus(this.$route.params.recipe)
-
-      this.interval.status = setInterval(() => {
-        this.getStatus(this.$route.params.recipe)
-      }, 3000)
-    }
-
-    this.interval.jobs = setInterval(() => {
-      this.getJobs()
-    }, 5000)
-
     window.bus.$on('reloadNav', (user) => {
       this.user = user
+      console.log(user)
       this.getProjects()
       this.getDependencies(this.$route.params.project)
+
+      this.interval.jobs = setInterval(() => {
+        this.getJobs()
+      }, 5000)
+
+      if (this.$route.params.recipe !== undefined) {
+        this.getStatus(this.$route.params.recipe)
+
+        this.interval.status = setInterval(() => {
+          this.getStatus(this.$route.params.recipe)
+        }, 3000)
+      }
     })
   },
   beforeDestroy () {
@@ -523,30 +518,36 @@ export default {
       window.bus.$emit('langChange', this.lang)
     },
     getProjects () {
-      this.$http.get(this.apiUrl + 'conf')
+      console.log('getting projects')
+      this.loadingProjects = true
+      this.$http.get(this.apiUrl + 'conf/')
         .then(response => {
           this.projects = Object.keys(response.body.projects)
+          window.bus.$emit('reloadProjects', this.projects)
           setTimeout(() => { this.loadingProjects = false }, 500)
         })
     },
     getDependencies (project) {
-      this.getDatasets(project)
-
-      this.getRecipes(project)
+      if (project !== undefined) {
+        this.getDatasets(project)
+        this.getRecipes(project)
+      }
     },
     getDatasets (project) {
-      this.$http.get(this.apiUrl + 'datasets')
+      this.$http.get(this.apiUrl + 'datasets/')
         .then(response => {
           this.allDatasets = response.body
           this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
+          window.bus.$emit('reloadDatasets', this.datasets)
           setTimeout(() => { this.loadingDatasets = false }, 500)
         })
     },
     getRecipes (project) {
-      this.$http.get(this.apiUrl + 'recipes')
+      this.$http.get(this.apiUrl + 'recipes/')
         .then(response => {
           this.allRecipes = response.body
           this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
+          window.bus.$emit('reloadRecipes', this.recipes)
           setTimeout(() => { this.loadingRecipes = false }, 500)
         })
     },
