@@ -447,10 +447,11 @@ export default {
     this.langs = this.localization.available
 
     this.changeLang(this.lang)
-
-    window.bus.$on('reloadNav', (user) => {
+    window.bus.$on('changeUser', (user) => {
       this.user = user
-      console.log(user)
+      window.bus.$emit('reloadNav')
+    })
+    window.bus.$on('reloadNav', () => {
       this.getProjects()
       this.getDependencies(this.$route.params.project)
 

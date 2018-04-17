@@ -59,6 +59,11 @@ export default {
     }
   },
   created () {
+    setTimeout(() => {
+      if (this.projects.length === 0) {
+        window.bus.$emit('reloadNav')
+      }
+    }, 1000)
     window.bus.$on('reloadProjects', (projects) => {
       this.projects = projects
     })
