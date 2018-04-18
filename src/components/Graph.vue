@@ -82,7 +82,7 @@
                     v-show="node.active"
                     :y="25 * scale[nodeStatus(node)]"
                     :fill="colors[node.type]"
-                    class="is-small"
+                    class="node-title"
                     text-anchor="middle"
                     >
 
@@ -580,5 +580,9 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   width: 90%
+}
+.node-title {
+  font-size: 14px;
+  font-weight: 300;
 }
 </style>

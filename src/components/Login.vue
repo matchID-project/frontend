@@ -98,7 +98,7 @@ export default {
       this.isLoggingIn = true
       this.$http.post(this.apiUrl + 'login/', { user: this.user, password: CryptoJS.SHA384(this.password).toString(CryptoJS.enc.Hex) }).then((response) => {
         this.logged = true
-        window.bus.$emit('reloadNav', response.body.user)
+        window.bus.$emit('changeUser', response.body.user)
         if (this.$route.name === 'login') {
           this.$router.push({name: 'home'})
         }
@@ -109,22 +109,12 @@ export default {
     }
   },
   created () {
-    this.$http.post(this.apiUrl + 'login/').then((response) => {
-      this.$http.get(this.apiUrl + 'login/').then((response) => {
-        this.logged = true
-        window.bus.$emit('reloadNav', response.body.user)
-      })
+    this.$http.get(this.apiUrl + 'login/').then((response) => {
+      this.logged = true
+      window.bus.$emit('changeUser', response.body.user)
     },
     () => {
-      this.$http.get(this.apiUrl + 'login/').then((response) => {
-        console.log(response)
-        this.logged = true
-        window.bus.$emit('reloadNav', response.body.user)
-      },
-      () => {
-        this.logged = false
-        window.bus.$emit('reloadNav')
-      })
+      this.logged = false
     })
   }
 }
