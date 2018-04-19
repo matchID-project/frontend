@@ -41,13 +41,13 @@
               >
             </div>
           </div>
-          <div class="field is-small">
+          <!-- <div class="field is-small">
             <label class="checkbox is-small">
               <input type="checkbox">
               {{ localization.login.remember[lang] }}
             </input>
             </label>
-          </div>
+          </div> -->
         </section>
         <footer class="modal-card-foot">
           <div class="field is-fullwidth">
@@ -62,9 +62,11 @@
                 <span class="icon" v-show="error"><i class="fa fa-times" aria-hidden="true"></i></span>
                 <span> {{ localization.login.button[lang] }} </span>
               </a>
-              <a class="button is-fullwidth is-dark"
-                 :href="apiUrl+'authorize/github'">
-              <span> <i class="icon fa fa-github"/> {{ localization.login.github[lang] }} </span>
+              <a v-for="provider in socialProviders"
+                class="button is-fullwidth"
+                 :class="provider.color"
+                 :href="apiUrl+'authorize/'+provider.name">
+              <span> <i class="icon fa" :class="provider.icon"/> {{ localization.login[provider.name][lang] }} </span>
               </a>
             </p>
           </div>
@@ -85,7 +87,17 @@ export default {
       password: '',
       logged: true,
       isLogginIn: false,
-      error: false
+      error: false,
+      socialProviders: [
+        { name: 'github',
+          color: 'is-dark',
+          icon: 'fa-github'
+        },
+        { name: 'facebook',
+          color: 'is-link',
+          icon: 'fa-facebook'
+        }
+      ]
     }
   },
   calculated: {
