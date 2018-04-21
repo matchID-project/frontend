@@ -450,14 +450,13 @@ export default {
     window.bus.$on('changeUser', (user) => {
       this.user = user
       window.bus.$emit('reloadNav')
+      this.interval.jobs = setInterval(() => {
+        this.getJobs()
+      }, 5000)
     })
     window.bus.$on('reloadNav', () => {
       this.getProjects()
       this.getDependencies(this.$route.params.project)
-
-      this.interval.jobs = setInterval(() => {
-        this.getJobs()
-      }, 5000)
 
       if (this.$route.params.recipe !== undefined) {
         this.getStatus(this.$route.params.recipe)
