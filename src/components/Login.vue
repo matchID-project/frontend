@@ -62,11 +62,11 @@
                 <span class="icon" v-show="error"><i class="fa fa-times" aria-hidden="true"></i></span>
                 <span> {{ localization.login.button[lang] }} </span>
               </a>
-              <a v-for="provider in socialProviders"
+              <a v-for="(provider, name) in socialProviders" v-if="provider.active"
                 class="button is-fullwidth"
                  :class="provider.color"
-                 :href="apiUrl+'authorize/'+provider.name">
-              <span> <i class="icon fa" :class="provider.icon"/> {{ localization.login[provider.name][lang] }} </span>
+                 :href="apiUrl+'authorize/'+name">
+              <span> <i class="icon fa" :class="provider.icon"/> {{ localization.login[name][lang] }} </span>
               </a>
             </p>
           </div>
@@ -88,16 +88,18 @@ export default {
       logged: true,
       isLogginIn: false,
       error: false,
-      socialProviders: [
-        { name: 'github',
+      socialProviders: {
+        github: {
+          active: false,
           color: 'is-dark',
           icon: 'fa-github'
         },
-        { name: 'facebook',
+        facebook: {
+          active: false,
           color: 'is-link',
           icon: 'fa-facebook'
         }
-      ]
+      }
     }
   },
   calculated: {
@@ -121,6 +123,13 @@ export default {
     }
   },
   created () {
+    console.log('creation ici')
+    this.$http.get(this.apiUrl + 'authorize/').then((response) => {
+      response.body.providers.forEach((provider, i) => {
+        console.log(provider)
+        this.socialProviders[provider].active = true
+      })
+    })
     this.$http.get(this.apiUrl + 'login/').then((response) => {
       this.logged = true
       window.bus.$emit('changeUser', response.body.user)
