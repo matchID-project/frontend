@@ -1,15 +1,14 @@
 <template>
 
-  <div id="navigationWrapper">
+  <div id="navigationWrapper" class="is-hidden-touch">
     <nav class="navbar is-transparent">
-        <router-link class="logo" :to="{ name: 'root'}">
+      <div class="navbar-brand">
+        <router-link class="logo is-hidden-touch" :to="{ name: 'root'}">
           <img class="logo mID-margin-right-8" src="../assets/img/matchID-logo.svg">
           <span class="logo mID-margin-right-8"/>
         </router-link>
-      <div class="navbar-brand">
-
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link is-active">
+        <div class="navbar-item is-hidden-touch has-dropdown is-hoverable">
+          <a class="navbar-link">
             <span class="icon"><i class="fa fa-globe"></i></span>
           </a>
           <div class="navbar-dropdown is-boxed">
@@ -26,7 +25,7 @@
         </div>
       </div>
 
-      <div class="navbar-menu">
+      <div class="navbar-menu" id="nav">
         <div class="navbar-start">
           <div class="navbar-item has-dropdown is-hoverable">
             <router-link

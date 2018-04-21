@@ -5,19 +5,17 @@
         <div class="hero-body">
           <div class="level">
             <div class="level-left">
-              <p class="level-item mID-margin-right-8"></p>
               <h1 class="level-item title">
                 {{ $route.params.project }}
               </h1>
             </div>
-            <div class="level-item level-right">
-              <h1 class="title"
+            <div class="level-right is-hidden-mobile">
+              <h1 class="level-item title"
                   @click="deleteObject = { name: $route.params.project,
                                            type: 'project',
                                            display: true }">
                 <i class="fa fa-trash"/>
               </h1>
-              <p class="level-item mID-margin-right-8"></p>
             </div>
           </div>
         </div>
