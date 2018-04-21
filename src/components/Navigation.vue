@@ -517,7 +517,6 @@ export default {
       window.bus.$emit('langChange', this.lang)
     },
     getProjects () {
-      console.log('getting projects')
       this.loadingProjects = true
       this.$http.get(this.apiUrl + 'conf/')
         .then(response => {
