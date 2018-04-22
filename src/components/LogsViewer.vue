@@ -121,7 +121,9 @@ export default {
       this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
         .then(response => {
           this.realLogs = response.body
-        })
+        },
+      () => {
+      })
     }
   }
 }
