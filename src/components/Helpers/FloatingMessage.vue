@@ -68,14 +68,10 @@ export default {
   },
   created () {
     let m = {
-      title: 'Page loaded',
+      title: 'Welcome',
       type: 'is-info',
       message: 'Further messages will appear here'
     }
-
-    setTimeout(() => {
-      window.bus.$emit('message', {title: 'test', message: 'post test', type: 'is-warning'})
-    }, 1000)
 
     window.bus.$on('message', (m) => {
       this.queueMessage(m)
