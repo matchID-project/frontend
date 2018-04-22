@@ -36,7 +36,9 @@
               <span>Jobs</span>
             </router-link>
 
-            <div class="navbar-dropdown is-boxed is-overflowed-y"  :style="dropdownMaxHeight">
+            <div class="navbar-dropdown is-boxed is-overflowed-y"
+                :style="dropdownMaxHeight"
+                @mouseover="getJobs()">
               <div class="dropdown-item">
                 <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
               </div>
@@ -449,9 +451,6 @@ export default {
     window.bus.$on('changeUser', (user) => {
       this.user = user
       window.bus.$emit('reloadNav')
-      this.interval.jobs = setInterval(() => {
-        this.getJobs()
-      }, 5000)
     })
     window.bus.$on('reloadNav', () => {
       this.getProjects()
@@ -462,7 +461,7 @@ export default {
 
         this.interval.status = setInterval(() => {
           this.getStatus(this.$route.params.recipe)
-        }, 3000)
+        }, 5000)
       }
     })
   },
@@ -517,7 +516,6 @@ export default {
       window.bus.$emit('langChange', this.lang)
     },
     getProjects () {
-      console.log('getting projects')
       this.loadingProjects = true
       this.$http.get(this.apiUrl + 'conf/')
         .then(response => {
@@ -568,13 +566,17 @@ export default {
         })
     },
     getStatus (recipe) {
-      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
-        .then(response => {
-          this.recipeStatus = response.body.status
-          if (this.recipeStatus === 'down') {
-            this.stoppingStatus = false
-          }
-        })
+      if (recipe !== undefined) {
+        this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
+          .then(response => {
+            this.recipeStatus = response.body.status
+            if (this.recipeStatus === 'down') {
+              this.stoppingStatus = false
+            } else {
+              window.bus.$emit('runningRecipe')
+            }
+          })
+      }
     },
     getJobs () {
       this.$http.get(this.apiUrl + 'jobs')

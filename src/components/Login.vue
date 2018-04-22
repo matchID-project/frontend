@@ -126,7 +126,6 @@ export default {
     console.log('creation ici')
     this.$http.get(this.apiUrl + 'authorize/').then((response) => {
       response.body.providers.forEach((provider, i) => {
-        console.log(provider)
         this.socialProviders[provider].active = true
       })
     })

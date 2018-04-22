@@ -95,11 +95,9 @@ export default {
     }
   },
   mounted () {
-    this.getRealLogs(this.$route.params.recipe)
-
-    this.interval = setInterval(() => {
+    window.bus.$on('runningRecipe', () => {
       this.getRealLogs(this.$route.params.recipe)
-    }, 10000)
+    })
   },
   beforeDestroy () {
     clearInterval(this.interval)
@@ -121,7 +119,9 @@ export default {
       this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
         .then(response => {
           this.realLogs = response.body
-        })
+        },
+      () => {
+      })
     }
   }
 }
