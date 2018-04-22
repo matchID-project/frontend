@@ -1,5 +1,5 @@
 <template>
-  <div class="modal is-active" v-if="display">
+  <div class="modal is-active" style="pointer-events: none;">
     <div class="modal-card is-fullheight is-fullwidth">
       <div class="modal-card-content is-fullheight">
       </div>
@@ -9,15 +9,17 @@
           </div>
 
           <div class="column is-4">
-              <article v-for="message in messages" class="message" :class="message.type"  v-if="message.display"  >
+            <transition name="slide-fade" v-for="message in messages">
+              <article class="message" :class="message.type"  v-if="message.display" >
                 <div class="message-header">
                   <p>{{message.title}}</p>
-                  <button class="delete" aria-label="delete" @click="message.display = false"></button>
+                  <button class="delete" style="pointer-events: auto;" aria-label="delete" @click="message.display = false"></button>
                 </div>
                 <div class="message-body has-text-centered">
                   {{message.message}}
                 </div>
               </article>
+            </transition>
           </div>
         </div>
       </footer>
@@ -31,41 +33,70 @@ export default {
   name: 'message',
   data () {
     return {
-      messages: [{
-        display: true,
-        title: 'Message test',
-        type: 'is-info',
-        message: 'Ceci est un message de test'
-      }]
+      mid: 1,
+      messages: [],
+      timeout: {
+        'is-danger': 20000,
+        'is-alert': 10000,
+        'is-info': 3000,
+        'is-success': 1000,
+        'is-warning': 3000
+      }
     }
   },
   computed: {
+    lastMessage () {
+      return this.$lodash(this.messages).map(m => { return m.title })[0]
+    },
     display () {
-      return false
+      if (this.messages !== []) {
+        return this.messages.some(m => { return m.display })
+      } else {
+        return false
+      }
     }
   },
   methods: {
+    queueMessage (m) {
+      this.messages = this.messages.filter(message => { return message.display })
+      m.display = true
+      this.messages.push(m)
+      setTimeout(() => {
+        m.display = false
+      }, this.timeout[m.type])
+    }
   },
   created () {
-    let timeout = {
-      'is-danger': 20000,
-      'is-alert': 10000,
-      'is-info': 3000,
-      'is-success': 1000
+    let m = {
+      title: 'Page loaded',
+      type: 'is-info',
+      message: 'Further messages will appear here'
     }
 
     setTimeout(() => {
-      this.display = false
-    }, 3000)
+      window.bus.$emit('message', {title: 'test', message: 'post test', type: 'is-warning'})
+    }, 1000)
+
     window.bus.$on('message', (m) => {
-      this.messages.append(m)
-      setTimeout(() => {
-        this.display = false
-      }, timeout[this.type])
+      this.queueMessage(m)
     })
+    window.bus.$emit('message', m)
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(200px);
+  opacity: 0;
+}
+
 </style>
