@@ -567,13 +567,15 @@ export default {
         })
     },
     getStatus (recipe) {
-      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
-        .then(response => {
-          this.recipeStatus = response.body.status
-          if (this.recipeStatus === 'down') {
-            this.stoppingStatus = false
-          }
-        })
+      if (recipe !== undefined) {
+        this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
+          .then(response => {
+            this.recipeStatus = response.body.status
+            if (this.recipeStatus === 'down') {
+              this.stoppingStatus = false
+            }
+          })
+      }
     },
     getJobs () {
       this.$http.get(this.apiUrl + 'jobs')
