@@ -36,7 +36,9 @@
               <span>Jobs</span>
             </router-link>
 
-            <div class="navbar-dropdown is-boxed is-overflowed-y"  :style="dropdownMaxHeight">
+            <div class="navbar-dropdown is-boxed is-overflowed-y"
+                :style="dropdownMaxHeight"
+                @mouseover="getJobs()">
               <div class="dropdown-item">
                 <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
               </div>
@@ -449,9 +451,6 @@ export default {
     window.bus.$on('changeUser', (user) => {
       this.user = user
       window.bus.$emit('reloadNav')
-      this.interval.jobs = setInterval(() => {
-        this.getJobs()
-      }, 5000)
     })
     window.bus.$on('reloadNav', () => {
       this.getProjects()
@@ -462,7 +461,7 @@ export default {
 
         this.interval.status = setInterval(() => {
           this.getStatus(this.$route.params.recipe)
-        }, 3000)
+        }, 5000)
       }
     })
   },
@@ -573,6 +572,8 @@ export default {
             this.recipeStatus = response.body.status
             if (this.recipeStatus === 'down') {
               this.stoppingStatus = false
+            } else {
+              window.bus.$emit('runningRecipe')
             }
           })
       }
