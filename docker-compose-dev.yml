@@ -30,6 +30,7 @@ services:
       - ./matchIdConfig:/matchid/matchIdConfig/
       - ./config:/matchid/config/
       - ./src:/matchid/src/
+      - ./static:/cartav/static
       - ./build:/matchid/build/
     ports:
       - "8080:8080"
