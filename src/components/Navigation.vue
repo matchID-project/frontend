@@ -1,85 +1,39 @@
 <template>
 
-  <div id="navigationWrapper" class="is-hidden-touch">
-    <nav class="navbar is-transparent">
+  <div id="navigationWrapper">
+    <div class="navbar is-transparent">
       <div class="navbar-brand">
-        <router-link class="logo is-hidden-touch" :to="{ name: 'root'}">
+        <router-link class="logo" :to="{ name: 'root'}">
           <img class="logo mID-margin-right-8" src="../assets/img/matchID-logo.svg">
           <span class="logo mID-margin-right-8"/>
         </router-link>
         <div class="navbar-item is-hidden-touch has-dropdown is-hoverable">
-          <a class="navbar-link">
-            <span class="icon"><i class="fa fa-globe"></i></span>
-          </a>
-          <div class="navbar-dropdown is-boxed">
-            <a
-              class="navbar-item"
-              v-for="availableLang in langs"
-              :key="availableLang.key"
-              :class="{'is-active' : availableLang === lang}"
-              @click="changeLang(availableLang)"
-            >
-              {{ availableLang.toUpperCase() }}
+            <a class="navbar-link">
+              <span class="icon"><i class="fa fa-globe"></i></span>
             </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="navbar-menu" id="nav">
-        <div class="navbar-start">
-          <div class="navbar-item has-dropdown is-hoverable">
-            <router-link
-              :to="{ name: 'jobs'}"
-              class="navbar-link"
-            >
-              <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
-              <span>Jobs</span>
-            </router-link>
-
-            <div class="navbar-dropdown is-boxed is-overflowed-y"
-                :style="dropdownMaxHeight"
-                @mouseover="getJobs()">
-              <div class="dropdown-item">
-                <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
-              </div>
-              <hr class="dropdown-divider">
-              <router-link
-                :to="{ name: 'job', params: { job: job.recipe}}"
-                class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index"
+            <div class="navbar-dropdown is-boxed">
+              <a
+                class="navbar-item"
+                v-for="availableLang in langs"
+                :key="availableLang.key"
+                :class="{'is-active' : availableLang === lang}"
+                @click="changeLang(availableLang)"
               >
-                {{ job.recipe }} <br/> {{ job.date }}
-              </router-link>
-              <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
-                {{localization.navbar.jobs.empty[lang]}}
-              </div>
-              <hr class="dropdown-divider">
-              <div class="dropdown-item">
-                <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.done[lang]}}</h6>
-              </div>
-              <hr class="dropdown-divider">
-              <div class="navbar-item" v-if="$lodash.isEmpty(doneJobs)">
-                {{localization.navbar.jobs.empty[lang]}}
-              </div>
-              <router-link
-                :to="{ name: 'job', params: { job: job.recipe}}"
-                v-else
-                class="navbar-item" v-for="(job, index) in doneJobs.slice(0,10)" :key="job.index"
-              >
-                {{ job.recipe }} <br/> {{ job.date }}
-              </router-link>
-              <router-link
-                :to="{ name: 'jobs' }"
-                class="navbar-item has-text-link"
-                v-if="doneJobs.length > 10"
-              >
-                {{localization.global.see_more[lang]}} ...
-              </router-link>
+                {{ availableLang.toUpperCase() }}
+              </a>
             </div>
           </div>
-
-          <div class="navbar-item has-dropdown is-hoverable">
+        <div class="navbar-burger burger" :class="[{'is-active': burger}]" @click="burger = !burger" data-target="navMenubd-main">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div id="navMenubd-main" class="navbar-menu" :class="[{'is-active': burger}]" >
+        <div class="navbar-start">
+          <div class="navbar-item has-dropdown is-hoverable" :class="[{'is-hidden-touch' : $route.params.project}]">
             <router-link
-              :to="{ name: 'home'}"
+              :to="{name: 'home'}"
               class="navbar-link"
             >
               <span class="icon">
@@ -131,7 +85,6 @@
               </router-link>
             </div>
           </div>
-
           <div v-if="$route.params.project" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <span class="icon">
@@ -222,60 +175,107 @@
               </router-link>
             </div>
           </div>
-
           <div v-if="$route.params.project" class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              <span class="icon">
-                <i class="fa fa-flask" aria-hidden="true"/>
-              </span>
-              {{localization.navbar.recipes[lang]}}
-            </a>
-
-            <div class="navbar-dropdown is-boxed is-overflowed-y" :style="dropdownMaxHeight">
-              <a
-                class="navbar-item has-text-info"
-                @click="newObject = {display: true, type: 'recipe'}"
-              >
+              <a class="navbar-link">
                 <span class="icon">
-                  <i class ="fa fa-plus"></i>
+                  <i class="fa fa-flask" aria-hidden="true"/>
                 </span>
-                {{ localization.object.new.recipe[lang] }}
+                {{localization.navbar.recipes[lang]}}
               </a>
 
-              <hr class="dropdown-divider">
+              <div class="navbar-dropdown is-boxed is-overflowed-y" :style="dropdownMaxHeight">
+                <a
+                  class="navbar-item has-text-info"
+                  @click="newObject = {display: true, type: 'recipe'}"
+                >
+                  <span class="icon">
+                    <i class ="fa fa-plus"></i>
+                  </span>
+                  {{ localization.object.new.recipe[lang] }}
+                </a>
 
-              <a
-                class="navbar-item has-text-info"
-                @click="getRecipes($route.params.project); loadingRecipes = true"
-              >
-                <span class="icon">
-                  <i class ="fa fa-refresh"></i>
-                </span>
-                {{ localization.global.refresh_list[lang] }}
-              </a>
+                <hr class="dropdown-divider">
 
-              <hr class="dropdown-divider">
+                <a
+                  class="navbar-item has-text-info"
+                  @click="getRecipes($route.params.project); loadingRecipes = true"
+                >
+                  <span class="icon">
+                    <i class ="fa fa-refresh"></i>
+                  </span>
+                  {{ localization.global.refresh_list[lang] }}
+                </a>
 
-              <div class="has-text-centered" v-if="loadingRecipes">
-                <span class="icon has-text-black-bis is-medium">
-                  <i class="fa fa-spinner fa-2x fa-spin"></i>
-                </span>
+                <hr class="dropdown-divider">
+
+                <div class="has-text-centered" v-if="loadingRecipes">
+                  <span class="icon has-text-black-bis is-medium">
+                    <i class="fa fa-spinner fa-2x fa-spin"></i>
+                  </span>
+                </div>
+
+                <router-link
+                  class="navbar-item"
+                  v-else
+                  v-for="(recipe, key) in orderedRecipes"
+                  :key="recipe.table"
+                  :class="{'is-active' : key === $route.params.recipe}"
+                  :to="{ name: 'recipe', params: { recipe: key}}"
+                >
+                  {{ key }}
+                </router-link>
               </div>
-
-              <router-link
-                class="navbar-item"
-                v-else
-                v-for="(recipe, key) in orderedRecipes"
-                :key="recipe.table"
-                :class="{'is-active' : key === $route.params.recipe}"
-                :to="{ name: 'recipe', params: { recipe: key}}"
-              >
-                {{ key }}
-              </router-link>
             </div>
-          </div>
-        </div>
+            <div class="navbar-item has-dropdown is-hoverable">
+              <router-link
+                :to="{ name: 'jobs'}"
+                class="navbar-link"
+              >
+                <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
+                <span>Jobs</span>
+              </router-link>
 
+              <div class="navbar-dropdown is-boxed is-overflowed-y"
+                  :style="dropdownMaxHeight"
+                  @mouseover="getJobs()">
+                <div class="dropdown-item">
+                  <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
+                </div>
+                <hr class="dropdown-divider">
+                <router-link
+                  :to="{ name: 'job', params: { job: job.recipe}}"
+                  class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index"
+                >
+                  {{ job.recipe }} <br/> {{ job.date }}
+                </router-link>
+                <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
+                  {{localization.navbar.jobs.empty[lang]}}
+                </div>
+                <hr class="dropdown-divider">
+                <div class="dropdown-item">
+                  <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.done[lang]}}</h6>
+                </div>
+                <hr class="dropdown-divider">
+                <div class="navbar-item" v-if="$lodash.isEmpty(doneJobs)">
+                  {{localization.navbar.jobs.empty[lang]}}
+                </div>
+                <router-link
+                  :to="{ name: 'job', params: { job: job.recipe}}"
+                  v-else
+                  class="navbar-item" v-for="(job, index) in doneJobs.slice(0,10)" :key="job.index"
+                >
+                  {{ job.recipe }} <br/> {{ job.date }}
+                </router-link>
+                <router-link
+                  :to="{ name: 'jobs' }"
+                  class="navbar-item has-text-link"
+                  v-if="doneJobs.length > 10"
+                >
+                  {{localization.global.see_more[lang]}} ...
+                </router-link>
+              </div>
+            </div>
+        </div>
         <div class="navbar-end">
           <div class="navbar-item" v-if="!loadingDatasets && $route.params.dataset && datasets[$route.params.dataset].validation">
             <router-link
@@ -296,7 +296,6 @@
               <span>Dataset</span>
             </router-link>
           </div>
-
           <div class="navbar-item" v-if="$route.params.recipe">
             <template v-if="recipeStatus === 'up'">
               <a
@@ -367,7 +366,7 @@
           </div>
         </div>
       </div>
-    </nav>
+    </div>
 
     <graph-view
       v-if="displayGraph"
@@ -411,6 +410,7 @@ export default {
   data () {
     let maxHeightCalc = window.screen.availHeight - 200
     return {
+      burger: false,
       langs: [],
       dropdownMaxHeight: {maxHeight: maxHeightCalc + 'px'},
       // projects
