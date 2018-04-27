@@ -8,71 +8,61 @@
         <span>Loading logs</span>
       </div>
     </div>
-    <div class="box is-overflowed is-fullheight is-size-7" v-else>
-      <div class="tabs is-small is-centered">
-        <ul>
-          <li :class="{'is-active' : tab === 'test'}" @click="tab = 'test'">
-            <a>
-              <span class="icon" :class="warningIndicatorTest ? 'has-text-danger' : 'has-text-success'">
-                <i
-                  class="fa"
-                  :class="warningIndicatorTest ? 'fa-times' : 'fa-check'"
-                ></i>
-              </span>
-              <span>Test Logs</span>
-            </a>
-          </li>
-          <li :class="{'is-active' : tab === 'real'}" @click="tab = 'real'">
-            <a>
-              <span class="icon" :class="warningIndicatorReal ? 'has-text-danger' : 'has-text-success'">
-                <i
-                  class="fa"
-                  :class="warningIndicatorReal ? 'fa-times' : 'fa-check'"
-                ></i>
-              </span>
-              <span>Real Logs</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class="columns" v-if="tab === 'test'">
+    <div class="box is-overflowed-y is-fullheight is-size-7" v-else>
+      <div class="columns">
         <div class="column is-11">
+          <div class="tabs is-small is-centered">
+            <ul>
+              <li :class="{'is-active' : tab === 'test'}" @click="tab = 'test'">
+                <a>
+                  <span class="icon" :class="warningIndicatorTest ? 'has-text-danger' : 'has-text-success'">
+                    <i
+                      class="fa"
+                      :class="warningIndicatorTest ? 'fa-times' : 'fa-check'"
+                    ></i>
+                  </span>
+                  <span>Test Logs</span>
+                </a>
+              </li>
+              <li :class="{'is-active' : tab === 'real'}" @click="tab = 'real'">
+                <a>
+                  <span class="icon" :class="warningIndicatorReal ? 'has-text-danger' : 'has-text-success'">
+                    <i
+                      class="fa"
+                      :class="warningIndicatorReal ? 'fa-times' : 'fa-check'"
+                    ></i>
+                  </span>
+                  <span>Real Logs</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div v-if="tab === 'test'">
             <div
               v-for="(line, index) in arrayTestLogs"
               v-if="index + 1 !== arrayTestLogs.length"
               :key="line.index"
-              :class="{'has-text-danger is-size-6' : line.match('Ooops')}"
-            >
+              :class="{'has-text-danger is-size-6' : line.match('Ooops')}">
               <span class="icon is-small" v-if="line.match('Ooops')"><i class="fa fa-warning" aria-hidden="true"></i></span>
               <span class="icon is-small" v-else><i class="fa fa-circle-o" aria-hidden="true"></i></span>
               <span>{{ line }}</span>
             </div>
-        </div>
-        <div
-          class="column is-1"
-          :class="warningIndicatorTest ? 'has-background-red' : 'has-background-green'"
-        >
-        </div>
-      </div>
-      <div class="columns" v-if="tab === 'real'">
-        <div class="column is-11">
+          </div>
+          <div v-if="tab === 'real'">
             <div
               v-for="(line, index) in arrayRealLogs"
               v-if="(index + 1 !== arrayRealLogs.length) && ((index <= 100) || (index > (arrayRealLogs.length - 100)))"
               :key="line.index"
-              :class="{'has-text-danger is-size-6' : line.match('Ooops')}"
-            >
+              :class="{'has-text-danger is-size-6' : line.match('Ooops')}">
               <span class="icon is-small" v-if="line.match('Ooops')"><i class="fa fa-warning" aria-hidden="true"></i></span>
               <span class="icon is-small" v-else><i class="fa fa-circle-o" aria-hidden="true"></i></span>
               <span v-if="index != 100">{{ line }}</span>
               <span v-else> <<< complete logs were cut for display performance >>> </span>
-
             </div>
+          </div>
         </div>
-        <div
-          class="column is-1"
-          :class="warningIndicatorReal ? 'has-background-red' : 'has-background-green'"
-        >
+        <div class="column is-1"
+          :class="((warningIndicatorReal && (tab === 'real')) || (warningIndicatorTest && (tab === 'test'))) ? 'has-background-red' : 'has-background-green'">
         </div>
       </div>
     </div>
