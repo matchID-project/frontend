@@ -84,7 +84,7 @@
       </div>
     </div>
 
-    <div  class="is-overflowed" style="height: calc(100% - 53.375px)">
+    <div class="is-overflowed-x" style="height: 100%">
       <table  class='table is-narrow is-bordered is-hoverable is-size-7'>
         <thead id="general-thead" ref="headertable">
           <tr>

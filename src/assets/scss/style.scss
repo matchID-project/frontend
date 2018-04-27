@@ -198,8 +198,10 @@ html, body {
 
 .is-overflowed-x {
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .is-overflowed-y {
   overflow-y: auto;
+  overflow-x: hidden;
 }
