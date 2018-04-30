@@ -62,14 +62,14 @@
       </div>
 
       <template v-else>
-        <div class="card" style="height: 80%">
+        <div class="card" style="height: 75%">
           <data-viewer
             v-if="!loadingData"
             :data="data"
             :columns="columns"
           ></data-viewer>
         </div>
-        <div class="card" style="height: 20%">
+        <div class="card" style="height: 25%">
           <logs-viewer
             :loading="loadingLogs"
             :content="logs"
