@@ -77,16 +77,22 @@ export default {
   },
   data () {
     return {
+      evtSource: null,
       warningIndicatorTest: false,
       warningIndicatorReal: false,
       realLogs: '',
+      realLogsLoading: false,
+      lastLogsLoaded: false,
       tab: 'test',
       interval: null
     }
   },
   mounted () {
-    window.bus.$on('runningRecipe', () => {
-      this.getRealLogs(this.$route.params.recipe)
+    window.bus.$on('runningRecipeLogs', () => {
+      this.getRunningLogs(this.$route.params.recipe)
+    })
+    window.bus.$on('lastRecipeLogs', () => {
+      this.getLastLogs(this.$route.params.recipe)
     })
   },
   beforeDestroy () {
@@ -99,19 +105,42 @@ export default {
       return arr
     },
     arrayRealLogs () {
-      let arr = this.realLogs.split('\n')
+      let arr = this.realLogs.split('\n').reverse().filter(l => { return l.length > 0 })
       this.warningIndicatorReal = arr.some(v => { return v.match('Ooops') })
       return arr
     }
   },
   methods: {
-    getRealLogs (recipe) {
-      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
-        .then(response => {
-          this.realLogs = response.body
-        },
+    getLastLogs (recipe) {
+      if (this.lastLogsLoaded) {
+        return
+      }
+      this.lastLogsLoaded = true
+      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log').then(response => {
+        this.realLogs = response.body
+        this.realLogsLoading = false
+      },
       () => {
       })
+    },
+    getRunningLogs (recipe) {
+      if (this.realLogsLoading) {
+        return
+      }
+      this.evtSource = new EventSource(this.apiUrl + 'recipes/' + recipe + '/log')
+      this.realLogsLoading = true
+      let that = this
+      this.evtSource.addEventListener('open', function (e) {
+        that.tab = 'real'
+        that.realLogs = 'Recipe is currently processing\n'
+      }, false)
+      this.evtSource.addEventListener('message', function (e) {
+        that.realLogs = that.realLogs + e.data + '\n'
+      }, false)
+      this.evtSource.addEventListener('close', function (e) {
+        that.evtSource.close()
+        that.realLogsLoading = false
+      }, false)
     }
   }
 }

@@ -572,8 +572,9 @@ export default {
             this.recipeStatus = response.body.status
             if (this.recipeStatus === 'down') {
               this.stoppingStatus = false
+              window.bus.$emit('lastRecipeLogs')
             } else {
-              window.bus.$emit('runningRecipe')
+              window.bus.$emit('runningRecipeLogs')
             }
           })
       }
