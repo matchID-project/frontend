@@ -1,6 +1,7 @@
 <template>
   <div id="recipe" class="columns is-fullheight is-gapless">
-    <div class="column is-3">
+    <div class="column" :class="[{'is-3' : showMode === 0},
+                                 {'is-8' : showMode === 1}]">
       <div class="level is-fullheight loading-border" v-if="loadingCode">
         <div class="level-item">
           <span class="icon has-text-black-bis is-medium mID-margin-right-8">
@@ -13,20 +14,23 @@
       <div class="card is-fullheight" v-else>
         <header class="card-header">
           <div class="button is-primary is-fullwidth">
-            <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
+            <i v-if="showMode === 0" @click="showMode = 1" class="card-header-icon fa fa-plus" aria-hidden="true"></i>
+            <i v-if="showMode === 1" @click="showMode = 0" class="card-header-icon fa fa-minus" aria-hidden="true"></i>
+            <i v-if="showMode === 1" @click="showMode = 2" class="card-header-icon fa fa-expand" aria-hidden="true"></i>
             <p class="card-header-title is-centered">
-              <i class="fa fa-flask mID-margin-right-8" aria-hidden="true"/>
-              {{this.$route.params.recipe}}</p>
-            <i @click="showFullScreen = true" class="card-header-icon fa fa-expand" aria-hidden="true"></i>
+              {{this.$route.params.recipe}}
+            </p>
+            <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
           </div>
-        </header>        
+        </header>
+        </header>
         <div class="card-content is-paddingless" style="height: calc(100% - 72px)">
           <yaml-editor
             :codeData="code"
             :saveCode="saveCode"
-            :showFullScreen="showFullScreen"
+            :showFullScreen="showMode === 2"
             @codeSaved-recipe="sendCodeSaving"
-            @showedFullScreen="showFullScreen = false"
+            @showedFullScreen="showMode = (showMode + 1) % 2"
           ></yaml-editor>
         </div>
         <div class="card-footer">
@@ -51,7 +55,8 @@
       </div>
     </div>
 
-    <div class="column is-9 is-fullheight">
+    <div class="column is-fullheight" :class="[{'is-9' : showMode === 0},
+                                               {'is-4' : showMode === 1}]">
       <div class="level is-fullheight loading-border" v-if="loadingData">
         <div class="level-item">
           <span class="icon has-text-black-bis is-medium mID-margin-right-8">
@@ -109,7 +114,7 @@ export default {
       completedSave: false, // indicator of save completed
       failedSave: false, // indicator of save failed
       showShortcuts: false,
-      showFullScreen: false,
+      showMode: 0,
       // data
       loadingData: true, // indicator of loading data
       data: null,
