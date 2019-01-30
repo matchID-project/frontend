@@ -186,6 +186,22 @@ export default {
               }
             }
           ]
+        },
+        annotation: {
+          annotations: [
+            {
+              drawTime: 'afterDatasetsDraw',
+              id: 'threshold',
+              type: 'line',
+              mode: 'vertical',
+              value: Math.round(this.scores.preComputed.decision / this.scores.statisticsInterval) * this.scores.statisticsInterval,
+              scaleID: 'x-axis-0',
+              label: {
+                content: 'Threshold: ' + this.scores.preComputed.decision,
+                enabled: true
+              }
+            }
+          ]
         }
       }
     }
