@@ -105,17 +105,18 @@ export default {
 
       let datasets = [
         {
-          label: 'Total',
+          label: this.localization.validation.statistics.labels.total[this.lang],
           borderColor: 'rgba(192,192,192,1)',
           backgroundColor: 'rgba(192,192,192,0.5)',
           data: statistics.intervals_count,
           borderDash: [10, 5],
           fill: false,
+          // xAxisID: 'x-total',
           yAxisID: 'y-total'
         },
         {
           type: 'line',
-          label: 'Done',
+          label: this.localization.validation.statistics.labels.done[this.lang],
           borderColor: 'rgba(0,49,137,1)',
           backgroundColor: 'rgba(0,49,137,1)',
           data: statistics.done_count,
@@ -125,7 +126,7 @@ export default {
         },
         {
           type: 'line',
-          label: 'Decision True',
+          label: this.localization.validation.statistics.labels.decision.true[this.lang],
           borderColor: 'rgba(150,177,224,1)',
           backgroundColor: 'rgba(150,177,224,1)',
           data: statistics.decision.true,
@@ -135,7 +136,7 @@ export default {
         },
         {
           type: 'line',
-          label: 'Decision False',
+          label: this.localization.validation.statistics.labels.decision.false[this.lang],
           borderColor: 'rgba(254,80,101,1)',
           backgroundColor: 'rgba(254,80,101,1)',
           data: statistics.decision.false,

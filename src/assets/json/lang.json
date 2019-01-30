@@ -61,7 +61,39 @@
     },
     "statistics": {
       "en": "Statistics",
-      "fr": "Statistiques"
+      "fr": "Statistiques",
+      "labels": {
+        "total": {
+          "en": "Total linked",
+          "fr": "Total appariés"
+        },
+        "done": {
+          "en": "Annotated",
+          "fr": "Annotés"
+        },
+        "decision": {
+          "true": {
+            "en": "Positives",
+            "fr": "Positifs"
+          },
+          "false": {
+            "en": "Negatives",
+            "fr": "Négatifs"
+          }
+        },
+        "linked": {
+          "en": "Linked",
+          "fr": "Appariés"
+        },
+        "wrong": {
+          "en": "False negatives",
+          "fr": "Faux négatifs"
+        },
+        "missed": {
+          "en": "Missed",
+          "fr": "Manqués"
+        }
+      }
     },
     "shortcuts": {
       "title": {
