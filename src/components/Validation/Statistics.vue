@@ -99,10 +99,9 @@ export default {
           }
         }
 
-        for (var interval = 0; interval < this.scores.range[1]; interval = interval + this.scores.statisticsInterval) {
-          let nextInterval = interval + this.scores.statisticsInterval
+        for (var interval = 0; interval <= this.scores.range[1]; interval = interval + this.scores.statisticsInterval) {
           let find = this.dataResults.aggregations.scores.buckets[this.dataResults.aggregations.scores.buckets.findIndex(x => x.key === interval)]
-          data.intervals.push(interval + '-' + nextInterval)
+          data.intervals.push(interval)
           if (!find) {
             data.intervals_count.push(0)
             data.done_count.push(0)
