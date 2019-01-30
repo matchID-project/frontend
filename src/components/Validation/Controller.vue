@@ -331,7 +331,12 @@ export default {
             query: {
               function_score: {
                 query: {
-                  match_all: {}
+                  range: {
+                    [this.scores.column]: {
+                      'gte': this.valuesRangeSlider[0],
+                      'lte': this.valuesRangeSlider[1]
+                    }
+                  }
                 },
                 functions: [
                   {
