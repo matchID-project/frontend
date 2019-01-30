@@ -21,8 +21,38 @@
             ></stats-chart>
           </div>
           <div class="card-footer has-text-centered">
-            <div class="card-footer-item">{{statisticsRendered.total ? statisticsRendered.total.toLocaleString() : 0}}<br/>total</div>
-            <div class="card-footer-item">{{statisticsRendered.done_count ? statisticsRendered.done_count.reduce((a, b) => a + b, 0).toLocaleString() : 0}}<br/>done</div>
+            <div class="card-footer-item">
+              <div class="level-left">
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading has-text-primary">{{ localization.validation.statistics.labels.total[lang] }}</p>
+                    <p class="title has-text-primary">{{statisticsRendered.total ? statisticsRendered.total.toLocaleString() : 0}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer-item">
+              <div class="level-left">
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading has-text-primary">{{ localization.validation.statistics.labels.done[lang] }}</p>
+                    <p class="title has-text-primary">{{statisticsRendered.done_count ? statisticsRendered.done_count.reduce((a, b) => a + b, 0).toLocaleString() : 0}}</p>
+                  </div>
+                </div>
+                <div class="level-item has-text-centered ">
+                  <div>
+                    <p class="heading" style="color:rgba(150,177,224,1)"> {{ localization.validation.statistics.labels.decision.true[lang] }} </p>
+                    <p class="title" style="color:rgba(150,177,224,1)">{{statisticsRendered.done_count ? statisticsRendered.decision.true.reduce((a, b) => a + b, 0).toLocaleString() : 0}}</p>
+                  </div>
+                </div>
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading" style="color:rgba(254,80,101,1)"> {{ localization.validation.statistics.labels.decision.false[lang] }} </p>
+                    <p class="title" style="color:rgba(254,80,101,1)">{{statisticsRendered.done_count ? statisticsRendered.decision.false.reduce((a, b) => a + b, 0).toLocaleString() : 0}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
