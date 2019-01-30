@@ -63,6 +63,14 @@
       "en": "Statistics",
       "fr": "Statistiques",
       "labels": {
+        "threshold": {
+          "en": "Decision threshold",
+          "fr": "Seuil de décision",
+          "true": {
+            "en": "> Threshold",
+            "fr": "> Seuil"
+          }
+        },
         "total": {
           "en": "Total linked",
           "fr": "Total appariés"
@@ -81,17 +89,43 @@
             "fr": "Négatifs"
           }
         },
-        "linked": {
-          "en": "Linked",
-          "fr": "Appariés"
-        },
-        "wrong": {
-          "en": "False negatives",
-          "fr": "Faux négatifs"
-        },
-        "missed": {
-          "en": "Missed",
-          "fr": "Manqués"
+        "evaluation": {
+          "precision": {
+            "en": "Precision",
+            "fr": "Précision"
+          },
+          "recall": {
+            "en": "Recall",
+            "fr": "Rappel"
+          },
+          "f1": {
+            "en": "F1-score",
+            "fr": "F1-score"
+          },
+          "null": {
+            "en": "N/A",
+            "fr": "N/D"
+          },
+          "true": {
+            "true": {
+              "en": "True postives",
+              "fr": "Vrais positifs"
+            },
+            "false": {
+              "en": "False positives",
+              "fr": "Faux positifs"
+            }
+          },
+          "false": {
+            "true": {
+              "en": "Missed",
+              "fr": "Manqués"
+            },
+            "false": {
+              "en": "True negatives",
+              "fr": "Vrais négatifs"
+            }
+          }
         }
       }
     },
