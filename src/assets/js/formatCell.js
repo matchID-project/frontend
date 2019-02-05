@@ -66,7 +66,10 @@ function coloredDiff (doubleArray) {
 
   if (doubleArray[0] === doubleArray[1]) return doubleArray[0]
 
-  let diff = diffChars(doubleArray[0], doubleArray[1])
+  let diff = diffChars(doubleArray[0], doubleArray[1], {'ignoreCase': true})
+
+  if (diff.length === 1) return doubleArray[0]
+
   let right = ''
   let left = ''
 
