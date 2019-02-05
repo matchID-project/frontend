@@ -373,6 +373,23 @@ export default {
       })
     },
     getElasticsearchStatistics () {
+      let aggs = {}
+      if (this.scores.aggs !== undefined) {
+        aggs = this.$lodash.clone(this.scores.aggs)
+      }
+      aggs.decision = {
+        terms: {
+          field: 'validation_decision'
+        }
+      }
+      aggs.done = {
+        filter: {
+          exists: {
+            field: 'validation_done'
+          }
+        }
+      }
+
       return this.esClient.search({
         index: this.elasticsearch.index,
         size: 0,
@@ -383,20 +400,7 @@ export default {
                 field: 'confiance',
                 interval: this.scores.statisticsInterval
               },
-              aggs: {
-                decision: {
-                  terms: {
-                    field: 'validation_decision'
-                  }
-                },
-                done: {
-                  filter: {
-                    exists: {
-                      field: 'validation_done'
-                    }
-                  }
-                }
-              }
+              aggs: aggs
             }
           }
         }

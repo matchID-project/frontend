@@ -21,19 +21,24 @@
             ></stats-chart>
           </div>
           <div class="card-footer has-text-centered">
-            <div class="card-footer-item">
+            <div class="card-footer-item" v-for="agg in (scores.aggs !== undefined) ? Object.keys(scores.aggs) : []">
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
-                    <p class="heading has-text-primary">{{ localization.validation.statistics.labels.total[lang] }}</p>
-                    <p class="title has-text-primary">{{ statisticsRendered.total }}</p>
+                    <p class="heading has-text-primary">{{ agg }}</p>
+                    <p class="subtitle has-text-primary">{{ statisticsRendered.aggs.total[agg] }}</p>
                   </div>
                 </div>
               </div>
               <div class="level-item has-text-centered">
                 <div>
-                  <p class="heading" style="color:rgba(150,177,224,1)">{{ localization.validation.statistics.labels.threshold.true[lang] }}</p>
-                  <p class="title" style="color:rgba(150,177,224,1)">{{ statisticsRendered.threshold.total.true }}</p>
+                  <span class="title">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading has-text-info" style="color:rgba(150,177,224,1)">{{ localization.validation.statistics.labels.threshold.true[lang] }}</p>
+                  <p class="has-text-info" style="color:rgba(150,177,224,1)">{{ statisticsRendered.aggs.threshold.total[agg] }}</p>
                 </div>
               </div>
             </div>
@@ -41,42 +46,63 @@
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
+                    <p class="heading has-text-primary">{{ localization.validation.statistics.labels.total[lang] }}</p>
+                    <p class="subtitle has-text-primary">{{ statisticsRendered.total }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <span class="title">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading has-text-info" style="color:rgba(150,177,224,1)">{{ localization.validation.statistics.labels.threshold.true[lang] }}</p>
+                  <p class="has-text-info" style="color:rgba(150,177,224,1)">{{ statisticsRendered.threshold.total.true }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer-item" v-if="statisticsRendered.decision.total.done > 0">
+              <div class="level-left">
+                <div class="level-item has-text-centered">
+                  <div>
                     <p class="heading has-text-primary">{{ localization.validation.statistics.labels.done[lang] }}</p>
-                    <p class="title has-text-primary">{{ statisticsRendered.decision.total.done }}</p>
+                    <p class="subtitle has-text-primary">{{ statisticsRendered.decision.total.done }}</p>
                   </div>
                 </div>
                 <div class="level-item has-text-centered ">
                   <div>
                     <p class="heading" style="color:rgba(150,177,224,1)"> {{ localization.validation.statistics.labels.decision.true[lang] }} </p>
-                    <p class="title" style="color:rgba(150,177,224,1)">{{ statisticsRendered.decision.total.true }}</p>
+                    <p class="" style="color:rgba(150,177,224,1)">{{ statisticsRendered.decision.total.true }}</p>
                   </div>
                 </div>
                 <div class="level-item has-text-centered">
                   <div>
                     <p class="heading" style="color:rgba(254,80,101,1)"> {{ localization.validation.statistics.labels.decision.false[lang] }} </p>
-                    <p class="title" style="color:rgba(254,80,101,1)">{{ statisticsRendered.decision.total.false }}</p>
+                    <p class="" style="color:rgba(254,80,101,1)">{{ statisticsRendered.decision.total.false }}</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="card-footer-item">
+            <div class="card-footer-item" v-if="statisticsRendered.decision.total.done > 0">
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
                     <p class="heading has-text-primary">{{ localization.validation.statistics.labels.evaluation.f1[lang] }}</p>
-                    <p class="title has-text-primary">{{ statisticsRendered.evaluation.f1 }}</p>
+                    <p class="subtitle has-text-primary">{{ statisticsRendered.evaluation.f1 }}</p>
                   </div>
                 </div>
                 <div class="level-item has-text-centered ">
                   <div>
                     <p class="heading has-text-primary"> {{ localization.validation.statistics.labels.evaluation.precision[lang] }} </p>
-                    <p class="title has-text-primary">{{ statisticsRendered.evaluation.precision }}</p>
+                    <p class="has-text-primary">{{ statisticsRendered.evaluation.precision }}</p>
                   </div>
                 </div>
                 <div class="level-item has-text-centered">
                   <div>
                     <p class="heading has-text-primary"> {{ localization.validation.statistics.labels.evaluation.recall[lang] }} </p>
-                    <p class="title has-text-primary">{{ statisticsRendered.evaluation.recall }}</p>
+                    <p class="has-text-primary">{{ statisticsRendered.evaluation.recall }}</p>
                   </div>
                 </div>
               </div>
@@ -120,6 +146,13 @@ export default {
         data.intervals = []
         data.intervals_count = []
         data.done_count = []
+        data.aggs = { threshold: { total: {} } }
+        if (this.scores.aggs !== undefined) {
+          Object.keys(this.scores.aggs).forEach(element => {
+            data.aggs[element] = []
+            data.aggs.threshold[element] = []
+          })
+        }
 
         for (let i = 0; i < choice.length; i++) {
           data[choice[i]] = {}
@@ -139,7 +172,12 @@ export default {
           if (!find) {
             data.intervals_count.push(0)
             data.done_count.push(0)
-
+            if (this.scores.aggs !== undefined) {
+              Object.keys(this.scores.aggs).forEach(element => {
+                data.aggs[element].push(0)
+                data.aggs.threshold[element].push(0)
+              })
+            }
             for (let i = 0; i < choice.length; i++) {
               for (let j = 0; j < pick.length; j++) {
                 data[choice[i]][pick[j]].push(0)
@@ -150,7 +188,12 @@ export default {
             data.done_count.push(!find.done ? 0 : find.done.doc_count)
             data.threshold.true.push((interval >= this.scores.preComputed.decision) ? find.doc_count : 0)
             data.threshold.false.push((interval >= this.scores.preComputed.decision) ? 0 : find.doc_count)
-
+            if (this.scores.aggs !== undefined) {
+              Object.keys(this.scores.aggs).forEach(element => {
+                data.aggs[element].push(find[element].value)
+                data.aggs.threshold[element].push((interval >= this.scores.preComputed.decision) ? find[element].value : 0)
+              })
+            }
             for (let j = 0; j < pick.length; j++) {
               let val = find['decision'].buckets[find['decision'].buckets.findIndex(x => (x.key === pick[j]) || (x.key_as_string === pick[j]))]
               data.decision[pick[j]].push(val === void 0 ? 0 : val.doc_count)
@@ -174,6 +217,13 @@ export default {
             data.evaluation.recall = data.done_count ? +(100 * data.evaluation.true.true / (data.evaluation.true.true + data.evaluation.false.true)).toFixed(1).toLocaleString() : this.localization.validation.statistics.labels.evaluation.null
             data.evaluation.precision = data.done_count ? +(100 * data.evaluation.true.true / (data.evaluation.true.true + data.evaluation.true.false)).toFixed(1).toLocaleString() : this.localization.validation.statistics.labels.evaluation.null
             data.evaluation.f1 = data.done_count ? +(2 * data.evaluation.precision * data.evaluation.recall / (data.evaluation.recall + data.evaluation.precision)).toFixed(1).toLocaleString() : this.localization.validation.statistics.labels.evaluation.null
+            if (this.scores.aggs !== undefined) {
+              data.aggs.total = {}
+              Object.keys(this.scores.aggs).forEach(element => {
+                data.aggs.total[element] = data.aggs[element].reduce((a, b) => a + b, 0).toLocaleString()
+                data.aggs.threshold.total[element] = data.aggs.threshold[element].reduce((a, b) => a + b, 0).toLocaleString()
+              })
+            }
           }
         }
       }
@@ -226,6 +276,16 @@ export default {
           yAxisID: 'y-decision'
         }
       ]
+      if (this.scores.aggs !== undefined) {
+        Object.keys(this.scores.aggs).forEach(element => {
+          datasets.push({
+            label: element,
+            data: statistics.aggs[element],
+            fill: false,
+            yAxisID: 'y-total'
+          })
+        })
+      }
 
       return {
         labels: statistics.intervals,
