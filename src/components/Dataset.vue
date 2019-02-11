@@ -29,7 +29,7 @@
             :codeData="code"
             :saveCode="saveCode"
             :showFullScreen="showMode === 2"
-            @codeSaved-recipe="sendCodeSaving"
+            @codeSaved-dataset="sendCodeSaving"
             @showedFullScreen="showMode = (showMode + 1) % 2"
           ></yaml-editor>
         </div>
