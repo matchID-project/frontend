@@ -11,8 +11,9 @@
                 <span class="select">
                   <select v-model='selectedSearchField'>
                     <option :value="'random'">Random</option>
-                    <option
+                    <option 
                       v-for="column in columns"
+                      :key="column.Label"
                       :value="Array.isArray(column.field) ? column.field.join() : column.field"
                       v-show="column.searchable"
                     >
@@ -395,6 +396,40 @@ export default {
         size: 0,
         body: {
           aggs: {
+            threshold: {
+              filter: {
+                range: {
+                  [this.scores.column]: {
+                    'gte': this.scores.preComputed.decision,
+                    'lte': this.valuesRangeSlider[1]
+                  }
+                }
+              },
+              aggs: {
+                distinct: {
+                  cardinality: {
+                    field: this.scores.id || 'matchid_id'
+                  }
+                }
+              }
+            },
+            range: {
+              filter: {
+                range: {
+                  [this.scores.column]: {
+                    'gte': this.valuesRangeSlider[0],
+                    'lte': this.valuesRangeSlider[1]
+                  }
+                }
+              },
+              aggs: {
+                distinct: {
+                  cardinality: {
+                    field: this.scores.id || 'matchid_id'
+                  }
+                }
+              }
+            },
             scores: {
               histogram: {
                 field: 'confiance',
