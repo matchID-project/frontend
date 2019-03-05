@@ -46,6 +46,27 @@
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
+                    <p class="heading has-text-primary">{{ localization.validation.statistics.labels.distinct[lang] }}</p>
+                    <p class="subtitle has-text-primary">{{ statisticsRendered.distinct.total }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <span class="title">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading has-text-info" style="color:rgba(150,177,224,1)">{{ localization.validation.statistics.labels.threshold.true[lang] }}</p>
+                  <p class="has-text-info" style="color:rgba(150,177,224,1)">{{ statisticsRendered.distinct.threshold }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer-item">
+              <div class="level-left">
+                <div class="level-item has-text-centered">
+                  <div>
                     <p class="heading has-text-primary">{{ localization.validation.statistics.labels.total[lang] }}</p>
                     <p class="subtitle has-text-primary">{{ statisticsRendered.total }}</p>
                   </div>
@@ -63,7 +84,7 @@
                 </div>
               </div>
             </div>
-            <div class="card-footer-item" v-if="statisticsRendered.decision.total.done > 0">
+            <div class="card-footer-item" v-if="statisticsRendered.decision.total.done !== 0">
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
@@ -85,7 +106,7 @@
                 </div>
               </div>
             </div>
-            <div class="card-footer-item" v-if="statisticsRendered.decision.total.done > 0">
+            <div class="card-footer-item" v-if="statisticsRendered.decision.total.done != 0">
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
@@ -143,6 +164,10 @@ export default {
 
       if (Object.keys(this.dataResults).length > 0) {
         data.total = this.dataResults.hits.total
+        data.distinct = {
+          total: this.dataResults.aggregations.range.distinct.value,
+          threshold: data.distinct = this.dataResults.aggregations.threshold.distinct.value
+        }
         data.intervals = []
         data.intervals_count = []
         data.done_count = []

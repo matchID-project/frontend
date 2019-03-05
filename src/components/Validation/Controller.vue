@@ -11,8 +11,9 @@
                 <span class="select">
                   <select v-model='selectedSearchField'>
                     <option :value="'random'">Random</option>
-                    <option
+                    <option 
                       v-for="column in columns"
+                      :key="column.Label"
                       :value="Array.isArray(column.field) ? column.field.join() : column.field"
                       v-show="column.searchable"
                     >
@@ -282,12 +283,12 @@ export default {
           if (this.displayOnlyUndone || !element._source.validation_done) {
             if (this.actions.display) {
               if (this.scores.column) {
-                element._source.validation_decision = !element._source.validation_decision ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
+                element._source.validation_decision = (element._source.validation_decision === undefined) ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
 
-                element._source.validation_done = !element._source.validation_done ? false : element._source.validation_done
+                element._source.validation_done = (element._source.validation_done === undefined) ? false : element._source.validation_done
 
                 if (this.actions.action.indecision_display) {
-                  element._source.validation_indecision = !element._source.validation_indecision ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
+                  element._source.validation_indecision = (element._source.validation_indecision === undefined) ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
                 }
               } else {
                 element._source.validation_decision = !element._source.validation_decision ? false : element._source.validation_decision
@@ -395,6 +396,40 @@ export default {
         size: 0,
         body: {
           aggs: {
+            threshold: {
+              filter: {
+                range: {
+                  [this.scores.column]: {
+                    'gte': this.scores.preComputed.decision,
+                    'lte': this.valuesRangeSlider[1]
+                  }
+                }
+              },
+              aggs: {
+                distinct: {
+                  cardinality: {
+                    field: this.scores.id || 'matchid_id'
+                  }
+                }
+              }
+            },
+            range: {
+              filter: {
+                range: {
+                  [this.scores.column]: {
+                    'gte': this.valuesRangeSlider[0],
+                    'lte': this.valuesRangeSlider[1]
+                  }
+                }
+              },
+              aggs: {
+                distinct: {
+                  cardinality: {
+                    field: this.scores.id || 'matchid_id'
+                  }
+                }
+              }
+            },
             scores: {
               histogram: {
                 field: 'confiance',
