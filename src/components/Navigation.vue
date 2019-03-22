@@ -284,7 +284,7 @@
               class="button is-link is-outlined"
             >
               <span class="icon"><i class="fa fa-check" aria-hidden="true"></i></span>
-              <span>Validation</span>
+              <span>{{localization.dataset.validation[lang]}}</span>
             </router-link>
 
             <router-link
@@ -293,9 +293,18 @@
               class="button is-link is-outlined"
             >
               <span class="icon"><i class="fa fa-table" aria-hidden="true"></i></span>
-              <span>Dataset</span>
-            </router-link>
+              <span>{{localization.dataset.configure[lang]}}</span>
+            </router-link>          
           </div>
+          <div class="navbar-item" v-if="!loadingDatasets && $route.params.dataset">
+            <a
+              class="button is-link is-outlined"
+              @click="downloadSample($route.params.dataset)"
+            >
+              <span class="icon"><i class="fa fa-download" aria-hidden="true"></i></span>
+              <span>{{localization.dataset.export[lang]}}</span>
+            </a>              
+          </div>          
           <div class="navbar-item" v-if="$route.params.recipe">
             <template v-if="recipeStatus === 'up'">
               <a
@@ -546,6 +555,17 @@ export default {
           this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
           window.bus.$emit('reloadRecipes', this.recipes)
           setTimeout(() => { this.loadingRecipes = false }, 500)
+        })
+    },
+    downloadSample (dataset) {
+      this.$http.post(this.apiUrl + 'datasets/' + dataset + '/?type=csv')
+        .then(response => {
+          var element = document.createElement('a')
+          element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(response.data))
+          element.setAttribute('download', dataset + '.csv')
+          element.style.display = 'none'
+          element.click()
+          document.body.appendChild(element)
         })
     },
     runRecipe (recipe) {
