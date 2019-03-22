@@ -20,6 +20,7 @@
             <p class="card-header-title is-centered">
               {{this.$route.params.recipe}}
             </p>
+            <i @click="objectDelete()" class="card-header-icon fa fa-trash" aria-hidden="true"></i>
             <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
           </div>
         </header>
@@ -175,6 +176,9 @@ export default {
           this.loadingLogs = false
           window.bus.$emit('message', {'title': 'error executing ' + recipe, type: 'is-danger', message: err.body})
         })
+    },
+    objectDelete () {
+      window.bus.$emit('deleteObject', {'type': 'recipe', 'name': this.$route.params.recipe})
     },
     sendCodeSaving (newCode) {
       this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})

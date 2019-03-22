@@ -394,6 +394,13 @@
       @close="newObject.display = false"
     ></new-object>
 
+    <delete-object
+      :display="deleteObject.display"
+      :type="deleteObject.type"
+      :name="deleteObject.name"
+      @close="deleteObject.display = false"
+    ></delete-object>
+
     <import-object
       :display="importObjectDisplay"
       @close="importObjectDisplay = false"
@@ -406,6 +413,7 @@ import GraphView from './Graph'
 import Login from './Login'
 import Message from './Helpers/FloatingMessage'
 import NewObject from './Object/New'
+import DeleteObject from './Object/Delete'
 import ImportObject from './Object/Import'
 
 export default {
@@ -414,6 +422,7 @@ export default {
     Message,
     Login,
     NewObject,
+    DeleteObject,
     ImportObject
   },
   data () {
@@ -447,6 +456,11 @@ export default {
         display: false,
         type: null
       },
+      deleteObject: {
+        display: false,
+        type: null,
+        name: null
+      },
       importObjectDisplay: false,
       // jobs
       runningJobs: {},
@@ -472,6 +486,9 @@ export default {
           this.getStatus(this.$route.params.recipe)
         }, 5000)
       }
+    })
+    window.bus.$on('deleteObject', (object) => {
+      this.deleteObject = {display: true, type: object.type, name: object.name}
     })
   },
   beforeDestroy () {

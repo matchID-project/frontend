@@ -21,6 +21,7 @@
               <i class="fa fa-table mID-margin-right-8" aria-hidden="true"/>
               {{this.$route.params.dataset}}
             </p>
+            <i @click="objectDelete()" class="card-header-icon fa fa-trash" aria-hidden="true"></i>
             <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
           </div>
         </header>
@@ -158,6 +159,9 @@ export default {
           }, 1500)
         })
     },
+    objectDelete () {
+      window.bus.$emit('deleteObject', {'type': 'dataset', 'name': this.$route.params.dataset})
+    },
     sendCodeSaving (newCode) {
       this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
         .then(response => {
@@ -174,7 +178,7 @@ export default {
             this.completedSave = true
             this.saveCode = false
             this.failedSave = false
-            window.bus.$emit('message', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
+            window.bus.$emit('messagemessage', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
             setTimeout(() => {
               this.completedSave = false
             }, 3000)
