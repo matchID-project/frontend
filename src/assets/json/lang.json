@@ -253,6 +253,20 @@
       "fr": "Arrêt"
     }
   },
+  "dataset": {
+    "validation": {
+      "en": "Validation",
+      "fr": "Validation"
+    },
+    "configure": {
+      "en": "Configure",
+      "fr": "Configurer"
+    },
+    "export": {
+      "en": "Sample",
+      "fr": "Echantillon"
+    }
+  },
   "viewLog": {
     "error": {
       "en": "Warning - bug(s) in recipe : please check log",
