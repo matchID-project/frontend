@@ -56,9 +56,9 @@ export default {
       if (this.type === 'project') {
         url = this.apiUrl + 'conf/' + this.name + '/'
       } else if (this.type === 'recipe') {
-        url = this.apiUrl + 'recipes/' + this.name + '/'
+        url = this.apiUrl + 'recipes/' + this.name + '/yaml'
       } else if (this.type === 'dataset') {
-        url = this.apiUrl + 'datasets/' + this.name + '/'
+        url = this.apiUrl + 'datasets/' + this.name + '/yaml'
       }
 
       this.$http.delete(url)
@@ -74,7 +74,8 @@ export default {
             this.$emit('close')
             this.actionFinished = false
 
-            if (this.type === 'project') return this.$router.push({ name: 'home', params: { project: name } })
+            if (this.type === 'project') return this.$router.push({ name: 'home' })
+            else return this.$router.push({ name: 'project', params: { project: this.$route.params.project } })
           }, 1000)
         })
     }
