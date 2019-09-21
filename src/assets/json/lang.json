@@ -5,6 +5,10 @@
   ],
   "default": "fr",
   "global": {
+    "shutdown": {
+      "en": "Restart server",
+      "fr": "Arrêter le serveur"
+    },
     "refresh_list": {
       "en": "Refresh list",
       "fr": "Rafraîchir la liste"

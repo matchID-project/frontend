@@ -238,6 +238,19 @@
               <div class="navbar-dropdown is-boxed is-overflowed-y"
                   :style="dropdownMaxHeight"
                   @mouseover="getJobs()">
+
+                <a
+                  class="navbar-item has-text-info"
+                  @click="shutdown"
+                >
+                  <span class="icon">
+                    <i class ="fa fa-stop"></i>
+                  </span>
+                  {{ localization.global.shutdown[lang] }}
+                </a>
+
+                <hr class="dropdown-divider">
+
                 <div class="dropdown-item">
                   <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.running[lang]}}</h6>
                 </div>
@@ -531,6 +544,15 @@ export default {
     }
   },
   methods: {
+    shutdown () {
+      this.$http.put(this.apiUrl + 'shutdown/')
+        .then(response => {
+          window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-warning', message: response.body.message})
+        },
+        error => {
+          window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-danger', message: error.body.message})
+        })
+    },
     logout () {
       this.$http.post(this.apiUrl + 'logout/')
         .then(response => {
