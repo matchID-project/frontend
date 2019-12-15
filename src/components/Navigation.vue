@@ -31,6 +31,61 @@
       </div>
       <div id="navMenubd-main" class="navbar-menu" :class="[{'is-active': burger}]" >
         <div class="navbar-start">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <router-link
+              :to="{name: 'home'}"
+              class="navbar-link"
+            >
+              <span class="icon">
+                <i class="fa fa-plug" aria-hidden="true"></i>
+              </span>
+              {{localization.navbar.connectors[lang]}}
+            </router-link>
+
+            <div class="navbar-dropdown is-boxed is-overflowed-y" :style="dropdownMaxHeight">
+              <a
+                class="navbar-item has-text-info"
+                @click="newObject = {display: true, type: 'connector'}"
+              >
+                <span class="icon">
+                  <i class ="fa fa-plus"></i>
+                </span>
+                {{ localization.object.new.connector[lang] }}
+              </a>
+
+              <hr class="dropdown-divider">
+
+              <a
+                class="navbar-item has-text-info"
+                @click="getConnectors()"
+              >
+                <span class="icon">
+                  <i class ="fa fa-refresh"></i>
+                </span>
+                {{ localization.global.refresh_list[lang] }}
+              </a>
+
+              <hr class="dropdown-divider">
+
+              <div class="has-text-centered" v-if="loadingConnectors">
+                <span class="icon has-text-black-bis is-medium">
+                  <i class="fa fa-spinner fa-2x fa-spin"></i>
+                </span>
+              </div>
+
+              <router-link
+                class="navbar-item"
+                v-else
+                v-for="connector in orderedConnectors"
+                :key="connector.key"
+                :class="{'is-active' : connector === $route.params.connector}"
+                :to="{ name: 'connector', params: { connector: connector}}"
+              >
+                {{ connector }}
+              </router-link>
+            </div>
+          </div>
+
           <div class="navbar-item has-dropdown is-hoverable" :class="[{'is-hidden-touch' : $route.params.project}]">
             <router-link
               :to="{name: 'home'}"
@@ -149,9 +204,11 @@
                         <i
                           class="fa"
                           :class="[
-                            {'fa-file-text-o' : dataset.connector == 'upload'},
-                            {'fa-database' : dataset.connector == 'elasticsearch'},
-                            {'fa-table' : dataset.connector == 'referential_data'}
+                            {'fa-file' : dataset.connector === 'upload'},
+                            {'fa-table' : dataset.connector === 'referential_data'},
+                            {'fa-database' : dataset.connector === 'elasticsearch'},
+                            {'fa-database' : dataset.connector === 'postgres'},
+                            {'fa-database' : dataset.connector === 'redisearch'}
                           ]"
                         ></i>
                       </span>
@@ -307,7 +364,7 @@
             >
               <span class="icon"><i class="fa fa-table" aria-hidden="true"></i></span>
               <span>{{localization.dataset.configure[lang]}}</span>
-            </router-link>          
+            </router-link>
           </div>
           <div class="navbar-item" v-if="!loadingDatasets && $route.params.dataset">
             <a
@@ -316,8 +373,8 @@
             >
               <span class="icon"><i class="fa fa-download" aria-hidden="true"></i></span>
               <span>{{localization.dataset.export[lang]}}</span>
-            </a>              
-          </div>          
+            </a>
+          </div>
           <div class="navbar-item" v-if="$route.params.recipe">
             <template v-if="recipeStatus === 'up'">
               <a
@@ -384,7 +441,7 @@
               @click="logout">
               <span class="mID-margin-right-8"> {{user}} </span>
               <i class="fa fa-sign-out mID-clickable"></i>
-              </a>
+            </a>
           </div>
         </div>
       </div>
@@ -444,6 +501,9 @@ export default {
       burger: false,
       langs: [],
       dropdownMaxHeight: {maxHeight: maxHeightCalc + 'px'},
+      // connectors
+      connectors: [],
+      loadingConnectors: true,
       // projects
       projects: [],
       loadingProjects: true,
@@ -484,11 +544,13 @@ export default {
     this.langs = this.localization.available
 
     this.changeLang(this.lang)
+
     window.bus.$on('changeUser', (user) => {
       this.user = user
       window.bus.$emit('reloadNav')
     })
     window.bus.$on('reloadNav', () => {
+      this.getConnectors()
       this.getProjects()
       this.getDependencies(this.$route.params.project)
 
@@ -525,6 +587,9 @@ export default {
     }
   },
   computed: {
+    orderedConnectors () {
+      return this.$lodash.sortBy(this.connectors)
+    },
     orderedProjects () {
       return this.$lodash.sortBy(this.projects)
     },
@@ -562,6 +627,15 @@ export default {
     changeLang (newLang) {
       this.lang = newLang
       window.bus.$emit('langChange', this.lang)
+    },
+    getConnectors () {
+      this.loadingConnectors = true
+      this.$http.get(this.apiUrl + 'connectors/')
+        .then(response => {
+          this.connectors = Object.keys(response.body)
+          window.bus.$emit('reloadConnectors', this.connectors)
+          setTimeout(() => { this.loadingConnectors = false }, 500)
+        })
     },
     getProjects () {
       this.loadingProjects = true

@@ -37,6 +37,10 @@
         "fr": "filtre"
       }
     },
+    "connectors": {
+      "en": "Connectors",
+      "fr": "Connecteurs"
+    },
     "projects":{
       "en": "Projects",
       "fr": "Projets"
@@ -279,6 +283,10 @@
   },
   "object": {
     "new": {
+      "connector": {
+        "en": "New connector",
+        "fr": "Nouveau connecteur"
+      },
       "project": {
         "en": "New project",
         "fr": "Nouveau projet"
