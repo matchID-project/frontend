@@ -21,6 +21,8 @@ export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
 export API_GLOBAL_BURST=200 nodelay
 export PORT=8081
+export FRONTEND_DEV_HOST=frontend-development
+export FRONTEND_DEV_PORT=8080
 export BACKEND_HOST=backend
 export BACKEND_PORT=8081
 export TIMEOUT=30
@@ -152,11 +154,11 @@ else
 endif
 
 frontend-dev-stop:
-	${DC} -f ${DC_FILE}-dev-frontend.yml down
+	${DC} -f ${DC_FILE}-dev.yml down
 
-dev: network frontend-stop backend elasticsearch postgres frontend-dev
+dev: network frontend-stop backend-dev frontend-dev
 
-dev-stop: backend-stop kibana-stop elasticsearch-stop postgres-stop frontend-dev-stop newtork-stop
+dev-stop: backend-stop frontend-dev-stop network-stop
 
 
 ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION):
