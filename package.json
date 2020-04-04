@@ -18,7 +18,7 @@
     "diff": "^4.0.1",
     "elasticsearch": "^13.0.0-rc2",
     "font-awesome": "^4.7.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "moment": "^2.18.1",
     "nouislider": "^10.0.0",
     "vue": "^2.3.3",
