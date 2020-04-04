@@ -133,7 +133,7 @@ backend-dev: network backend-config
 backend: network backend-config
 	@make -C ${BACKEND} backend ${MAKEOVERRIDES}
 
-backend-docker-check: configure
+backend-docker-check: configure backend-config
 	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check \
 		DC_IMAGE_NAME=${BACKEND_DC_IMAGE_NAME}\
 		APP_VERSION=$(shell cd ${BACKEND} && make version | awk '{print $$NF}')
