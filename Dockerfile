@@ -71,9 +71,6 @@ ARG app_name
 ARG app_ver
 ARG PORT
 
-VOLUME /$app_path/src
-VOLUME /$app_path/public
-
 EXPOSE ${PORT}
 
 CMD ["npm", "run", "dev"]
