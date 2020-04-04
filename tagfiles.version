@@ -1,0 +1,11 @@
+build
+config
+docker-compose-build.yml
+docker-compose.yml
+Dockerfile
+index.html
+nginx
+package.json
+src
+static
+tagfiles.version
