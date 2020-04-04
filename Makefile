@@ -169,7 +169,6 @@ ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION):
 		.editorconfig \
 		.eslintrc.js \
 		.eslintignore \
-		matchIdConfig \
 		build \
 		config \
 		)
