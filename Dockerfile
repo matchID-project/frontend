@@ -13,6 +13,7 @@ ARG NPM_LATEST
 ARG NPM_VERBOSE
 ARG app_path
 ARG app_name
+ARG api_path
 ARG app_ver
 ENV APP ${APP}
 ENV APP_VERSION ${app_ver}
@@ -91,16 +92,18 @@ ARG MIRROR_DEBIAN
 ARG app_path
 ARG app_name
 ARG app_ver
+ARG app_pkg
 ENV APP ${app_name}
+ENV APP_PKG ${app_pkg}
 ENV APP_VERSION ${app_ver}
 
 # VOLUME /$app_path/build
 
-COPY ${APP}-${APP_VERSION}.tar.gz .
+COPY ${app_pkg}-${APP_VERSION}.tar.gz .
 
-RUN  set -ex ; tar -zxvf ${APP}-${APP_VERSION}.tar.gz  && \
+RUN  set -ex ; tar -zxvf ${APP_PKG}-${APP_VERSION}.tar.gz  && \
      npm run build 2>&1 | tee npm.log; egrep -E '(ERROR|error)' npm.log && exit 1 ; rm -f npm.log \
-     rm -rf ${APP}-${APP_VERSION}.tar.gz
+     rm -rf ${APP_PKG}-${APP_VERSION}.tar.gz
 
 CMD ["npm", "run", "build"]
 

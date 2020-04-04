@@ -12,12 +12,23 @@ export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 export APP_GROUP=matchID
 export APP=frontend
 export APP_PATH=$(shell pwd)
+export APP_NAME=${APP_GROUP}
+export API_PATH=/${APP_NAME}/api/v0
+export API_USER_LIMIT_RATE=1r/s
+export API_DOWNLOAD_LIMIT_RATE=30r/m
+export API_USER_BURST=20 nodelay
+export API_USER_SCOPE=http_x_forwarded_for
+export API_GLOBAL_LIMIT_RATE=20r/s
+export API_GLOBAL_BURST=200 nodelay
 export PORT=8081
+export BACKEND_HOST=backend
 export BACKEND_PORT=8081
 export TIMEOUT=30
 
 #matchID default paths
 export FRONTEND := $(shell pwd)
+export NGINX=${FRONTEND}/nginx
+export NGINX_TIMEOUT=15
 export DOCKER_USERNAME=$(shell echo ${APP_GROUP} | tr '[:upper:]' '[:lower:]')
 export DC_DIR=${FRONTEND}
 export DC_FILE=${DC_DIR}/docker-compose
@@ -26,6 +37,7 @@ export DC_IMAGE_NAME=${DC_PREFIX}-${APP}
 export DC_NETWORK=${DC_PREFIX}
 export DC_NETWORK_OPT=
 export DC_BUILD_ARGS = --pull --no-cache
+export DC_IMAGE_NAME=${DC_PREFIX}-${APP}
 export GIT_ROOT=https://github.com/matchid-project
 export GIT_ORIGIN=origin
 export GIT_BRANCH=dev
@@ -34,7 +46,7 @@ export GIT_BACKEND=backend
 export GIT_BACKEND_BRANCH=dev
 
 export BACKEND=${FRONTEND}/../${GIT_BACKEND}
-export BACKEND_DC_IMAGE_NAME=${DC_PREFIX}-${FRONTEND}
+export BACKEND_DC_IMAGE_NAME=${DC_PREFIX}-${GIT_BACKEND}
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -56,6 +68,7 @@ export FILE_FRONTEND_DIST_LATEST_VERSION = $(APP_GROUP)-$(APP)-latest-dist.tar.g
 
 export BUILD_DIR=${FRONTEND}/nginx/dist
 export DC_BUILD_FRONTEND=${DC_FILE}-build.yml
+export DC_RUN_NGINX_FRONTEND=${DC_FILE}.yml
 
 #temp fix before updating
 export NPM_FIX=true
@@ -80,7 +93,7 @@ configure:
 	@touch configure
 
 config-clean:
-	@rm -rf tools aws configure
+	@(rm -rf tools aws configure > /dev/null 2>&1 )|| exit 0;
 
 docker-clean: stop
 	docker container rm matchid-build-front matchid-nginx
@@ -94,7 +107,7 @@ network: configure
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
 backend-stop:
-	${DC} down
+	make -C ${BACKEND} backend-stop
 
 backend-prep:
 ifeq ("$(wildcard ${UPLOAD})","")
@@ -114,23 +127,19 @@ backend-config:
 		git checkout ${GIT_BACKEND_BRANCH};\
 	fi
 
-backend-dev:
-	@echo please use backend repo for full development mode && exit 1
+backend-dev: network backend-config
+	@make -C ${BACKEND} backend-dev ${MAKEOVERRIDES}
 
-backend: network
-	@if [ -f docker-compose-local.yml ];then\
-		DC_LOCAL="-f docker-compose-local.yml";\
-	fi;\
-	export BACKEND_ENV=production;\
-	${DC} -f docker-compose.yml $$DC_LOCAL up -d
+backend: network backend-config
+	@make -C ${BACKEND} backend ${MAKEOVERRIDES}
 
-backend-docker-check:
-	@BACKEND_APP_VERSION=$(make -C ${FRONTEND} version | awk '{print $$NF}');\
-	make -C ${APP_PATH}/${GIT_TOOLS} docker-push DC_IMAGE_NAME=${BACKEND_DC_IMAGE_NAME} APP_VERSION=${BACKEND_APP_VERSION} ${MAKEOVERRIDES}
-
+backend-docker-check: configure
+	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check \
+		DC_IMAGE_NAME=${BACKEND_DC_IMAGE_NAME}\
+		APP_VERSION=$(shell cd ${BACKEND} && make version | awk '{print $$NF}')
 
 frontend-clean: frontend-build-dir-clean
-	@rm ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION)
+	@(rm ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION) > /dev/null 2>&1 )|| exit 0;
 
 frontend-dev:
 ifneq "$(commit)" "$(lastcommit)"
@@ -176,7 +185,7 @@ frontend-build-check:
 	${DC} -f $(DC_BUILD_FRONTEND) config -q
 
 frontend-build-dir-clean:
-	@sudo rm -rf ${BUILD_DIR}
+	@(rm -rf ${BUILD_DIR} > /dev/null 2>&1 )|| exit 0;
 
 $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION): frontend-build-dir
 	${DC} -f $(DC_BUILD_FRONTEND) run -T --rm frontend-build tar czf - $$(basename /$(APP_GROUP)/dist) -C $$(dirname /$(APP_GROUP)/dist) > $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
@@ -188,17 +197,29 @@ frontend-package-dist: $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
 
 frontend-build: frontend-build-dist frontend-package-dist
 
+nginx-check-build:
+	${DC} -f $(DC_RUN_NGINX_FRONTEND) config -q
+
+nginx-build: $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) nginx-check-build
+	@echo building ${APP_GROUP} static nginx ${APP}
+	cp $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) ${NGINX}/
+	${DC} -f $(DC_RUN_NGINX_FRONTEND) build $(DC_BUILD_ARGS)
+
 frontend-stop:
 	${DC} -f ${DC_FILE}.yml down
 
-frontend: frontend-build
+frontend-docker-check: configure
+	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check DC_IMAGE_NAME=${DC_IMAGE_NAME} APP_VERSION=${APP_VERSION} ${MAKEOVERRIDES}
+
+frontend: frontend-docker-check
 	@echo docker-compose up matchID frontend
 	${DC} -f ${DC_FILE}.yml up -d
+	@timeout=${NGINX_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (curl -s --fail -XGET localhost:${PORT} > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo "waiting for nginx to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; exit $$ret
 
-stop: backend-stop
+stop: backend-stop frontend-stop
 	@echo all components stopped
 
-build: frontend-build
+build: frontend-build nginx-build
 
 start: backend frontend
 

@@ -31,7 +31,7 @@
       </div>
       <div id="navMenubd-main" class="navbar-menu" :class="[{'is-active': burger}]" >
         <div class="navbar-start">
-          <div class="navbar-item has-dropdown is-hoverable">
+          <div v-if="false" class="navbar-item has-dropdown is-hoverable">
             <router-link
               :to="{name: 'home'}"
               class="navbar-link"
