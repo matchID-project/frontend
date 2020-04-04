@@ -10,3 +10,4 @@ esdata
 .lastcommit
 configure
 matchID-frontend*
+nginx/dist

@@ -54,7 +54,7 @@ export FILE_FRONTEND_APP_VERSION = $(APP_GROUP)-$(APP)-$(APP_VERSION).tar.gz
 export FILE_FRONTEND_DIST_APP_VERSION = $(APP_GROUP)-$(APP)-$(APP_VERSION)-dist.tar.gz
 export FILE_FRONTEND_DIST_LATEST_VERSION = $(APP_GROUP)-$(APP)-latest-dist.tar.gz
 
-export BUILD_DIR=${FRONTEND}/dist
+export BUILD_DIR=${FRONTEND}/nginx/dist
 export DC_BUILD_FRONTEND=${DC_FILE}-build.yml
 
 #temp fix before updating
@@ -130,7 +130,7 @@ backend-docker-check:
 
 
 frontend-clean: frontend-build-dir-clean
-
+	@rm ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION)
 
 frontend-dev:
 ifneq "$(commit)" "$(lastcommit)"
@@ -179,13 +179,14 @@ frontend-build-dir-clean:
 	@sudo rm -rf ${BUILD_DIR}
 
 $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION): frontend-build-dir
-	${DC} -f $(DC_BUILD_FRONTEND) run -T --rm frontend-build tar czf - $$(basename /$(APP)/public) -C $$(dirname /$(APP)/public) > $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
+	${DC} -f $(DC_BUILD_FRONTEND) run -T --rm frontend-build tar czf - $$(basename /$(APP_GROUP)/dist) -C $$(dirname /$(APP_GROUP)/dist) > $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
 	  cp $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION)
 	if [ -f $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) ]; then ls -alsrt  $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) && sha1sum $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) ; fi
 	if [ -f $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION) ]; then ls -alsrt  $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION) && sha1sum $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION) ; fi
 
-frontend-build: frontend-build-dist $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
+frontend-package-dist: $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
 
+frontend-build: frontend-build-dist frontend-package-dist
 
 frontend-stop:
 	${DC} -f ${DC_FILE}.yml down
