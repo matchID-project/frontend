@@ -131,7 +131,7 @@ backend-dev: network backend-config
 	@make -C ${BACKEND} backend-dev ${MAKEOVERRIDES}
 
 backend: network backend-config
-	@make -C ${BACKEND} backend ${MAKEOVERRIDES}
+	@make -C ${BACKEND} wait-backend ${MAKEOVERRIDES}
 
 backend-docker-check: configure backend-config
 	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check \
