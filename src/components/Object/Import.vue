@@ -47,7 +47,7 @@ export default {
     connector: upload
     table: {table}
     type: csv
-    sep: "\\\\s+|,|;"
+    sep: "\\\\t|,|;"
     encoding: "utf8"`
     }
   },
