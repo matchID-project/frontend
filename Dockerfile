@@ -73,7 +73,7 @@ ARG PORT
 
 EXPOSE ${PORT}
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "serve"]
 
 ################################
 # Step 3:   "build" target     #

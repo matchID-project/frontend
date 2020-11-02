@@ -41,7 +41,7 @@
                         <div class="icon">
                           <i class="fa fa-spinner fa-spin"></i>
                         </div>
-                      </div>                      
+                      </div>
                    </div>
                   </router-link>
                 </li>
@@ -132,9 +132,6 @@ export default {
       runningJobs: {},
       doneJobs: {},
       log: null,
-      arrLength: 1,
-      warningIndicator: false,
-      warningNumber: 0,
       warningFilter: false,
       filter: '',
       // pagination
@@ -163,15 +160,23 @@ export default {
     parsedLog () {
       if (this.log) {
         let arr = this.filteredLog
-        this.warningNumber = arr.filter(v => { return v.match('Ooops') }).length
-        this.warningIndicator = (this.warningNumber > 0)
-        this.arrLength = arr.length
         let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil((arr.length - 1) / this.pageSize)))
         if (pageMax < this.pageCurrent) {
           this.setPageCurrent(pageMax)
         }
         return arr.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
+      } else {
+        return []
       }
+    },
+    arrLength () {
+      return this.filteredLog.length;
+    },
+    warningNumber () {
+      return this.filteredLog.filter(v => { return v.match('Ooops') }).length
+    },
+    warningIndicator () {
+      return this.warningNumber > 0
     },
     groupedRecipes () {
       return this.$lodash.groupBy(this.doneJobs, v => { return v.recipe })
@@ -212,14 +217,14 @@ export default {
     getRunningLog (recipe) {
       this.evtSource = new EventSource(this.apiUrl + 'recipes/' + recipe + '/log')
       let that = this
-      this.evtSource.addEventListener('open', function (e) {
+      this.evtSource.addEventListener('open', function () {
         that.log = []
       }, false)
       this.evtSource.addEventListener('message', function (e) {
         that.log = that.log.concat(e.data.split('\n'))
         that.setPageCurrent(Math.ceil(that.log.length / that.pageSize))
       }, false)
-      this.evtSource.addEventListener('close', function (e) {
+      this.evtSource.addEventListener('close', function () {
         that.evtSource.close()
       }, false)
     }

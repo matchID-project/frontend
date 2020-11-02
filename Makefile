@@ -163,16 +163,12 @@ dev-stop: backend-stop frontend-dev-stop network-stop
 
 ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION):
 	( cd ${FRONTEND} && tar -zcvf $(FILE_FRONTEND_APP_VERSION) \
-		index.html \
 		package.json \
         src \
-        static \
-		.babelrc \
+        public \
+		babel.config.js \
+		vue.config.js \
 		.editorconfig \
-		.eslintrc.js \
-		.eslintignore \
-		build \
-		config \
 		)
 
 frontend-build-dist: ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION) frontend-build-check

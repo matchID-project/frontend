@@ -62,7 +62,7 @@ export default {
       }
 
       this.$http.delete(url)
-        .then(response => {
+        .then(() => {
           setTimeout(() => {
             this.loadingAction = false
             this.actionFinished = true

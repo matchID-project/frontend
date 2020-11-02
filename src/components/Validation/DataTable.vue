@@ -302,7 +302,7 @@ export default {
     updateData (entry, type) {
       if (type === 'done') {
         if (entry.validation_done) {
-          this.updateDone(entry, this.actions.action.indecision_display).then(response => {
+          this.updateDone(entry, this.actions.action.indecision_display).then(() => {
             entry.validation = 'success'
           }, error => {
             console.log(error)
@@ -310,7 +310,7 @@ export default {
             entry.validation_done = false
           })
         } else {
-          this.updateCancel(entry).then(response => {
+          this.updateCancel(entry).then(() => {
             entry.validation = 'success'
           }, error => {
             console.log(error)
@@ -319,7 +319,7 @@ export default {
           })
         }
       } else {
-        this.updateDone(entry, this.actions.action.indecision_display).then(response => {
+        this.updateDone(entry, this.actions.action.indecision_display).then(() => {
           entry.validation = 'success'
           entry.validation_done = true
         }, error => {

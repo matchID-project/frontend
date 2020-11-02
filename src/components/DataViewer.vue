@@ -9,6 +9,7 @@
                 <select v-model="pageSize">
                   <option
                     v-for="n in 10"
+                    :key="n"
                     :value="50 * n"
                   >
                     {{50 * n}}
@@ -90,10 +91,10 @@
           <tr>
             <th class="has-background-white-ter is-paddingless is-fullheight" rowspan="2" scope="col"></th>
             <th
-              v-for="column in computedColumns"
+              v-for="column in computedColumns.filter(c => c.display)"
+              :key="column.field"
               class="has-background-white-ter is-fullheight"
               :title="column.field"
-              v-if="column.display"
               rowspan="1"
               scope="col"
             >
@@ -102,8 +103,8 @@
           </tr>
           <tr ref="row">
             <th
-              v-for="column in computedColumns"
-              v-if="column.display"
+              v-for="column in computedColumns.filter(c => c.display)"
+              :key="column.field"
               class="is-paddingless"
               scope="col"
               rowspan="1"
@@ -149,9 +150,8 @@
               </span>
             </td>
             <td
-              v-for="column in computedColumns"
+              v-for="column in computedColumns.filter(c => c.display)"
               :key="column.field"
-              v-if="column.display"
             >
               {{ entry[column.field] }}
             </td>
@@ -190,7 +190,6 @@ export default {
       sortOrders: sortOrders,
       // pagination
       pageCurrent: 1,
-      dataLength: 1,
       pageSize: 5
     }
   },
@@ -205,6 +204,9 @@ export default {
         })
       })
       return cols
+    },
+    dataLength () {
+      return this.data.length
     },
     computedData () {
       let sortKey = this.sortKey
@@ -227,8 +229,6 @@ export default {
           return (a === b ? 0 : a > b ? 1 : -1) * order
         })
       }
-
-      this.dataLength = data.length
 
       return data.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
     }

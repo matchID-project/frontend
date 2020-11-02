@@ -314,7 +314,7 @@
                 <hr class="dropdown-divider">
                 <router-link
                   :to="{ name: 'job', params: { job: job.recipe}}"
-                  class="navbar-item" v-for="(job, index) in runningJobs" :key="job.index"
+                  class="navbar-item" v-for="job in runningJobs" :key="job.index"
                 >
                   {{ job.recipe }} <br/> {{ job.date }}
                 </router-link>
@@ -332,7 +332,7 @@
                 <router-link
                   :to="{ name: 'job', params: { job: job.recipe}}"
                   v-else
-                  class="navbar-item" v-for="(job, index) in doneJobs.slice(0,10)" :key="job.index"
+                  class="navbar-item" v-for="job in doneJobs.slice(0,10)" :key="job.index"
                 >
                   {{ job.recipe }} <br/> {{ job.date }}
                 </router-link>
@@ -431,7 +431,7 @@
                     @click="displayGraph = true"
                   ></i>
                 </span>
-                <a class="mID-unclickable">
+                <a class="mID-unclickable" style="padding-top:0px;padding-bottom:0px;">
                   <span>{{ $route.params.project }}</span>
                 </a>
               </li>
@@ -620,7 +620,7 @@ export default {
     },
     logout () {
       this.$http.post(this.apiUrl + 'logout/')
-        .then(response => {
+        .then(() => {
           this.$router.push({name: 'login'})
         })
     },
@@ -685,7 +685,7 @@ export default {
       this.clickPossible = false
       this.stoppingStatus = false
       this.$http.put(this.apiUrl + 'recipes/' + recipe + '/run')
-        .then(response => {
+        .then(() => {
           setTimeout(() => { this.clickPossible = true }, 6 * 1000)
         })
     },
@@ -694,7 +694,7 @@ export default {
       this.stoppingStatus = true
 
       this.$http.put(this.apiUrl + 'recipes/' + recipe + '/stop')
-        .then(response => {
+        .then(() => {
           this.clickPossible = true
         })
     },

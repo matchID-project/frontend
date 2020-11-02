@@ -61,15 +61,11 @@ services:
       APP: ${APP_NAME}
     volumes:
       - ${FRONTEND}/package.json:/${APP_NAME}/package.json
-      - ${FRONTEND}/index.html:/${APP_NAME}/index.html
       - ${FRONTEND}/src:/${APP_NAME}/src
-      - ${FRONTEND}/.babelrc:/${APP_NAME}/.babelrc
+      - ${FRONTEND}/babel.config.js:/${APP_NAME}/babel.config.js
+      - ${FRONTEND}/vue.config.js:/${APP_NAME}/vue.config.js
       - ${FRONTEND}/.editorconfig:/${APP_NAME}/.editorconfig
-      - ${FRONTEND}/.eslintrc.js:/${APP_NAME}/.eslintrc.js
-      - ${FRONTEND}/.eslintignore:/${APP_NAME}/.eslintignore
-      - ${FRONTEND}/build:/${APP_NAME}/build
-      - ${FRONTEND}/static:/${APP_NAME}/static
-      - ${FRONTEND}/config:/${APP_NAME}/config
+      - ${FRONTEND}/public:/${APP_NAME}/public
 
 networks:
   default:

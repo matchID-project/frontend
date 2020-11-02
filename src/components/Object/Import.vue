@@ -63,7 +63,7 @@ export default {
       data = { yaml: this.datasetYaml.replace(/\{name\}/mg, name).replace(/\{table\}/mg, table) }
 
       this.$http.post(url, data)
-        .then(response => {
+        .then(() => {
           setTimeout(() => {
             this.loadingAction = false
             this.actionFinished = true

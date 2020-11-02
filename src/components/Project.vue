@@ -37,17 +37,17 @@
 
             <div class="box" v-if="!$lodash.isEmpty(datasets)">
               <div class="menu">
-                <template
-                  v-for="type in ['upload', 'elasticsearch']"
+                <div
+                  v-for="(type, id) in ['upload', 'elasticsearch']"
+                  :key="id"
                 >
                   <p class="menu-label">
                     {{ type }}
                   </p>
                   <ul class="menu-list">
                     <li
-                      v-for="(dataset, key) in orderedDatasets"
+                      v-for="(dataset, key) in orderedDatasets.filter(d => d.connector === type)"
                       :key="dataset.table"
-                      v-if="dataset.connector == type"
                     >
                       <router-link
                         :to="{ name: 'dataset', params: { dataset: key}}"
@@ -60,7 +60,7 @@
                       </ul>
                     </li>
                   </ul>
-                </template>
+                </div>
               </div>
             </div>
 
