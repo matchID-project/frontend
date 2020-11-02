@@ -14,8 +14,10 @@
           </div>
         </header>
         <section class="modal-card-body">
-          <figure class="avatar">
-            <img class="image is-128x128" src="../assets/img/matchID-logo-square.png">
+          <figure style="padding-bottom:20px;margin-top:0px;" >
+            <div style="overflow:hidden;height:132px;width:132px;padding: 5px;margin-left: auto;margin-right: auto;background: #fff;border-radius: 50%;box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);">
+              <img class="image is-128x128" style="margin-top:-5px;" src="../assets/img/matchID-logo-square.svg">
+            </div>
           </figure>
           <div class="field">
             <div class="control is-large">
@@ -62,10 +64,12 @@
                 <span class="icon" v-show="error"><i class="fa fa-times" aria-hidden="true"></i></span>
                 <span> {{ localization.login.button[lang] }} </span>
               </a>
-              <a v-for="(provider, name) in socialProviders" v-if="provider.active"
+              <a
+                v-for="(provider, name) in socialProvidersActive"
+                :key="name"
                 class="button is-fullwidth"
-                 :class="provider.color"
-                 :href="apiUrl+'authorize/'+name">
+                :class="provider.color"
+                :href="apiUrl+'authorize/'+name">
               <span> <i class="icon fa" :class="provider.icon"/> {{ localization.login[name][lang] }} </span>
               </a>
             </p>
@@ -125,7 +129,7 @@ export default {
   created () {
     console.log('creation ici')
     this.$http.get(this.apiUrl + 'authorize/').then((response) => {
-      response.body.providers.forEach((provider, i) => {
+      response.body.providers.forEach(provider => {
         this.socialProviders[provider].active = true
       })
     })
@@ -136,6 +140,18 @@ export default {
     () => {
       this.logged = false
     })
+  },
+  computed: {
+    socialProvidersActive () {
+      let dic={};
+      Object.keys(this.socialProviders).forEach(name => {
+        if (this.socialProviders[name].active) {
+          dic[name] = this.socialProviders[name];
+        }
+      });
+      return dic;
+    }
+
   }
 }
 </script>

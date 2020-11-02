@@ -21,7 +21,11 @@
             ></stats-chart>
           </div>
           <div class="card-footer has-text-centered">
-            <div class="card-footer-item" v-for="agg in (scores.aggs !== undefined) ? Object.keys(scores.aggs) : []">
+            <div
+              class="card-footer-item"
+              v-for="(agg, id) in (scores.aggs !== undefined) ? Object.keys(scores.aggs) : []"
+              :key=id
+            >
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>

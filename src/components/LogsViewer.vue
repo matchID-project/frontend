@@ -39,9 +39,8 @@
           </div>
           <div v-if="tab === 'test'">
             <div
-              v-for="(line, index) in arrayTestLogs"
-              v-if="index + 1 !== arrayTestLogs.length"
-              :key="line.index"
+              v-for="(line, index) in arrayTestLogs.filter((l, i) => i + 1 !== arrayTestLogs.length)"
+              :key="index"
               :class="{'has-text-danger is-size-6' : line.match('Ooops')}">
               <span class="icon is-small" v-if="line.match('Ooops')"><i class="fa fa-warning" aria-hidden="true"></i></span>
               <span class="icon is-small" v-else><i class="fa fa-circle-o" aria-hidden="true"></i></span>
@@ -50,14 +49,13 @@
           </div>
           <div v-if="tab === 'real'">
             <div
-              v-for="(line, index) in arrayRealLogs"
-              v-if="(index + 1 !== arrayRealLogs.length) && ((index <= 100) || (index > (arrayRealLogs.length - 100)))"
-              :key="line.index"
+              v-for="(line, index) in arrayRealLogs.filter((l, i) => (i + 1 !== arrayRealLogs.length) && ((i <= 100) || (i > (arrayRealLogs.length - 100))))"
+              :key="index"
               :class="{'has-text-danger is-size-6' : line.match('Ooops')}">
               <span class="icon is-small" v-if="line.match('Ooops')"><i class="fa fa-warning" aria-hidden="true"></i></span>
               <span class="icon is-small" v-else><i class="fa fa-circle-o" aria-hidden="true"></i></span>
               <span v-if="index != 100">{{ line }}</span>
-              <span v-else> <<< complete logs were cut for display performance >>> </span>
+              <span v-else> &lt;&lt;&lt; complete logs were cut for display performance &gt;&gt;&gt; </span>
             </div>
           </div>
         </div>
@@ -78,8 +76,6 @@ export default {
   data () {
     return {
       evtSource: null,
-      warningIndicatorTest: false,
-      warningIndicatorReal: false,
       realLogs: '',
       realLogsLoading: false,
       lastLogsLoaded: false,
@@ -101,13 +97,17 @@ export default {
   computed: {
     arrayTestLogs () {
       let arr = this.content.split('\n')
-      this.warningIndicatorTest = arr.some(v => { return v.match('Ooops') })
       return arr
     },
     arrayRealLogs () {
       let arr = this.realLogs.split('\n').reverse().filter(l => { return l.length > 0 })
-      this.warningIndicatorReal = arr.some(v => { return v.match('Ooops') })
       return arr
+    },
+    warningIndicatorTest () {
+      return this.arrayTestLogs.some(v => { return v.match('Ooops') })
+    },
+    warningIndicatorReal () {
+      return this.arrayRealLogs.some(v => { return v.match('Ooops') })
     }
   },
   methods: {
@@ -130,14 +130,14 @@ export default {
       this.evtSource = new EventSource(this.apiUrl + 'recipes/' + recipe + '/log')
       this.realLogsLoading = true
       let that = this
-      this.evtSource.addEventListener('open', function (e) {
+      this.evtSource.addEventListener('open', function () {
         that.tab = 'real'
         that.realLogs = 'Recipe is currently processing\n'
       }, false)
       this.evtSource.addEventListener('message', function (e) {
         that.realLogs = that.realLogs + e.data + '\n'
       }, false)
-      this.evtSource.addEventListener('close', function (e) {
+      this.evtSource.addEventListener('close', function () {
         that.evtSource.close()
         that.realLogsLoading = false
       }, false)

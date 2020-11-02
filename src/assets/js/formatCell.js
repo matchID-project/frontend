@@ -56,7 +56,7 @@ function formatNumber (value) {
   return (value === undefined) ? '' : String(value)
 }
 
-function formatUndefined (value) {
+function formatUndefined () {
   return '<span class="has-text-grey-light">NA</span>'
 }
 

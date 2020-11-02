@@ -1,11 +1,8 @@
-build
-config
 docker-compose-build.yml
 docker-compose.yml
 Dockerfile
-index.html
 nginx
 package.json
+public
 src
-static
 tagfiles.version

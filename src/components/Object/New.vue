@@ -100,7 +100,7 @@ export default {
       }
 
       this.$http[method](url, data)
-        .then(response => {
+        .then(() => {
           setTimeout(() => {
             this.loadingAction = false
             this.actionFinished = true

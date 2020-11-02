@@ -24,7 +24,6 @@
             <i @click="showShortcuts = true" class="card-header-icon fa fa-question" aria-hidden="true"></i>
           </div>
         </header>
-        </header>
         <div class="card-content is-paddingless" style="height: calc(100% - 72px)">
           <yaml-editor
             :codeData="code"
@@ -43,7 +42,7 @@
                 @click="fireCodeSaving()"
                 v-shortkey="['ctrl', 's']"
                 @shortkey="fireCodeSaving()">
-            <i class="card-footer-icon mID-margin-right-8" 
+            <i class="card-footer-icon mID-margin-right-8"
               :class="[{'fa fa-times': (failedSave === true)},
                        {'fa fa-save': (loadingSave === false) && (completedSave === false) && (failedSave === false)},
                        {'fa fa-spinner fa-spin': loadingSave === true},
