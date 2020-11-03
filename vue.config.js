@@ -4,15 +4,16 @@
 const path = require('path')
 
 module.exports = {
-  // publicPath: `${process.env.APP_NAME}`,
+  publicPath: `/${process.env.APP_NAME}/`,
   outputDir: 'dist',
   runtimeCompiler: true,
   productionSourceMap: true,
+  lintOnSave: process.env.NODE_ENV !== 'production',
   devServer: {
     public: 'http://0.0.0.0/',
     overlay: true,
     host: '0.0.0.0',
-    port: process.env.FRONTEND_DEV_PORT,
+    port: process.env.VUE_FRONTEND_DEV_PORT,
     hot: true,
     disableHostCheck: true,
     watchOptions: {

@@ -93,6 +93,7 @@ ARG app_pkg
 ENV APP ${app_name}
 ENV APP_PKG ${app_pkg}
 ENV APP_VERSION ${app_ver}
+ENV APP_NAME ${app_name}
 
 # VOLUME /$app_path/build
 
