@@ -163,7 +163,7 @@ export default {
       required: true,
       type: Object
     },
-    data: {
+    inputData: {
       required: true,
       type: Array
     },
@@ -184,10 +184,12 @@ export default {
       elasticsearchResponseData: {},
       activeRow: 0,
       screenHeightMiddle: 0,
-      shortcutsActivation: false
+      shortcutsActivation: false,
+      data: []
     }
   },
   mounted () {
+    this.data = this.inputData;
     const scrollManagerCallbacks = {}
     Object.assign(scrollManagerCallbacks, {
       reachedStart: () => this.$refs.tableHeaderRef.release(),
