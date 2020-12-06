@@ -352,9 +352,15 @@ export default {
       return this.updateDocument(entry['_id'], script)
     },
     updateDocument (id, script) {
+      console.log({
+        index: this.elasticsearch.index,
+        id: id,
+        body: {
+          'script': script
+        }
+      })
       return this.esClient.update({
         index: this.elasticsearch.index,
-        type: this.elasticsearch.type,
         id: id,
         body: {
           'script': script
