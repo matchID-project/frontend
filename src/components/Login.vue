@@ -127,7 +127,6 @@ export default {
     }
   },
   created () {
-    console.log('creation ici')
     this.$http.get(this.apiUrl + 'authorize/').then((response) => {
       response.body.providers.forEach(provider => {
         this.socialProviders[provider].active = true

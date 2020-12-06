@@ -17,7 +17,7 @@
     "crypto-js": "^3.1.8",
     "d3": "^5.15.1",
     "diff": "^4.0.2",
-    "elasticsearch": "^16.7.1",
+    "elasticsearch": "^16.7.2",
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",

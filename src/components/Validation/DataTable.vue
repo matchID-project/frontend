@@ -71,7 +71,7 @@
                           :value="entry.validation_decision"
                           :color="{checked: '#00d1b2', unchecked: '#ff3860'}"
                           :sync="true"
-                          :labels="{checked: 'I', unchecked: 'O'}"
+                          :labels="{checked: 'ok', unchecked: 'ko'}"
                           @change="updateData(entry, 'decision')"
                         />
                       </label>
@@ -99,7 +99,7 @@
                           v-model="entry.validation_done"
                           :value="entry.validation_done"
                           color="#363636"
-                          :labels="{checked: '<span class=\'icon is-small\'><i class=\'fa fa-small fa-check\'></i></span>', unchecked: ''}"
+                          :labels="{checked: '✅', unchecked: 'O'}"
                           :sync="true"
                           @change="updateData(entry, 'done')"
                         />
@@ -163,7 +163,7 @@ export default {
       required: true,
       type: Object
     },
-    data: {
+    inputData: {
       required: true,
       type: Array
     },
@@ -184,10 +184,12 @@ export default {
       elasticsearchResponseData: {},
       activeRow: 0,
       screenHeightMiddle: 0,
-      shortcutsActivation: false
+      shortcutsActivation: false,
+      data: []
     }
   },
   mounted () {
+    this.data = this.inputData;
     const scrollManagerCallbacks = {}
     Object.assign(scrollManagerCallbacks, {
       reachedStart: () => this.$refs.tableHeaderRef.release(),
@@ -350,9 +352,15 @@ export default {
       return this.updateDocument(entry['_id'], script)
     },
     updateDocument (id, script) {
+      console.log({
+        index: this.elasticsearch.index,
+        id: id,
+        body: {
+          'script': script
+        }
+      })
       return this.esClient.update({
         index: this.elasticsearch.index,
-        type: this.elasticsearch.type,
         id: id,
         body: {
           'script': script

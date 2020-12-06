@@ -76,7 +76,10 @@ export default {
   props: {
     pageSize: Number,
     lengthData: Number,
-    pageCurrent: Number
+    pageCurrent: {
+      type: Number,
+      default: 1
+    }
   },
   data () {
     return {
@@ -91,12 +94,8 @@ export default {
   },
   methods: {
     setPageCurrent (page) {
-      this.pageCurrent = page
       this.$emit('pageChanged', page)
     }
-  },
-  mounted: function () {
-    this.pageCurrent = 1
   }
 }
 </script>
