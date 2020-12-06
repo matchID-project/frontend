@@ -158,7 +158,7 @@
     </template>
 
     <data-table
-      :data="filteredData"
+      :inputData="filteredData"
       :columns="columns"
       :scores="scores"
       :view="view"
