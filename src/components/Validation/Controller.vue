@@ -142,8 +142,9 @@
         </slot>
       </message>
 
+
       <statistics
-        v-show="actions.display && statisticsShow"
+        v-if="actions.display && statisticsShow"
         @close="statisticsShow = false"
         :dataResults="statisticsResults"
         :scores="scores"
@@ -361,10 +362,9 @@ export default {
         return Number.parseInt(v)
       })
     },
-    statisticsRender () {
+    async statisticsRender () {
+      await this.getStatistics()
       this.statisticsShow = true
-
-      this.getStatistics()
     },
     getStatistics () {
       this.getElasticsearchStatistics().then(response => {
@@ -408,7 +408,7 @@ export default {
               aggs: {
                 distinct: {
                   cardinality: {
-                    field: this.scores.id || 'matchid_id'
+                    field: this.scores.id || 'matchid_id.keyword'
                   }
                 }
               }
@@ -425,7 +425,7 @@ export default {
               aggs: {
                 distinct: {
                   cardinality: {
-                    field: this.scores.id || 'matchid_id'
+                    field: this.scores.id || 'matchid_id.keyword'
                   }
                 }
               }

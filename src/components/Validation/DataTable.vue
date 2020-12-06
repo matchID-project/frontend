@@ -71,7 +71,7 @@
                           :value="entry.validation_decision"
                           :color="{checked: '#00d1b2', unchecked: '#ff3860'}"
                           :sync="true"
-                          :labels="{checked: 'I', unchecked: 'O'}"
+                          :labels="{checked: 'ok', unchecked: 'ko'}"
                           @change="updateData(entry, 'decision')"
                         />
                       </label>
@@ -99,7 +99,7 @@
                           v-model="entry.validation_done"
                           :value="entry.validation_done"
                           color="#363636"
-                          :labels="{checked: '<span class=\'icon is-small\'><i class=\'fa fa-small fa-check\'></i></span>', unchecked: ''}"
+                          :labels="{checked: '✅', unchecked: 'O'}"
                           :sync="true"
                           @change="updateData(entry, 'done')"
                         />
