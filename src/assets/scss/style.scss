@@ -49,7 +49,6 @@ html, body {
   font-weight: bolder;
   font-family: monospace;
   font-size: 24px;
-  background-color: $turquoise;
   color: $white;
 }
 
@@ -199,8 +198,10 @@ html, body {
 
 .is-overflowed-x {
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .is-overflowed-y {
   overflow-y: auto;
+  overflow-x: hidden;
 }

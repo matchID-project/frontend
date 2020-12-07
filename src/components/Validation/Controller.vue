@@ -11,8 +11,9 @@
                 <span class="select">
                   <select v-model='selectedSearchField'>
                     <option :value="'random'">Random</option>
-                    <option
+                    <option 
                       v-for="column in columns"
+                      :key="column.Label"
                       :value="Array.isArray(column.field) ? column.field.join() : column.field"
                       v-show="column.searchable"
                     >
@@ -141,8 +142,9 @@
         </slot>
       </message>
 
+
       <statistics
-        v-show="actions.display && statisticsShow"
+        v-if="actions.display && statisticsShow"
         @close="statisticsShow = false"
         :dataResults="statisticsResults"
         :scores="scores"
@@ -157,7 +159,7 @@
     </template>
 
     <data-table
-      :data="filteredData"
+      :inputData="filteredData"
       :columns="columns"
       :scores="scores"
       :view="view"
@@ -282,12 +284,12 @@ export default {
           if (this.displayOnlyUndone || !element._source.validation_done) {
             if (this.actions.display) {
               if (this.scores.column) {
-                element._source.validation_decision = !element._source.validation_decision ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
+                element._source.validation_decision = (element._source.validation_decision === undefined) ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
 
-                element._source.validation_done = !element._source.validation_done ? false : element._source.validation_done
+                element._source.validation_done = (element._source.validation_done === undefined) ? false : element._source.validation_done
 
                 if (this.actions.action.indecision_display) {
-                  element._source.validation_indecision = !element._source.validation_indecision ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
+                  element._source.validation_indecision = (element._source.validation_indecision === undefined) ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
                 }
               } else {
                 element._source.validation_decision = !element._source.validation_decision ? false : element._source.validation_decision
@@ -331,7 +333,12 @@ export default {
             query: {
               function_score: {
                 query: {
-                  match_all: {}
+                  range: {
+                    [this.scores.column]: {
+                      'gte': this.valuesRangeSlider[0],
+                      'lte': this.valuesRangeSlider[1]
+                    }
+                  }
                 },
                 functions: [
                   {
@@ -355,10 +362,9 @@ export default {
         return Number.parseInt(v)
       })
     },
-    statisticsRender () {
+    async statisticsRender () {
+      await this.getStatistics()
       this.statisticsShow = true
-
-      this.getStatistics()
     },
     getStatistics () {
       this.getElasticsearchStatistics().then(response => {
@@ -368,30 +374,68 @@ export default {
       })
     },
     getElasticsearchStatistics () {
+      let aggs = {}
+      if (this.scores.aggs !== undefined) {
+        aggs = this.$lodash.clone(this.scores.aggs)
+      }
+      aggs.decision = {
+        terms: {
+          field: 'validation_decision'
+        }
+      }
+      aggs.done = {
+        filter: {
+          exists: {
+            field: 'validation_done'
+          }
+        }
+      }
+
       return this.esClient.search({
         index: this.elasticsearch.index,
         size: 0,
         body: {
           aggs: {
+            threshold: {
+              filter: {
+                range: {
+                  [this.scores.column]: {
+                    'gte': this.scores.preComputed.decision,
+                    'lte': this.valuesRangeSlider[1]
+                  }
+                }
+              },
+              aggs: {
+                distinct: {
+                  cardinality: {
+                    field: this.scores.id || 'matchid_id.keyword'
+                  }
+                }
+              }
+            },
+            range: {
+              filter: {
+                range: {
+                  [this.scores.column]: {
+                    'gte': this.valuesRangeSlider[0],
+                    'lte': this.valuesRangeSlider[1]
+                  }
+                }
+              },
+              aggs: {
+                distinct: {
+                  cardinality: {
+                    field: this.scores.id || 'matchid_id.keyword'
+                  }
+                }
+              }
+            },
             scores: {
               histogram: {
                 field: 'confiance',
                 interval: this.scores.statisticsInterval
               },
-              aggs: {
-                decision: {
-                  terms: {
-                    field: 'validation_decision'
-                  }
-                },
-                done: {
-                  filter: {
-                    exists: {
-                      field: 'validation_done'
-                    }
-                  }
-                }
-              }
+              aggs: aggs
             }
           }
         }

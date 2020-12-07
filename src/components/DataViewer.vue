@@ -1,14 +1,15 @@
 <template>
-  <section class="is-fullheight">
+  <section class="is-fullheight" ref="datatable">
     <div class="box is-marginless">
-      <div class="field is-horizontal">
-        <div class="field-body">
-          <div class="field is-narrow">
+      <div class="field is-horizontal" ref="navtable">
+        <div class="columns">
+          <div class="column is-narrow is-hidden">
             <div class="control">
               <div class="select is-small">
                 <select v-model="pageSize">
                   <option
                     v-for="n in 10"
+                    :key="n"
                     :value="50 * n"
                   >
                     {{50 * n}}
@@ -17,12 +18,14 @@
               </div>
             </div>
           </div>
+          <div class="column is-4">
           <pagination
             :pageSize="pageSize"
             :lengthData="dataLength"
             :pageCurrent="pageCurrent"
             @pageChanged="v => {pageCurrent = v}"
           ></pagination>
+        </div>
           <!-- <div class="field is-narrow">
             <div class="control">
               <div class="select is-small">
@@ -37,7 +40,7 @@
               </div>
             </div>
           </div> -->
-          <div class="field">
+          <div class="column is-narrow">
             <p class="control is-expanded has-icons-left">
               <input
                 v-model="colFilter"
@@ -50,7 +53,8 @@
               </span>
             </p>
           </div>
-          <div class="field has-addons">
+          <div class="column">
+            <div class="field is-narrow has-addons">
             <p class="control has-icons-left">
               <input
                 v-model="rowSearch"
@@ -76,31 +80,35 @@
               </span>
             </p>
           </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="is-overflowed" style="height: calc(100% - 53.375px)">
-      <table class='table is-narrow is-bordered is-hoverable is-size-7'>
-        <thead id="general-thead">
+    <div class="is-overflowed-x" style="height: 100%">
+      <table  class='table is-narrow is-bordered is-hoverable is-size-7'>
+        <thead id="general-thead" ref="headertable">
           <tr>
-            <th class="has-background-white-ter is-paddingless is-fullheight" rowspan="2"></th>
+            <th class="has-background-white-ter is-paddingless is-fullheight" rowspan="2" scope="col"></th>
             <th
-              v-for="column in computedColumns"
+              v-for="column in computedColumns.filter(c => c.display)"
+              :key="column.field"
               class="has-background-white-ter is-fullheight"
               :title="column.field"
-              v-if="column.display"
               rowspan="1"
+              scope="col"
             >
               {{column.label}}
             </th>
           </tr>
-          <tr>
+          <tr ref="row">
             <th
-              v-for="column in computedColumns"
-              v-if="column.display"
+              v-for="column in computedColumns.filter(c => c.display)"
+              :key="column.field"
               class="is-paddingless"
+              scope="col"
               rowspan="1"
+
             >
               <div class="card">
                 <div class="card-footer">
@@ -142,9 +150,8 @@
               </span>
             </td>
             <td
-              v-for="column in computedColumns"
+              v-for="column in computedColumns.filter(c => c.display)"
               :key="column.field"
-              v-if="column.display"
             >
               {{ entry[column.field] }}
             </td>
@@ -182,9 +189,8 @@ export default {
       sortKey: '',
       sortOrders: sortOrders,
       // pagination
-      pageSize: 50,
       pageCurrent: 1,
-      dataLength: 1
+      pageSize: 5
     }
   },
   computed: {
@@ -198,6 +204,9 @@ export default {
         })
       })
       return cols
+    },
+    dataLength () {
+      return this.data.length
     },
     computedData () {
       let sortKey = this.sortKey
@@ -221,8 +230,6 @@ export default {
         })
       }
 
-      this.dataLength = data.length
-
       return data.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
     }
   },
@@ -238,7 +245,17 @@ export default {
     },
     exists (key, word) {
       return String(word).toLowerCase().indexOf(key) > -1
+    },
+    handleResize () {
+      this.pageSize = Math.min(Math.floor((this.$refs.datatable.clientHeight - this.$refs.navtable.clientHeight - this.$refs.headertable.clientHeight) / this.$refs.row.clientHeight), this.dataLength)
     }
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleResize)
+  },
+  mounted () {
+    this.handleResize()
+    window.addEventListener('resize', this.handleResize)
   }
 }
 </script>

@@ -41,7 +41,7 @@
                         <div class="icon">
                           <i class="fa fa-spinner fa-spin"></i>
                         </div>
-                      </div>                      
+                      </div>
                    </div>
                   </router-link>
                 </li>
@@ -128,12 +128,10 @@ export default {
   },
   data () {
     return {
+      evtSource: null,
       runningJobs: {},
       doneJobs: {},
       log: null,
-      arrLength: 1,
-      warningIndicator: false,
-      warningNumber: 0,
       warningFilter: false,
       filter: '',
       // pagination
@@ -150,19 +148,10 @@ export default {
       this.getLog(this.$route.params.job)
     }
   },
-  mounted () {
+  created () {
     this.getJobs()
-
-    window.bus.$on('updateJobs', v => {
-      this.runningJobs = v.running
-      this.doneJobs = v.done
-    })
-
-    if (this.$route.name === 'job') {
-      this.interval.jobs = setInterval(() => {
-        this.getLog(this.$route.params.job)
-      }, 5000)
-    }
+  },
+  mounted () {
   },
   computed: {
     filteredLog () {
@@ -171,15 +160,23 @@ export default {
     parsedLog () {
       if (this.log) {
         let arr = this.filteredLog
-        this.warningNumber = arr.filter(v => { return v.match('Ooops') }).length
-        this.warningIndicator = (this.warningNumber > 0)
-        this.arrLength = arr.length
         let pageMax = Math.max(1, Math.min(this.pageCurrent, Math.ceil((arr.length - 1) / this.pageSize)))
         if (pageMax < this.pageCurrent) {
           this.setPageCurrent(pageMax)
         }
         return arr.slice((this.pageCurrent - 1) * this.pageSize, this.pageCurrent * this.pageSize)
+      } else {
+        return []
       }
+    },
+    arrLength () {
+      return this.filteredLog.length;
+    },
+    warningNumber () {
+      return this.filteredLog.filter(v => { return v.match('Ooops') }).length
+    },
+    warningIndicator () {
+      return this.warningNumber > 0
     },
     groupedRecipes () {
       return this.$lodash.groupBy(this.doneJobs, v => { return v.recipe })
@@ -195,17 +192,41 @@ export default {
         .then(response => {
           this.runningJobs = response.body.running
           this.doneJobs = response.body.done
+          if (this.$route.name === 'job') {
+            this.getLog(this.$route.params.job)
+          }
         })
     },
     getLog (recipe) {
-      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
-        .then(response => {
-          let arr = response.body.split('\n')
-          if ((this.log === null) || (arr.length !== this.log.length)) {
-            this.log = arr
-            this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
-          }
-        })
+      if (this.runningJobs.some(r => { return r.recipe === recipe })) {
+        this.getRunningLog(recipe)
+      } else {
+        this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
+          .then(response => {
+            let arr = response.body.split('\n')
+            if ((this.log === null) || (arr.length !== this.log.length)) {
+              this.log = arr
+              this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
+            }
+          })
+        if (this.evtSource !== null) {
+          this.evtSource.close()
+        }
+      }
+    },
+    getRunningLog (recipe) {
+      this.evtSource = new EventSource(this.apiUrl + 'recipes/' + recipe + '/log')
+      let that = this
+      this.evtSource.addEventListener('open', function () {
+        that.log = []
+      }, false)
+      this.evtSource.addEventListener('message', function (e) {
+        that.log = that.log.concat(e.data.split('\n'))
+        that.setPageCurrent(Math.ceil(that.log.length / that.pageSize))
+      }, false)
+      this.evtSource.addEventListener('close', function () {
+        that.evtSource.close()
+      }, false)
     }
   }
 }

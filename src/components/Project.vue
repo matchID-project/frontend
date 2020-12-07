@@ -3,10 +3,20 @@
     <div class="hero">
       <section class="hero is-info">
         <div class="hero-body">
-          <div class="container">
-            <h1 class="title">
-              {{ $route.params.project }}
-            </h1>
+          <div class="level">
+            <div class="level-left">
+              <h1 class="level-item title">
+                {{ $route.params.project }}
+              </h1>
+            </div>
+            <div class="level-right is-hidden-mobile">
+              <h1 class="level-item title"
+                  @click="deleteObject = { name: $route.params.project,
+                                           type: 'project',
+                                           display: true }">
+                <i class="fa fa-trash"/>
+              </h1>
+            </div>
           </div>
         </div>
       </section>
@@ -27,17 +37,17 @@
 
             <div class="box" v-if="!$lodash.isEmpty(datasets)">
               <div class="menu">
-                <template
-                  v-for="type in ['upload', 'elasticsearch']"
+                <div
+                  v-for="(type, id) in ['upload', 'elasticsearch']"
+                  :key="id"
                 >
                   <p class="menu-label">
                     {{ type }}
                   </p>
                   <ul class="menu-list">
                     <li
-                      v-for="(dataset, key) in orderedDatasets"
+                      v-for="(dataset, key) in orderedDatasets.filter(d => d.connector === type)"
                       :key="dataset.table"
-                      v-if="dataset.connector == type"
                     >
                       <router-link
                         :to="{ name: 'dataset', params: { dataset: key}}"
@@ -50,7 +60,7 @@
                       </ul>
                     </li>
                   </ul>
-                </template>
+                </div>
               </div>
             </div>
 
@@ -60,7 +70,7 @@
                   <div class="hero-body">
                     <div class="container">
                       <h5 class="title is-5">
-                        <span class="icon mID-margin-right-8"><i class="fa fa-download" aria-hidden="true"></i></span>
+                        <span class="icon mID-margin-right-8"><i class="fa fa-cloud-upload" aria-hidden="true"></i></span>
                         <span>{{ localization.object.import.dataset[lang] }}</span>
                       </h5>
                     </div>
@@ -143,17 +153,27 @@
       :display="importObjectDisplay"
       @close="importObjectDisplay = false"
     ></import-object>
+
+    <delete-object
+      :display="deleteObject.display"
+      :type="deleteObject.type"
+      :name="deleteObject.name"
+      @close="deleteObject.display = false"
+    ></delete-object>
+
   </div>
 </template>
 
 <script>
 import NewObject from './Object/New'
 import ImportObject from './Object/Import'
+import DeleteObject from './Object/Delete'
 
 export default {
   components: {
     NewObject,
-    ImportObject
+    ImportObject,
+    DeleteObject
   },
   data () {
     return {
@@ -163,6 +183,11 @@ export default {
       newObject: {
         display: false,
         type: null
+      },
+      deleteObject: {
+        display: false,
+        type: null,
+        name: null
       },
       importObjectDisplay: false
     }
@@ -183,34 +208,13 @@ export default {
       return ordered
     }
   },
-  watch: {
-    '$route.params.project' () {
-      this.getDependencies(this.$route.params.project)
-    }
-  },
   created () {
-    this.getDatasets(this.$route.params.project)
-
-    this.getRecipes(this.$route.params.project)
-  },
-  methods: {
-    getDependencies (project) {
-      this.getDatasets(project)
-
-      this.getRecipes(project)
-    },
-    getDatasets (project) {
-      this.$http.get(this.apiUrl + 'datasets')
-        .then(response => {
-          this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
-        })
-    },
-    getRecipes (project) {
-      this.$http.get(this.apiUrl + 'recipes')
-        .then(response => {
-          this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
-        })
-    }
+    window.bus.$on('reloadDatasets', (datasets) => {
+      this.datasets = datasets
+    })
+    window.bus.$on('reloadRecipes', (recipes) => {
+      this.recipes = recipes
+    })
   }
 }
 </script>

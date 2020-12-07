@@ -1,32 +1,26 @@
-version: '2'
+version: '3.4'
 
 services:
   frontend-build:
-    build: 
-      context: .
-      dockerfile: Dockerfile.build
+    build:
+      context: ${FRONTEND}
+      dockerfile: Dockerfile
       args:
-        proxy: ${http_proxy}
-    image: matchid-front:latest
-    container_name: matchid-front-build
-    volumes:
-      - ./index.html:/matchid/index.html
-      - ./.babelrc:/matchid/.babelrc
-      - ./.editorconfig:/matchid/.editorconfig 
-      - ./.eslintignore:/matchid/.eslintignore
-      - ./.eslintrc.js:/matchid/.eslintrc.js 
-      - ./matchIdConfig:/matchid/matchIdConfig/
-      - ./config:/matchid/config/
-      - ./src:/matchid/src/
-      - ./build:/matchid/build/
-      - ./dist:/matchid/dist/
-    ports:
-      - "8080:8080"
-
- 
-
-
-
-
-
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+        no_proxy: ${no_proxy}
+        npm_registry: ${NPM_REGISTRY}
+        sass_registry: ${SASS_REGISTRY}
+        MIRROR_DEBIAN: ${MIRROR_DEBIAN}
+        app_path: /${APP_NAME}
+        app_name: ${APP_NAME}
+        app_pkg: ${APP_GROUP}-${APP}
+        app_ver: ${APP_VERSION}
+        api_path: ${API_PATH}
+        NPM_FIX: ${NPM_FIX}
+        NPM_LATEST: ${NPM_LATEST}
+        NPM_GIT: ${NPM_GIT}
+        NPM_VERBOSE: ${NPM_VERBOSE}
+    image: ${DC_PREFIX}-${APP}-build:${APP_VERSION}
+    container_name: ${DC_PREFIX}-${APP}-build
 

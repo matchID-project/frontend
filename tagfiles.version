@@ -1,0 +1,8 @@
+docker-compose-build.yml
+docker-compose.yml
+Dockerfile
+nginx
+package.json
+public
+src
+tagfiles.version

@@ -4,6 +4,7 @@
       <th class="head-centered" v-show="view.display">{{view.column_name}}</th>
       <th
         v-for="column in columns"
+        :key="column.label"
         v-show="column.display"
         :class="column.appliedClass ? column.appliedClass.head : ''"
       >

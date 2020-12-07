@@ -64,7 +64,7 @@ export default {
     connector: upload
     table: {table}
     type: csv
-    sep: "\\\\s+|,|;"
+    sep: "\\\\t|,|;"
     encoding: "utf8"`,
         recipe: `recipes:
   {}:
@@ -100,7 +100,7 @@ export default {
       }
 
       this.$http[method](url, data)
-        .then(response => {
+        .then(() => {
           setTimeout(() => {
             this.loadingAction = false
             this.actionFinished = true

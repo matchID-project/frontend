@@ -1,0 +1,79 @@
+upstream frontend-dev {
+  server <FRONTEND_DEV_HOST>:<FRONTEND_DEV_PORT>;
+}
+
+upstream backend {
+  server <BACKEND_HOST>:<BACKEND_PORT>;
+}
+
+server {
+  listen 80 default_server;
+
+  # frontend (dev, npm server)
+  location / {
+    limit_req zone=app burst=10 nodelay;
+    limit_req_status 429;
+  	proxy_pass http://frontend-dev;
+    # Allow protocol upgrade to websocket
+    proxy_http_version 1.1;
+    proxy_next_upstream off;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+
+  location ~ (^/$) {
+    limit_req zone=app burst=10 nodelay;
+    limit_req_status 429;
+    try_files $uri @rew;
+  }
+
+  location @rew {
+    return 302 $scheme://$http_host/<APP_NAME>/;
+  }
+
+  location /<APP_NAME> {
+      proxy_pass http://frontend-dev;
+      # Allow protocol upgrade to websocket
+      proxy_http_version 1.1;
+      proxy_next_upstream off;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+  }
+
+  location ~ (^/socksjs-node/.*) {
+        proxy_pass http://frontend-dev;
+      # Allow protocol upgrade to websocket
+      proxy_http_version 1.1;
+      proxy_next_upstream off;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+  }
+
+  location ~ "^<API_PATH>.*" {
+    add_header Access-Control-Allow-Origin '$http_origin';
+    limit_req zone=api burst=<API_USER_BURST>;
+    limit_req zone=server burst=<API_GLOBAL_BURST>;
+    limit_req_status 429;
+    proxy_pass http://backend;
+    proxy_read_timeout 3600;
+    proxy_send_timeout 600;
+    # Allow large uploads
+    client_max_body_size 0;
+    # Allow protocol upgrade to websocket
+    proxy_http_version 1.1;
+    proxy_next_upstream off;
+    proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+    proxy_set_header X-Forwarded-For $http_x_forwarded_for;
+    proxy_set_header X-Forwarded-Host $http_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+
+}

@@ -21,11 +21,10 @@
                  @mouseup="drop()"
                  v-if="bounds.minX">
 
-                <defs>
-                  <template v-for="color in Object.keys(colors)">
-                    <marker  :id="'arrow-'+color" viewBox="0 0 20 15" refX="1" refY="5"
+                <defs v-for="color in Object.keys(colors)" :key="color">
+                    <marker :id="'arrow-'+color" viewBox="0 0 20 15" refX="1" refY="5"
                         markerWidth="9" markerHeight="9" orient="auto"
-                        >
+                    >
                       <path :fill="colors[color]" d="M 5 0 L 20 5 L 5 10 z"  ></path>
                     </marker>
                     <marker  :id="'circle-'+color" viewBox="0 0 10 10" refX="5" refY="5"
@@ -34,7 +33,6 @@
                       <circle :fill="colors[color]" cx="5" cy="5" r="3"  ></circle>
                     </marker>
 
-                  </template>
                 </defs>
 
               <!-- <polyline v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
@@ -46,7 +44,7 @@
                     >
               </polyline> -->
 
-              <path v-for="link in links" v-show="linkStatus(link) !== 'hidden'"
+              <path v-for="link in links" :key="link" v-show="linkStatus(link) !== 'hidden'"
                     :d="pathFromLink(link)"
                     :stroke="colors[linkStatus(link)]"
                     :stroke-width="strokes[linkStatus(link)]"
@@ -56,40 +54,42 @@
                     >
               </path>
 
-              <template v-for="(node, i) in nodes" >
-                <g :transform="'translate(' + coords[i].x + ',' + coords[i].y + ')'">
-                  <title> {{node.type}}: {{node.name}}</title>
-                  <circle v-show="node.show"
-                          :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
-                          :stroke="colors[node.type]"
-                          :stroke-width="strokes[nodeStatus(node)]"
-                          @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
-                          @click="toggle(node)"
-                          >
-                  </circle>
-                  <g class="transform-origin: center center">
-                    <icon
-                          v-show="node.active"
-                          :x="-7.5 * scale[nodeStatus(node)]"
-                          :y="-7.5 * scale[nodeStatus(node)]"
-                          :scale="scale[nodeStatus(node)]"
-                          :name="icons[nodeStatus(node)]"
-                          :color="colors[nodeStatus(node)]"
-                    >
-                    </icon>
-                  </g>
-                  <text
-                    v-show="node.active"
-                    :y="25 * scale[nodeStatus(node)]"
-                    :fill="colors[node.type]"
-                    class="is-small"
-                    text-anchor="middle"
-                    >
-
-                          {{node.name}}
-                  </text>
+              <g
+                v-for="(node, i) in nodes"
+                :key="i"
+                :transform="'translate(' + coords[i].x + ',' + coords[i].y + ')'"
+              >
+                <title> {{node.type}}: {{node.name}}</title>
+                <circle v-show="node.show"
+                        :r="circles[nodeStatus(node)] * scale[nodeStatus(node)]" fill="white"
+                        :stroke="colors[node.type]"
+                        :stroke-width="strokes[nodeStatus(node)]"
+                        @mousedown="currentMove = {x: $event.screenX, y: $event.screenY, node: node}"
+                        @click="toggle(node)"
+                        >
+                </circle>
+                <g class="transform-origin: center center">
+                  <icon
+                        v-show="node.active"
+                        :x="-7.5 * scale[nodeStatus(node)]"
+                        :y="-7.5 * scale[nodeStatus(node)]"
+                        :scale="scale[nodeStatus(node)]"
+                        :name="icons[nodeStatus(node)]"
+                        :color="colors[nodeStatus(node)]"
+                  >
+                  </icon>
                 </g>
-              </template>
+                <text
+                  v-show="node.active"
+                  :y="25 * scale[nodeStatus(node)]"
+                  :fill="colors[node.type]"
+                  class="node-title"
+                  text-anchor="middle"
+                  >
+
+                        {{node.name}}
+                </text>
+              </g>
 
 
             </svg>
@@ -121,8 +121,8 @@ export default {
     return {
       nodes: []
         // .concat([{name: this.project, type: 'project', props: { project: this.project }, x: this.width / 2, y: this.height / 2, fixed: false, rank: 0}])
-        .concat(Object.keys(this.datasets).map((name, index) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), dbtype: this.datasets[name].connector, active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
-        .concat(Object.keys(this.recipes).map((name, index) => ({name: name, type: 'recipe', active: (this.recipes[name].project === this.project), show: (this.recipes[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
+        .concat(Object.keys(this.datasets).map((name) => ({name: name, type: 'dataset', show: (this.datasets[name].project === this.project), dbtype: this.datasets[name].connector, active: (this.datasets[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
+        .concat(Object.keys(this.recipes).map((name) => ({name: name, type: 'recipe', active: (this.recipes[name].project === this.project), show: (this.recipes[name].project === this.project), x: this.width / 2, y: this.height / 2, fixed: false})))
         .concat(),
       links: [],
       width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * 0.7,
@@ -580,5 +580,9 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   width: 90%
+}
+.node-title {
+  font-size: 14px;
+  font-weight: 300;
 }
 </style>

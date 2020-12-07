@@ -2,7 +2,7 @@
   <section class="section" id="home">
     <div class="container">
       <div class="columns is-multiline is-9">
-        <div class="column is-half" v-for="project in orderedProjects" :key="project.key">
+        <div class="column is-half" v-for="project in projects" :key="project.key">
           <router-link class="hero is-link box" :to="{ name: 'project', params: { project: project}}">
             <div class="hero-body">
               <div class="container">
@@ -53,16 +53,15 @@ export default {
       }
     }
   },
-  computed: {
-    orderedProjects () {
-      return this.$lodash.sortBy(this.projects)
-    }
-  },
   created () {
-    this.$http.get(this.apiUrl + 'conf')
-      .then(response => {
-        this.projects = Object.keys(response.body.projects)
-      })
+    setTimeout(() => {
+      if (this.projects.length === 0) {
+        window.bus.$emit('reloadNav')
+      }
+    }, 2000)
+    window.bus.$on('reloadProjects', (projects) => {
+      this.projects = projects
+    })
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <nav
     v-if="maxPage > 1"
-    class="field pagination is-narrow is-small is-centered"
+    class="field pagination is-small is-centered"
   >
     <a
       class="pagination-previous is-paddingless is-marginless"
@@ -24,7 +24,10 @@
         >1</a>
       </li>
       <template v-if="maxPage <= 7">
-        <li v-for="n in maxPage - 1" v-if="n > 1">
+        <li
+          v-for="n in [...Array(maxPage - 1).keys()].filter(x => x > 1)"
+          :key="n"
+        >
           <a
             class="pagination-link"
             :class="{'is-current' : n === pageCurrent}"
@@ -40,7 +43,7 @@
           <li><a class="pagination-link" @click="setPageCurrent(pageCurrent + 1)">{{pageCurrent + 1}}</a></li>
         </template>
         <template v-else>
-          <li v-for="n in 4">
+          <li v-for="n in 4" :key="n">
             <a
               class="pagination-link"
               :class="{'is-current' : n + 1 === pageCurrent}"
@@ -73,7 +76,10 @@ export default {
   props: {
     pageSize: Number,
     lengthData: Number,
-    pageCurrent: Number
+    pageCurrent: {
+      type: Number,
+      default: 1
+    }
   },
   data () {
     return {
@@ -88,12 +94,8 @@ export default {
   },
   methods: {
     setPageCurrent (page) {
-      this.pageCurrent = page
       this.$emit('pageChanged', page)
     }
-  },
-  mounted: function () {
-    this.pageCurrent = 1
   }
 }
 </script>

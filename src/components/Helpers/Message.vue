@@ -45,12 +45,12 @@
     methods: {
     },
     mounted () {
-      window.bus.$on('projectChange', function (project) {
+      window.bus.$on('projectChange', function () {
         window.bus.$emit('error', {display: false, message: '', type: 'success'})
         // vue.editor.setValue('')
       })
 
-      window.bus.$on('objectChange', function (loading) {
+      window.bus.$on('objectChange', function () {
         window.bus.$emit('error', {display: false, message: '', type: 'success'})
       })
     }

@@ -47,6 +47,8 @@ export default {
         return 'warning'
       } else if (this.value >= this.colors.danger) {
         return 'danger'
+      } else {
+        return 'primary'
       }
     }
   }

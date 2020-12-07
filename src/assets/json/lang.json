@@ -5,6 +5,10 @@
   ],
   "default": "fr",
   "global": {
+    "shutdown": {
+      "en": "Restart server",
+      "fr": "Arrêter le serveur"
+    },
     "refresh_list": {
       "en": "Refresh list",
       "fr": "Rafraîchir la liste"
@@ -32,6 +36,10 @@
         "en": "search",
         "fr": "filtre"
       }
+    },
+    "connectors": {
+      "en": "Connectors",
+      "fr": "Connecteurs"
     },
     "projects":{
       "en": "Projects",
@@ -61,7 +69,77 @@
     },
     "statistics": {
       "en": "Statistics",
-      "fr": "Statistiques"
+      "fr": "Statistiques",
+      "labels": {
+        "threshold": {
+          "en": "Decision threshold",
+          "fr": "Seuil de décision",
+          "true": {
+            "en": "> Threshold",
+            "fr": "> Seuil"
+          }
+        },
+        "distinct": {
+          "en": "Distincts",
+          "fr": "Distincts"
+        },
+        "total": {
+          "en": "Total pairs",
+          "fr": "Paires totales"
+        },
+        "done": {
+          "en": "Annotated",
+          "fr": "Annotés"
+        },
+        "decision": {
+          "true": {
+            "en": "Positives",
+            "fr": "Positifs"
+          },
+          "false": {
+            "en": "Negatives",
+            "fr": "Négatifs"
+          }
+        },
+        "evaluation": {
+          "precision": {
+            "en": "Precision",
+            "fr": "Précision"
+          },
+          "recall": {
+            "en": "Recall",
+            "fr": "Rappel"
+          },
+          "f1": {
+            "en": "F1-score",
+            "fr": "F1-score"
+          },
+          "null": {
+            "en": "N/A",
+            "fr": "N/D"
+          },
+          "true": {
+            "true": {
+              "en": "True postives",
+              "fr": "Vrais positifs"
+            },
+            "false": {
+              "en": "False positives",
+              "fr": "Faux positifs"
+            }
+          },
+          "false": {
+            "true": {
+              "en": "Missed",
+              "fr": "Manqués"
+            },
+            "false": {
+              "en": "True negatives",
+              "fr": "Vrais négatifs"
+            }
+          }
+        }
+      }
     },
     "shortcuts": {
       "title": {
@@ -128,7 +206,7 @@
       },
       "general": {
         "en": "Most of standard shortcuts on text editors work when your cursor is inside editor.<br/><br/> Some important ones :",
-        "fr": "La plupart des raccourcis clavier classiques d'un éditeur focntionnent ici.<br/><br/> Quelques raccourcis importants :"
+        "fr": "La plupart des raccourcis clavier classiques d'un éditeur fonctionnent ici.<br/><br/> Quelques raccourcis importants :"
       },
       "save": {
         "en": "Save",
@@ -183,6 +261,20 @@
       "fr": "Arrêt"
     }
   },
+  "dataset": {
+    "validation": {
+      "en": "Validation",
+      "fr": "Validation"
+    },
+    "configure": {
+      "en": "Configure",
+      "fr": "Configurer"
+    },
+    "export": {
+      "en": "Sample",
+      "fr": "Echantillon"
+    }
+  },
   "viewLog": {
     "error": {
       "en": "Warning - bug(s) in recipe : please check log",
@@ -191,6 +283,10 @@
   },
   "object": {
     "new": {
+      "connector": {
+        "en": "New connector",
+        "fr": "Nouveau connecteur"
+      },
       "project": {
         "en": "New project",
         "fr": "Nouveau projet"
@@ -218,6 +314,34 @@
         "fr": "Importer"
       }
     },
+    "cancel": {
+      "action": {
+        "en": "Cancel",
+        "fr": "Annuler"
+      }
+    },
+    "delete": {
+      "project": {
+        "en": "Delete project",
+        "fr": "Supprimer le projet"
+      },
+      "recipe": {
+        "en": "Delete recipe",
+        "fr": "Supprimer la recette"
+      },
+      "dataset": {
+        "en": "Delete dataset",
+        "fr": "Supprimer le dataset"
+      },
+      "action": {
+        "en": "Delete",
+        "fr": "Supprimer"
+      },
+      "message": {
+        "en": "It will not be possible to roll back after this deletion",
+        "fr": "L'action entraînera une suppresssion définitive"
+      }
+    },
     "name": {
       "project": {
         "en": "Project name",
@@ -237,6 +361,46 @@
     "title": {
       "en": "Project graph",
       "fr": "Graphe du projet"
+    }
+  },
+  "login": {
+    "title": {
+      "en": "Log in",
+      "fr": "Connexion"
+    },
+    "subtitle": {
+      "en": "Please enter your id and password",
+      "fr": "Saisissez votre identifiant et mot de passe"
+    },
+    "placeholder": {
+      "id": {
+        "en": "enter your id here",
+        "fr": "votre identifiant"
+      },
+      "password": {
+        "en": "your password here",
+        "fr": "votre mot de passe"
+      }
+    },
+    "button": {
+      "en": "Log in",
+      "fr": "Connectez-vous"
+    },
+    "remember": {
+      "en": "Remember me",
+      "fr": "Se souvenir de moi"
+    },
+    "github": {
+      "en": "with GitHub",
+      "fr": "avec GitHub"
+    },
+    "facebook": {
+      "en": "with Facebook",
+      "fr": "avec Facebook"
+    },
+    "twitter": {
+      "en": "with Twitter",
+      "fr": "avec Twitter"
     }
   }
 }

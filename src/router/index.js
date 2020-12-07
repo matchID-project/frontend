@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import Login from '@/components/Login'
 import Project from '@/components/Project'
 import Recipe from '@/components/Recipe'
 import Dataset from '@/components/Dataset'
@@ -13,6 +14,7 @@ export default new Router({
   mode: 'history',
   routes: [
     {name: 'root', path: '/matchID', redirect: { name: 'home' }},
+    {name: 'login', path: '/matchID/login', component: Login},
     {name: 'home', path: '/matchID/projects', component: Home},
     {name: 'jobs', path: '/matchID/jobs', component: Jobs},
     {name: 'job', path: '/matchID/jobs/:job', component: Jobs},
