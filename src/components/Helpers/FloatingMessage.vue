@@ -9,7 +9,7 @@
           </div>
 
           <div class="column is-4">
-            <transition name="slide-fade" v-for="message in messages" :key="message">
+            <transition name="slide-fade" v-for="message in messages" :key="message.title">
               <article class="message" :class="message.type"  v-if="message.display" >
                 <div class="message-header">
                   <p>{{message.title}}</p>

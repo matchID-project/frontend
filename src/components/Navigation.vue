@@ -76,7 +76,7 @@
               <router-link
                 class="navbar-item"
                 v-else
-                v-for="connector in orderedConnectors"
+                v-for="connector in connectors"
                 :key="connector.key"
                 :class="{'is-active' : connector === $route.params.connector}"
                 :to="{ name: 'connector', params: { connector: connector}}"
@@ -131,7 +131,7 @@
               <router-link
                 class="navbar-item"
                 v-else
-                v-for="project in orderedProjects"
+                v-for="project in projects"
                 :key="project.key"
                 :class="{'is-active' : project === $route.params.project}"
                 :to="{ name: 'project', params: { project: project}}"
@@ -587,12 +587,6 @@ export default {
     }
   },
   computed: {
-    orderedConnectors () {
-      return this.$lodash.sortBy(this.connectors)
-    },
-    orderedProjects () {
-      return this.$lodash.sortBy(this.projects)
-    },
     orderedDatasets () {
       let ordered = {}
       this.$lodash(this.datasets).keys().sort().each(key => {
@@ -632,7 +626,7 @@ export default {
       this.loadingConnectors = true
       this.$http.get(this.apiUrl + 'connectors/')
         .then(response => {
-          this.connectors = Object.keys(response.body)
+          this.connectors = Object.keys(response.body).sort()
           window.bus.$emit('reloadConnectors', this.connectors)
           setTimeout(() => { this.loadingConnectors = false }, 500)
         })
@@ -641,7 +635,7 @@ export default {
       this.loadingProjects = true
       this.$http.get(this.apiUrl + 'conf/')
         .then(response => {
-          this.projects = Object.keys(response.body.projects)
+          this.projects = Object.keys(response.body.projects).sort()
           window.bus.$emit('reloadProjects', this.projects)
           setTimeout(() => { this.loadingProjects = false }, 500)
         })

@@ -84,7 +84,7 @@
               <div class="level-item has-text-centered">
                 <div>
                   <p class="heading has-text-info" style="color:rgba(150,177,224,1)">{{ localization.validation.statistics.labels.threshold.true[lang] }}</p>
-                  <p class="has-text-info" style="color:rgba(150,177,224,1)">{{ statisticsRendered.threshold.total.true }}</p>
+                  <p class="has-text-info" style="color:rgba(150,177,224,1)"> {{ statisticsRendered.threshold.total.true }}</p>
                 </div>
               </div>
             </div>
@@ -163,11 +163,11 @@ export default {
   computed: {
     statisticsRendered () {
       let data = {}
+      console.log(this.dataResults);
       let choice = ['decision', 'threshold', 'true', 'false']
       let pick = ['false', 'true']
-
       if (Object.keys(this.dataResults).length > 0) {
-        data.total = this.dataResults.hits.total
+        data.total = this.dataResults.hits.total.value
         data.distinct = {
           total: this.dataResults.aggregations.range.distinct.value,
           threshold: data.distinct = this.dataResults.aggregations.threshold.distinct.value
