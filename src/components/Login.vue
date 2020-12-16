@@ -135,7 +135,7 @@ export default {
     })
     this.$http.get(this.apiUrl + 'login/').then((response) => {
       this.logged = true
-      window.bus.$emit('changeUser', response.body.user)
+      window.bus.$emit('changeUser', response.body && response.body.user)
     },
     () => {
       this.logged = false
