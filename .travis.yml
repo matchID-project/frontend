@@ -28,7 +28,7 @@ before_script:
   - docker version
 
 script:
-  - git fetch --unshallow && git tag -l
+  - git fetch && git tag -l
   - make frontend-docker-check ||
     make build backend-docker-check up &&
     if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( ( "$TRAVIS_BRANCH" == "master" ) || ( "$TRAVIS_BRANCH" == "dev" ) ) ]]; then
