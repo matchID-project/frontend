@@ -6,6 +6,7 @@
 ##############################################
 
 SHELL=/bin/bash
+OS_TYPE := $(shell cat /etc/os-release | grep -E '^NAME=' | sed 's/^.*debian.*$$/DEB/I;s/^.*ubuntu.*$$/DEB/I;s/^.*fedora.*$$/RPM/I;s/.*centos.*$$/RPM/I;')
 export DEBIAN_FRONTEND=noninteractive
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 #matchID default exposition port
@@ -53,7 +54,7 @@ export BACKEND_DC_IMAGE_NAME=${DC_PREFIX}-${GIT_BACKEND}
 dummy		    := $(shell touch artifacts)
 include ./artifacts
 
-tag                 := $(shell git describe --tags | sed 's/-.*//')
+tag                 := $(shell [ -f "/usr/bin/git" ] && git describe --tags | sed 's/-.*//')
 version 			:= $(shell cat tagfiles.version | xargs -I '{}' find {} -type f -not -name '*.tar.gz'  | sort | xargs cat | sha1sum - | sed 's/\(......\).*/\1/')
 export APP_VERSION =  ${tag}-${version}
 
@@ -81,18 +82,25 @@ include /etc/os-release
 version:
 	@echo ${APP_GROUP} ${APP} ${APP_VERSION}
 
-configure:
-	# this proc relies on matchid/tools and works both local and remote
-	@sudo apt-get install make -yq
+config:
+	@if [ ! -f "/usr/bin/git" ];then\
+		if [ "${OS_TYPE}" = "DEB" ]; then\
+			sudo apt-get install git -yq;\
+		fi;\
+		if [ "${OS_TYPE}" = "RPM" ]; then\
+			sudo yum install -y git;\
+		fi;\
+	fi
 	@if [ -z "${TOOLS_PATH}" ];then\
-		git clone ${GIT_ROOT}/${GIT_TOOLS};\
+		if [ ! -f "${APP_PATH}/${GIT_TOOLS}" ]; then\
+			git clone -q ${GIT_ROOT}/${GIT_TOOLS};\
+		fi;\
 		make -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
 	else\
 		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
 	fi
 	cp artifacts ${APP_PATH}/${GIT_TOOLS}/
-	@ln -s ${APP_PATH}/${GIT_TOOLS}/aws ${APP_PATH}/aws
-	@touch configure
+	@touch config
 
 config-clean:
 	@(rm -rf tools aws configure > /dev/null 2>&1 )|| exit 0;
@@ -135,7 +143,7 @@ backend-dev: network backend-config
 backend: network backend-config
 	@make -C ${BACKEND} backend ${MAKEOVERRIDES}
 
-backend-docker-check: configure backend-config
+backend-docker-check: config backend-config
 	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check \
 		DC_IMAGE_NAME=${BACKEND_DC_IMAGE_NAME}\
 		APP_VERSION=$(shell cd ${BACKEND} && make version | awk '{print $$NF}')
@@ -205,7 +213,7 @@ nginx-build: $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) nginx-check-build
 frontend-stop:
 	${DC} -f ${DC_FILE}.yml down
 
-frontend-docker-check: configure
+frontend-docker-check: config
 	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check DC_IMAGE_NAME=${DC_IMAGE_NAME} APP_VERSION=${APP_VERSION} ${MAKEOVERRIDES}
 
 frontend-docker-push:
