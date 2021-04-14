@@ -61,7 +61,7 @@ export APP_VERSION =  ${tag}-${version}
 commit 				= ${APP_VERSION}
 lastcommit          := $(shell touch .lastcommit && cat .lastcommit)
 date                := $(shell date -I)
-id                  := $(shell cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+id                  := $(shell openssl rand -base64 8)
 
 vm_max_count		:= $(shell cat /etc/sysctl.conf | egrep vm.max_map_count\s*=\s*262144 && echo true)
 
