@@ -74,7 +74,7 @@ export DC_BUILD_FRONTEND=${DC_FILE}-build.yml
 export DC_RUN_NGINX_FRONTEND=${DC_FILE}.yml
 
 #temp fix before updating
-export NPM_FIX=true
+export NPM_AUDIT_IGNORE=true
 
 DC := 'docker-compose'
 include /etc/os-release
