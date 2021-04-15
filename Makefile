@@ -61,7 +61,7 @@ export APP_VERSION =  ${tag}-${version}
 commit 				= ${APP_VERSION}
 lastcommit          := $(shell touch .lastcommit && cat .lastcommit)
 date                := $(shell date -I)
-id                  := $(shell cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+id                  := $(shell openssl rand -base64 8)
 
 vm_max_count		:= $(shell cat /etc/sysctl.conf | egrep vm.max_map_count\s*=\s*262144 && echo true)
 
@@ -74,7 +74,7 @@ export DC_BUILD_FRONTEND=${DC_FILE}-build.yml
 export DC_RUN_NGINX_FRONTEND=${DC_FILE}.yml
 
 #temp fix before updating
-export NPM_FIX=true
+export NPM_AUDIT_IGNORE=true
 
 DC := 'docker-compose'
 include /etc/os-release
@@ -103,7 +103,7 @@ config:
 	@touch config
 
 config-clean:
-	@(rm -rf tools aws configure > /dev/null 2>&1 )|| exit 0;
+	@(rm -rf tools config > /dev/null 2>&1 )|| exit 0;
 
 docker-clean: stop
 	docker container rm matchid-build-front matchid-nginx
@@ -113,7 +113,7 @@ clean: frontend-clean config-clean
 network-stop:
 	docker network rm ${DC_NETWORK}
 
-network: configure
+network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
 backend-stop:
