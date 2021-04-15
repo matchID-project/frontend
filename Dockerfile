@@ -51,10 +51,12 @@ RUN if [ -z "${NPM_VERBOSE}" ]; then\
       npm install --verbose; \
     fi
 
-RUN if [ -z "${NPM_FIX}" ]; then \
-      npm audit --registry=https://registry.npmjs.org; \
-    else \
-      npm audit fix --registry=https://registry.npmjs.org; \
+RUN if [ -z "${NPM_AUDIT_IGNORE}" ]; then\
+      if [ -z "${NPM_FIX}" ]; then \
+        npm audit --registry=https://registry.npmjs.org; \
+      else \
+        npm audit fix --registry=https://registry.npmjs.org; \
+      fi;\
     fi
 ################################
 # Step 2: "development" target #

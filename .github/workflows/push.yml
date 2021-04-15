@@ -1,0 +1,29 @@
+name: push
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+jobs:
+  build:
+    name: 🐳 Build docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: build
+        if: success()
+        run: frontend-docker-check || make build backend-docker-check up
+        env:
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+      - name: publish
+        if: success()
+        run: make frontend-docker-push GIT_BRANCH="$GIT_BRANCH";
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
