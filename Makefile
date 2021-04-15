@@ -103,7 +103,7 @@ config:
 	@touch config
 
 config-clean:
-	@(rm -rf tools aws configure > /dev/null 2>&1 )|| exit 0;
+	@(rm -rf tools config > /dev/null 2>&1 )|| exit 0;
 
 docker-clean: stop
 	docker container rm matchid-build-front matchid-nginx
@@ -113,7 +113,7 @@ clean: frontend-clean config-clean
 network-stop:
 	docker network rm ${DC_NETWORK}
 
-network: configure
+network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
 backend-stop:
