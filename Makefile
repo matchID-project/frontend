@@ -55,7 +55,7 @@ dummy		    := $(shell touch artifacts)
 include ./artifacts
 
 tag                 := $(shell [ -f "/usr/bin/git" ] && git describe --tags | sed 's/-.*//')
-version 			:= $(shell cat tagfiles.version | xargs -I '{}' find {} -type f -not -name '*.tar.gz'  | sort | xargs cat | sha1sum - | sed 's/\(......\).*/\1/')
+version 			:= $(shell export LC_ALL=C;cat tagfiles.version | xargs -I '{}' find {} -type f -not -name '*.tar.gz'  | sort | xargs cat | sha1sum - | sed 's/\(......\).*/\1/')
 export APP_VERSION =  ${tag}-${version}
 
 commit 				= ${APP_VERSION}
