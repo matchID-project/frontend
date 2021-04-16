@@ -14,6 +14,9 @@ jobs:
         id: extract_branch
       - name: build
         if: success()
-        run: frontend-docker-check || make build backend-docker-check up
+        run: |
+          make version-files;
+          make version;
+          frontend-docker-check || make build backend-docker-check up
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
