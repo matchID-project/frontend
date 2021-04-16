@@ -82,6 +82,9 @@ include /etc/os-release
 version:
 	@echo ${APP_GROUP} ${APP} ${APP_VERSION}
 
+version-files:
+	@cat tagfiles.version | xargs -I '{}' find {} -type f -not -name '*.tar.gz'  | sort
+
 config:
 	@if [ ! -f "/usr/bin/git" ];then\
 		if [ "${OS_TYPE}" = "DEB" ]; then\
