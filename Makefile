@@ -149,7 +149,7 @@ backend: network backend-config
 backend-docker-check: config backend-config
 	@make -C ${APP_PATH}/${GIT_TOOLS} docker-check \
 		DC_IMAGE_NAME=${BACKEND_DC_IMAGE_NAME}\
-		APP_VERSION=$(shell cd ${BACKEND} && make version | awk '{print $$NF}')
+		APP_VERSION=$(shell cd ${BACKEND} && make version | grep backend | awk '{print $$NF}')
 
 frontend-clean: frontend-build-dir-clean
 	@(rm ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION) > /dev/null 2>&1 )|| exit 0;
@@ -196,7 +196,7 @@ frontend-build-dir-clean:
 	@(rm -rf ${BUILD_DIR} > /dev/null 2>&1 )|| exit 0;
 
 $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION): frontend-build-dir
-	${DC} -f $(DC_BUILD_FRONTEND) run -T --rm frontend-build tar czf - $$(basename /$(APP_GROUP)/dist) -C $$(dirname /$(APP_GROUP)/dist) > $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
+	${DC} -f $(DC_BUILD_FRONTEND) run -T --rm frontend-build tar czf - $$(basename /$(APP_GROUP)/dist) > $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION)
 	  cp $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION)
 	if [ -f $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) ]; then ls -alsrt  $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) && sha1sum $(BUILD_DIR)/$(FILE_FRONTEND_DIST_APP_VERSION) ; fi
 	if [ -f $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION) ]; then ls -alsrt  $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION) && sha1sum $(BUILD_DIR)/$(FILE_FRONTEND_DIST_LATEST_VERSION) ; fi
