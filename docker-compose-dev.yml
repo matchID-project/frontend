@@ -54,6 +54,7 @@ services:
         NPM_LATEST: ${NPM_LATEST}
         NPM_GIT: ${NPM_GIT}
         NPM_VERBOSE: ${NPM_VERBOSE}
+        NPM_AUDIT_IGNORE: ${NPM_AUDIT_IGNORE}
         FRONTEND_DEV_PORT: ${FRONTEND_DEV_PORT}
     image: ${DOCKER_USERNAME}/${DC_PREFIX}-frontend-development:${APP_VERSION}
     container_name: ${DC_PREFIX}-frontend-development
