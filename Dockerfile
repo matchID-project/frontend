@@ -1,4 +1,4 @@
-FROM node:slim as base
+FROM node:16-slim as base
 ARG proxy
 
 ARG http_proxy
@@ -11,6 +11,7 @@ ARG NPM_GIT
 ARG NPM_FIX
 ARG NPM_LATEST
 ARG NPM_VERBOSE
+ARG NPM_AUDIT_IGNORE
 ARG app_path
 ARG app_name
 ARG api_path
