@@ -589,22 +589,25 @@ export default {
   computed: {
     orderedDatasets () {
       let ordered = {}
-      this.$lodash(this.datasets).keys().sort().each(key => {
+      Object.keys(this.datasets).sort().each(key => {
         ordered[key] = this.datasets[key]
       })
       return ordered
     },
     orderedRecipes () {
       let ordered = {}
-      this.$lodash(this.recipes).keys().sort().each(key => {
+      Object.keys(this.recipes).sort().each(key => {
         ordered[key] = this.recipes[key]
       })
       return ordered
     }
   },
   methods: {
+    isEmpty (obj) {
+      return obj ? (Object.keys(obj).length === 0) : true;
+    },
     shutdown () {
-      this.$http.put(this.apiUrl + 'shutdown/')
+      fetch(this.apiUrl + 'shutdown/', {method: 'PUT'})
         .then(response => {
           window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-warning', message: response.body.message})
         },
@@ -613,7 +616,7 @@ export default {
         })
     },
     logout () {
-      this.$http.post(this.apiUrl + 'logout/')
+      fetch(this.apiUrl + 'logout/', {method: 'POST'})
         .then(() => {
           this.$router.push({name: 'login'})
         })
@@ -647,7 +650,7 @@ export default {
       }
     },
     getDatasets (project) {
-      this.$http.get(this.apiUrl + 'datasets/')
+      fetch(this.apiUrl + 'datasets/')
         .then(response => {
           this.allDatasets = response.body
           this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)

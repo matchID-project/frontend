@@ -222,7 +222,7 @@ export default {
     }
   },
   created () {
-    this.$http.put(this.apiUrl + 'datasets/' + this.$route.params.dataset + '/validation')
+    fetch(this.apiUrl + 'datasets/' + this.$route.params.dataset + '/validation', {method: put})
       .then(response => {
         this.columns = response.body.props.columns
         this.scores = response.body.props.scores
