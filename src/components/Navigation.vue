@@ -318,7 +318,7 @@
                 >
                   {{ job.recipe }} <br/> {{ job.date }}
                 </router-link>
-                <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
+                <div class="navbar-item" v-if="isEmpty(runningJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </div>
                 <hr class="dropdown-divider">
@@ -326,7 +326,7 @@
                   <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.done[lang]}}</h6>
                 </div>
                 <hr class="dropdown-divider">
-                <div class="navbar-item" v-if="$lodash.isEmpty(doneJobs)">
+                <div class="navbar-item" v-if="isEmpty(doneJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </div>
                 <router-link
@@ -653,7 +653,7 @@ export default {
       fetch(this.apiUrl + 'datasets/')
         .then(response => {
           this.allDatasets = response.body
-          this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
+          this.datasets = response.body.filter((v) => v.project === project)
           window.bus.$emit('reloadDatasets', this.datasets)
           setTimeout(() => { this.loadingDatasets = false }, 500)
         })
@@ -662,7 +662,7 @@ export default {
       this.$http.get(this.apiUrl + 'recipes/')
         .then(response => {
           this.allRecipes = response.body
-          this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
+          this.recipes = response.body.filter((v) => v.project === project)
           window.bus.$emit('reloadRecipes', this.recipes)
           setTimeout(() => { this.loadingRecipes = false }, 500)
         })

@@ -375,7 +375,7 @@ export default {
     getElasticsearchStatistics () {
       let aggs = {}
       if (this.scores.aggs !== undefined) {
-        aggs = this.$lodash.clone(this.scores.aggs)
+        aggs = {...this.scores.aggs}
       }
       aggs.decision = {
         terms: {

@@ -20,7 +20,7 @@
                 {{localization.navbar.jobs.running[lang]}}
               </p>
               <ul class="menu-list">
-                <li v-if="$lodash.isEmpty(runningJobs)">
+                <li v-if="isEmpty(runningJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </li>
                 <li v-else v-for="(job, key) in runningJobs" :key="key">
@@ -50,7 +50,7 @@
                 {{localization.navbar.jobs.done[lang]}}
               </p>
               <div class="menu-list">
-                <p v-if="$lodash.isEmpty(doneJobs)">
+                <p v-if="isEmpty(doneJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </p>
                 <p v-else v-for="(recipe, key) in groupedRecipes" :key="key">
@@ -179,10 +179,23 @@ export default {
       return this.warningNumber > 0
     },
     groupedRecipes () {
-      return this.$lodash.groupBy(this.doneJobs, v => { return v.recipe })
+      return this.groupBy(this.doneJobs, v => { return v.recipe })
     }
   },
   methods: {
+    isEmpty (obj) {
+      return obj ? (Object.keys(obj).length === 0) : true;
+    },
+    groupBy (arr, criteria) {
+	    return arr.reduce((obj, item) => {
+        const key = typeof criteria === 'function' ? criteria(item) : item[criteria];
+        if (!obj.hasOwnProperty(key)) {
+          obj[key] = [];
+        }
+        obj[key].push(item);
+        return obj;
+      }, {})
+    },
     setPageCurrent (page) {
       this.pageCurrent = page
       this.$emit('pageChanged', page)

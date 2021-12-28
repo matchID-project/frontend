@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     lastMessage () {
-      return this.$lodash(this.messages).map(m => { return m.title })[0]
+      return this.messages.map(m => { return m.title })[0]
     },
     display () {
       if (this.messages !== []) {
