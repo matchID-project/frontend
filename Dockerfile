@@ -53,10 +53,13 @@ RUN if [ -z "${NPM_VERBOSE}" ]; then\
     fi
 
 RUN if [ -z "${NPM_AUDIT_IGNORE}" ]; then\
+      if [ ! -z "${NPM_AUDIT_LEVEL}" ]; then\
+        npm config set audit-level ${NPM_AUDIT_LEVEL};\
+      fi;\
       if [ -z "${NPM_FIX}" ]; then \
-        npm audit --registry=https://registry.npmjs.org; \
+        npm audit --registry=https://registry.npmjs.org || npm audit --production --registry=https://registry.npmjs.org; \
       else \
-        npm audit fix --registry=https://registry.npmjs.org; \
+        npm audit fix --registry=https://registry.npmjs.org || npm audit --production --registry=https://registry.npmjs.org; \
       fi;\
     fi
 ################################
