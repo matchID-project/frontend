@@ -11,7 +11,7 @@
                 <span class="select">
                   <select v-model='selectedSearchField'>
                     <option :value="'random'">Random</option>
-                    <option 
+                    <option
                       v-for="column in columns"
                       :key="column.Label"
                       :value="Array.isArray(column.field) ? column.field.join() : column.field"

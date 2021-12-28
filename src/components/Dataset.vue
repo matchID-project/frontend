@@ -43,7 +43,7 @@
                 @click="fireCodeSaving()"
                 v-shortkey="['ctrl', 's']"
                 @shortkey="fireCodeSaving()">
-            <i class="card-footer-icon mID-margin-right-8" 
+            <i class="card-footer-icon mID-margin-right-8"
               :class="[{'fa fa-times': (failedSave === true)},
                        {'fa fa-save': (loadingSave === false) && (completedSave === false) && (failedSave === false)},
                        {'fa fa-spinner fa-spin': loadingSave === true},

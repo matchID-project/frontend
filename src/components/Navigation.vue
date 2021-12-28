@@ -1,5 +1,4 @@
 <template>
-
   <div id="navigationWrapper">
     <div class="navbar is-transparent">
       <div class="navbar-brand">
