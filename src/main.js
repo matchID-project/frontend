@@ -1,20 +1,35 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
+import { createApp } from 'vue'
+import App from './App.vue'
 import router from './router'
-import VueResource from 'vue-resource'
 import VueShortkey from 'vue-shortkey'
+import VueClipboard from 'vue-clipboard2'
 
-Vue.use(VueResource)
-Vue.use(VueShortkey)
+import apiConf from '@/assets/json/backend.json'
+import localization from '@/assets/json/lang.json'
 
-Vue.config.productionTip = false
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#root',
-  router,
-  template: '<App/>',
-  components: { App }
+const app = createApp(App)
+
+app.use(router)
+app.use(VueShortkey)
+app.use(VueClipboard)
+
+window.bus = eventBus
+
+app.mixin({
+  data () {
+    return {
+      apiUrl: apiConf.api.url,
+      localization: localization,
+      lang: localization.default
+    }
+  },
+  mounted () {
+    window.bus.$on('langChange', value => {
+      this.lang = value
+    })
+  }
 })
+
+
+app.mount('#app')
