@@ -1,13 +1,14 @@
 <template>
   <div id="editor" class="is-fullheight" style="font-size: 12px">
-    <codemirror
-      ref="myEditor"
-      :code="code"
+    <PrismEditor
+      class="language-yaml is-fullheight"
+      v-model="code"
+      :highlight="highlighter"
       :options="editorOptions"
       @beforeChange="beforeCodeChange"
       @change="onEditorCodeChange"
-      class="is-fullheight"
-    ></codemirror>
+      line-numbers
+    />
     <a
       class="delete is-large"
       v-show="isFullScreen"
@@ -19,34 +20,17 @@
 
 <script>
 
-import {codemirror} from 'vue-codemirror'
+  import { PrismEditor } from 'vue-prism-editor';
+  import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
+  import { highlight, languages } from 'prismjs/components/prism-core';
+  import 'prismjs/components/prism-yaml';
+  import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
 
-require('codemirror/addon/selection/active-line.js')
 
-require('codemirror/addon/dialog/dialog.js')
-require('codemirror/addon/dialog/dialog.css')
-require('codemirror/addon/search/searchcursor.js')
-require('codemirror/addon/search/search.js')
-
-// keyMap
-require('codemirror/addon/edit/matchbrackets.js')
-
-// foldGutter
-require('codemirror/addon/fold/foldgutter.css')
-require('codemirror/addon/fold/brace-fold.js')
-require('codemirror/addon/fold/comment-fold.js')
-require('codemirror/addon/fold/foldcode.js')
-require('codemirror/addon/fold/foldgutter.js')
-require('codemirror/addon/fold/indent-fold.js')
-require('codemirror/addon/fold/markdown-fold.js')
-require('codemirror/addon/fold/xml-fold.js')
-
-require('codemirror/addon/display/fullscreen.css')
-require('codemirror/addon/display/fullscreen.js')
 
 export default {
   components: {
-    codemirror
+    PrismEditor
   },
   props: {
     codeData: String,
@@ -97,7 +81,7 @@ export default {
         this.editor.setOption('fullScreen', true)
         this.$emit('showedFullScreen')
       }
-    }
+    },
   },
   computed: {
     editor () {
@@ -105,6 +89,9 @@ export default {
     }
   },
   methods: {
+    highlighter(code) {
+      return highlight(code, languages.yaml); // languages.<insert language> to return html with markup
+    },
     beforeCodeChange (cm, change) {
       let readOnlyLines = [0, 1]
       if (~readOnlyLines.indexOf(change.from.line)) {
