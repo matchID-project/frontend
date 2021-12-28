@@ -1,4 +1,4 @@
-FROM node:slim as base
+FROM node:16-slim as base
 ARG proxy
 
 ARG http_proxy
@@ -11,6 +11,7 @@ ARG NPM_GIT
 ARG NPM_FIX
 ARG NPM_LATEST
 ARG NPM_VERBOSE
+ARG NPM_AUDIT_IGNORE
 ARG app_path
 ARG app_name
 ARG api_path
@@ -52,10 +53,13 @@ RUN if [ -z "${NPM_VERBOSE}" ]; then\
     fi
 
 RUN if [ -z "${NPM_AUDIT_IGNORE}" ]; then\
+      if [ ! -z "${NPM_AUDIT_LEVEL}" ]; then\
+        npm config set audit-level ${NPM_AUDIT_LEVEL};\
+      fi;\
       if [ -z "${NPM_FIX}" ]; then \
-        npm audit --registry=https://registry.npmjs.org; \
+        npm audit --registry=https://registry.npmjs.org || npm audit --production --registry=https://registry.npmjs.org; \
       else \
-        npm audit fix --registry=https://registry.npmjs.org; \
+        npm audit fix --registry=https://registry.npmjs.org || npm audit --production --registry=https://registry.npmjs.org; \
       fi;\
     fi
 ################################
