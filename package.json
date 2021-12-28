@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueform/toggle": "^2.0.1",
     "bulma": "=0.6.2",
     "chart.js": "^2.9.4",
     "chartjs-plugin-annotation": "^0.5.7",
