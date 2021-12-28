@@ -7,6 +7,7 @@ import VueClipboard from 'vue-clipboard2'
 import apiConf from '@/assets/json/backend.json'
 import localization from '@/assets/json/lang.json'
 
+import eventBus from '@/eventBus.js'
 
 const app = createApp(App)
 
