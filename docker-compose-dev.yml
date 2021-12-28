@@ -63,8 +63,7 @@ services:
     volumes:
       - ${FRONTEND}/package.json:/${APP_NAME}/package.json
       - ${FRONTEND}/src:/${APP_NAME}/src
-      - ${FRONTEND}/babel.config.js:/${APP_NAME}/babel.config.js
-      - ${FRONTEND}/vue.config.js:/${APP_NAME}/vue.config.js
+      - ${FRONTEND}/vite.config.js:/${APP_NAME}/vite.config.js
       - ${FRONTEND}/.editorconfig:/${APP_NAME}/.editorconfig
       - ${FRONTEND}/public:/${APP_NAME}/public
 
