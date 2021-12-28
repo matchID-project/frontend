@@ -165,7 +165,6 @@
       :view="view"
       :actions="actions"
       :elasticsearch="elasticsearch"
-      :esClient="esClient"
       :loading="loading"
     ></data-table>
 
@@ -217,8 +216,6 @@ export default {
         message: '',
         type: ''
       },
-      // ES CLIENT
-      esClient: {}
     }
   },
   created () {
@@ -237,7 +234,6 @@ export default {
         if (this.elasticsearch.connection.host.match(/^\//) || this.elasticsearch.connection.host === '') {
           this.elasticsearch.connection.host = window.location.host + this.elasticsearch.connection.host
         }
-        this.esClient = new elasticsearchLib.Client(this.elasticsearch.connection)
 
         this.refreshData()
       })
@@ -312,10 +308,10 @@ export default {
     },
     search (query, fields) {
       if (fields.includes(',')) {
-        return this.esClient.search({
-          index: this.elasticsearch.index,
-          size: this.elasticsearch.size,
+        return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search`, {
+          method: 'POST',
           body: {
+            size: this.elasticsearch.size,
             query: {
               multi_match: {
                 query: query,
@@ -325,10 +321,10 @@ export default {
           }
         })
       } else if (fields === 'random') {
-        return this.esClient.search({
-          index: this.elasticsearch.index,
-          size: this.elasticsearch.size,
+        return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search`, {
+          method: 'POST',
           body: {
+            size: this.elasticsearch.size,
             query: {
               function_score: {
                 query: {
@@ -349,12 +345,7 @@ export default {
           }
         })
       }
-
-      return this.esClient.search({
-        index: this.elasticsearch.index,
-        size: this.elasticsearch.size,
-        q: fields + ':' + query
-      })
+      return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search?q=${fields}:${query}`)
     },
     updateValuesRangeSlider (valueRange) {
       this.valuesRangeSlider = valueRange.map(v => {
@@ -390,10 +381,10 @@ export default {
         }
       }
 
-      return this.esClient.search({
-        index: this.elasticsearch.index,
-        size: 0,
+      return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search`, {
+        method: 'POST',
         body: {
+          size: 0,
           aggs: {
             threshold: {
               filter: {

@@ -171,10 +171,6 @@ export default {
       type: Boolean,
       default: false,
       required: true
-    },
-    esClient: {
-      type: Object,
-      required: false
     }
   },
   data () {
@@ -359,11 +355,11 @@ export default {
           'script': script
         }
       })
-      return this.esClient.update({
-        index: this.elasticsearch.index,
-        id: id,
+      return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_update/${id}`,
+      {
+        method: 'POST',
         body: {
-          'script': script
+          script: script
         }
       })
     }
