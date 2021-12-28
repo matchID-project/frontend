@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import statsChart from '../../assets/js/charts'
+import statsChart from '@/assets/js/charts.js'
 
 export default {
   components: {

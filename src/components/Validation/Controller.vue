@@ -173,12 +173,11 @@
 </template>
 
 <script>
-import RangeSlider from '../Helpers/RangeSlider'
-import Message from '../Helpers/Message'
-import DataTable from './DataTable'
-import elasticsearchLib from 'elasticsearch'
-import Statistics from './Statistics'
-import Shortcuts from './Shortcuts'
+import RangeSlider from '@/components/Helpers/RangeSlider.vue'
+import Message from '@/components/Helpers/Message.vue'
+import DataTable from '@/components/Validation/DataTable.vue'
+import Statistics from '@/components/Validation/Statistics.vue'
+import Shortcuts from '@/components/Validation/Shortcuts.vue'
 
 export default {
   components: {

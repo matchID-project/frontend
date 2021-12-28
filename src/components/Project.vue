@@ -165,9 +165,9 @@
 </template>
 
 <script>
-import NewObject from './Object/New'
-import ImportObject from './Object/Import'
-import DeleteObject from './Object/Delete'
+import NewObject from '@/components/Object/New.vue'
+import ImportObject from '@/components/Object/Import.vue'
+import DeleteObject from '@/components/Object/Delete.vue'
 
 export default {
   components: {

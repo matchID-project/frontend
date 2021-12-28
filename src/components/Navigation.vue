@@ -479,12 +479,12 @@
 </template>
 
 <script>
-import GraphView from './Graph'
-import Login from './Login'
-import Message from './Helpers/FloatingMessage'
-import NewObject from './Object/New'
-import DeleteObject from './Object/Delete'
-import ImportObject from './Object/Import'
+import GraphView from '@/components/Graph.vue'
+import Login from '@/components/Login.vue'
+import Message from '@/components/Helpers/FloatingMessage.vue'
+import NewObject from '@/components/Object/New.vue'
+import DeleteObject from '@/components/Object/Delete.vue'
+import ImportObject from '@/components/Object/Import.vue'
 
 export default {
   components: {

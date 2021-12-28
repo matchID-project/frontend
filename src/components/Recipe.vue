@@ -91,10 +91,10 @@
 </template>
 
 <script>
-import YamlEditor from './Editor/YamlEditor'
-import Shortcuts from './Editor/Shortcuts'
-import DataViewer from './DataViewer'
-import LogsViewer from './LogsViewer'
+import YamlEditor from '@/components/Editor/YamlEditor.vue'
+import Shortcuts from '@/components/Editor/Shortcuts.vue'
+import DataViewer from '@/components/DataViewer.vue'
+import LogsViewer from '@/components/LogsViewer.vue'
 
 export default {
   components: {

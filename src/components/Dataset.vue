@@ -84,9 +84,9 @@
 </template>
 
 <script>
-import YamlEditor from './Editor/YamlEditor'
-import Shortcuts from './Editor/Shortcuts'
-import DataViewer from './DataViewer'
+import YamlEditor from '@/components/Editor/YamlEditor.vue'
+import Shortcuts from '@/components/Editor/Shortcuts.vue'
+import DataViewer from '@/components/DataViewer.vue'
 
 export default {
   components: {
