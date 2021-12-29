@@ -1,5 +1,4 @@
 <template>
-
   <div id="navigationWrapper">
     <div class="navbar is-transparent">
       <div class="navbar-brand">
@@ -318,7 +317,7 @@
                 >
                   {{ job.recipe }} <br/> {{ job.date }}
                 </router-link>
-                <div class="navbar-item" v-if="$lodash.isEmpty(runningJobs)">
+                <div class="navbar-item" v-if="isEmpty(runningJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </div>
                 <hr class="dropdown-divider">
@@ -326,7 +325,7 @@
                   <h6 class="title is-6 has-text-primary">{{localization.navbar.jobs.done[lang]}}</h6>
                 </div>
                 <hr class="dropdown-divider">
-                <div class="navbar-item" v-if="$lodash.isEmpty(doneJobs)">
+                <div class="navbar-item" v-if="isEmpty(doneJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </div>
                 <router-link
@@ -377,7 +376,7 @@
           </div>
           <div class="navbar-item" v-if="$route.params.recipe">
             <template v-if="recipeStatus === 'up'">
-              <a
+              <button
                 v-if="stoppingStatus"
                 class="button is-outlined is-danger"
                 disabled
@@ -386,18 +385,18 @@
                   <i class="fa fa-spin fa-spinner"></i>
                 </span>
                 <span>{{localization.recipe.stopping[lang]}} ...</span>
-              </a>
-              <a
+              </button>
+              <button
                 v-else
                 @mouseover="recipeState = 'stop'"
                 @mouseleave="recipeState = 'running'"
                 class="button is-outlined"
-                :disabled="!clickPossible"
                 :class="[
                   {'is-danger': recipeState === 'stop'},
                   {'is-warning' : recipeState === 'running'}
                 ]"
                 @click="stopRecipe($route.params.recipe)"
+                :disabled="disabled"
               >
                 <span class="icon">
                   <i
@@ -410,17 +409,17 @@
                 </span>
                 <span v-if="recipeState === 'stop'">{{localization.recipe.stop[lang]}}</span>
                 <span v-else-if="recipeState === 'running'">{{localization.recipe.running[lang]}} ...</span>
-              </a>
+              </button>
             </template>
-            <a
+            <button
               v-else-if="recipeStatus"
               class="button is-success is-outlined"
-              :disabled="!clickPossible"
               @click="runRecipe($route.params.recipe)"
+              :disabled="disabled"
             >
               <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
               <span>{{localization.recipe.run[lang]}}</span>
-            </a>
+            </button>
           </div>
           <div class="navbar-item breadcrumb">
             <ul>
@@ -479,12 +478,12 @@
 </template>
 
 <script>
-import GraphView from './Graph'
-import Login from './Login'
-import Message from './Helpers/FloatingMessage'
-import NewObject from './Object/New'
-import DeleteObject from './Object/Delete'
-import ImportObject from './Object/Import'
+import GraphView from '@/components/Graph.vue'
+import Login from '@/components/Login.vue'
+import Message from '@/components/Helpers/FloatingMessage.vue'
+import NewObject from '@/components/Object/New.vue'
+import DeleteObject from '@/components/Object/Delete.vue'
+import ImportObject from '@/components/Object/Import.vue'
 
 export default {
   components: {
@@ -516,7 +515,7 @@ export default {
       allRecipes: {},
       loadingRecipes: true,
       recipeStatus: null,
-      clickPossible: true,
+      disabled: false,
       recipeState: 'running',
       stoppingStatus: false,
       interval: {},
@@ -589,31 +588,44 @@ export default {
   computed: {
     orderedDatasets () {
       let ordered = {}
-      this.$lodash(this.datasets).keys().sort().each(key => {
+      Object.keys(this.datasets).sort().forEach(key => {
         ordered[key] = this.datasets[key]
       })
       return ordered
     },
     orderedRecipes () {
       let ordered = {}
-      this.$lodash(this.recipes).keys().sort().each(key => {
+      Object.keys(this.recipes).sort().forEach(key => {
         ordered[key] = this.recipes[key]
       })
       return ordered
     }
   },
   methods: {
+    isEmpty (obj) {
+      return obj ? (Object.keys(obj).length === 0) : true;
+    },
+    pickBy (obj, filter) {
+      return Object.keys(obj)
+        .filter((key) => filter(obj[key]))
+        .reduce((newObj, key) => { newObj[key] = obj[key]; return newObj; }, {})
+    },
     shutdown () {
-      this.$http.put(this.apiUrl + 'shutdown/')
+      fetch(this.apiUrl + 'shutdown/', {method: 'PUT'})
         .then(response => {
-          window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-warning', message: response.body.message})
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-warning', message: json.message})
+            })
+          }
         },
         error => {
           window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-danger', message: error.body.message})
         })
     },
     logout () {
-      this.$http.post(this.apiUrl + 'logout/')
+      fetch(this.apiUrl + 'logout/', {method: 'POST'})
         .then(() => {
           this.$router.push({name: 'login'})
         })
@@ -624,20 +636,30 @@ export default {
     },
     getConnectors () {
       this.loadingConnectors = true
-      this.$http.get(this.apiUrl + 'connectors/')
+      fetch(this.apiUrl + 'connectors/')
         .then(response => {
-          this.connectors = Object.keys(response.body).sort()
-          window.bus.$emit('reloadConnectors', this.connectors)
-          setTimeout(() => { this.loadingConnectors = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.connectors = Object.keys(json).sort()
+              window.bus.$emit('reloadConnectors', this.connectors)
+              setTimeout(() => { this.loadingConnectors = false }, 500)
+            })
+          }
         })
     },
     getProjects () {
       this.loadingProjects = true
-      this.$http.get(this.apiUrl + 'conf/')
+      fetch(this.apiUrl + 'conf/')
         .then(response => {
-          this.projects = Object.keys(response.body.projects).sort()
-          window.bus.$emit('reloadProjects', this.projects)
-          setTimeout(() => { this.loadingProjects = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.projects = Object.keys(json.projects).sort()
+              window.bus.$emit('reloadProjects', this.projects)
+              setTimeout(() => { this.loadingProjects = false }, 500)
+            })
+          }
         })
     },
     getDependencies (project) {
@@ -647,25 +669,35 @@ export default {
       }
     },
     getDatasets (project) {
-      this.$http.get(this.apiUrl + 'datasets/')
+      fetch(this.apiUrl + 'datasets/')
         .then(response => {
-          this.allDatasets = response.body
-          this.datasets = this.$lodash.pickBy(response.body, (v) => v.project === project)
-          window.bus.$emit('reloadDatasets', this.datasets)
-          setTimeout(() => { this.loadingDatasets = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.allDatasets = json
+              this.datasets = this.pickBy(json, (v) => v.project === project)
+              window.bus.$emit('reloadDatasets', this.datasets)
+              setTimeout(() => { this.loadingDatasets = false }, 500)
+            })
+          }
         })
     },
     getRecipes (project) {
-      this.$http.get(this.apiUrl + 'recipes/')
+      fetch(this.apiUrl + 'recipes/')
         .then(response => {
-          this.allRecipes = response.body
-          this.recipes = this.$lodash.pickBy(response.body, (v) => v.project === project)
-          window.bus.$emit('reloadRecipes', this.recipes)
-          setTimeout(() => { this.loadingRecipes = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.allRecipes = json
+              this.recipes = this.pickBy(json, (v) => v.project === project)
+              window.bus.$emit('reloadRecipes', this.recipes)
+              setTimeout(() => { this.loadingRecipes = false }, 500)
+            })
+          }
         })
     },
     downloadSample (dataset) {
-      this.$http.post(this.apiUrl + 'datasets/' + dataset + '/?type=csv')
+      fetch(this.apiUrl + 'datasets/' + dataset + '/?type=csv', {method: 'POST'})
         .then(response => {
           var element = document.createElement('a')
           element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(response.data))
@@ -676,43 +708,53 @@ export default {
         })
     },
     runRecipe (recipe) {
-      this.clickPossible = false
+      this.disabled = true
       this.stoppingStatus = false
-      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/run')
+      fetch(this.apiUrl + 'recipes/' + recipe + '/run', {method: 'PUT'})
         .then(() => {
-          setTimeout(() => { this.clickPossible = true }, 6 * 1000)
+          setTimeout(() => { this.disabled = false }, 6 * 1000)
         })
     },
     stopRecipe (recipe) {
-      this.clickPossible = false
+      this.disabled = true
       this.stoppingStatus = true
 
-      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/stop')
+      fetch(this.apiUrl + 'recipes/' + recipe + '/stop', {method: 'PUT'})
         .then(() => {
-          this.clickPossible = true
+          this.disabled = false
         })
     },
     getStatus (recipe) {
       if (recipe !== undefined) {
-        this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
+        fetch(this.apiUrl + 'recipes/' + recipe + '/status')
           .then(response => {
-            this.recipeStatus = response.body.status
-            if (this.recipeStatus === 'down') {
-              this.stoppingStatus = false
-              window.bus.$emit('lastRecipeLogs')
-            } else {
-              window.bus.$emit('runningRecipeLogs')
+            const contentType = response.headers.get("content-type")
+            if(contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json().then( (json) => {
+                this.recipeStatus = json.status
+                if (this.recipeStatus === 'down') {
+                  this.stoppingStatus = false
+                  window.bus.$emit('lastRecipeLogs')
+                } else {
+                  window.bus.$emit('runningRecipeLogs')
+                }
+              })
             }
           })
       }
     },
     getJobs () {
-      this.$http.get(this.apiUrl + 'jobs')
+      fetch(this.apiUrl + 'jobs')
         .then(response => {
-          this.runningJobs = response.body.running
-          this.doneJobs = response.body.done
-          if (this.$route.name === 'jobs' || this.$route.name === 'job') {
-            window.bus.$emit('updateJobs', {running: response.body.running, done: response.body.done})
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.runningJobs = json.running
+              this.doneJobs = json.done
+              if (this.$route.name === 'jobs' || this.$route.name === 'job') {
+                window.bus.$emit('updateJobs', {running: json.running, done: json.done})
+              }
+            })
           }
         })
     }

@@ -35,7 +35,7 @@
               </div>
             </section>
 
-            <div class="box" v-if="!$lodash.isEmpty(datasets)">
+            <div class="box" v-if="!isEmpty(datasets)">
               <div class="menu">
                 <div
                   v-for="(type, id) in ['upload', 'elasticsearch']"
@@ -103,7 +103,7 @@
               </div>
             </section>
 
-            <div class="box" v-if="!$lodash.isEmpty(recipes)">
+            <div class="box" v-if="!isEmpty(recipes)">
               <div class="menu">
                 <ul class="menu-list">
                   <li
@@ -165,9 +165,9 @@
 </template>
 
 <script>
-import NewObject from './Object/New'
-import ImportObject from './Object/Import'
-import DeleteObject from './Object/Delete'
+import NewObject from '@/components/Object/New.vue'
+import ImportObject from '@/components/Object/Import.vue'
+import DeleteObject from '@/components/Object/Delete.vue'
 
 export default {
   components: {
@@ -195,16 +195,19 @@ export default {
   computed: {
     orderedRecipes () {
       let ordered = {}
-      this.$lodash(this.recipes).keys().sort().each(key => {
+      Object.keys(this.recipes).sort().forEach(key => {
         ordered[key] = this.recipes[key]
       })
       return ordered
     }
   },
   methods: {
+    isEmpty (obj) {
+      return obj ? (Object.keys(obj).length === 0) : true;
+    },
     orderedDatasets (type) {
       let ordered = {}
-      this.$lodash(this.datasets).keys().sort().each(key => {
+      Object.keys(this.datasets).sort().forEach(key => {
         if (this.datasets[key].connector === type) {
           ordered[key] = this.datasets[key]
         }

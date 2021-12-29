@@ -1,17 +1,14 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from '@/components/Home'
-import Login from '@/components/Login'
-import Project from '@/components/Project'
-import Recipe from '@/components/Recipe'
-import Dataset from '@/components/Dataset'
-import ValidationController from '@/components/Validation/Controller'
-import Jobs from '@/components/Jobs'
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from '@/components/Home.vue'
+import Login from '@/components/Login.vue'
+import Project from '@/components/Project.vue'
+import Recipe from '@/components/Recipe.vue'
+import Dataset from '@/components/Dataset.vue'
+import ValidationController from '@/components/Validation/Controller.vue'
+import Jobs from '@/components/Jobs.vue'
 
-Vue.use(Router)
-
-export default new Router({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {name: 'root', path: '/matchID', redirect: { name: 'home' }},
     {name: 'login', path: '/matchID/login', component: Login},
@@ -24,3 +21,5 @@ export default new Router({
     {name: 'validation', path: '/matchID/projects/:project/datasets/:dataset/validation', component: ValidationController}
   ]
 })
+
+export default router;

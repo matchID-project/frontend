@@ -17,7 +17,6 @@
 </template>
 
 <script>
-  import Vue from 'vue'
 
   export default {
     props: {
@@ -55,7 +54,7 @@
         this.$table.insertBefore(this.$referenceHeader, this.$el.nextSibling)
       },
       justify () {
-        Vue.nextTick(() => {
+        this.$nextTick(() => {
           const scrollContainerEl = document.querySelector(this.scrollContainer)
           const scrollContainerElRect = scrollContainerEl.getBoundingClientRect()
 

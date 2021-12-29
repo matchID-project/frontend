@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import NewObject from './Object/New'
+import NewObject from '@/components/Object/New.vue'
 
 export default {
   components: {

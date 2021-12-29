@@ -23,7 +23,7 @@ export API_GLOBAL_LIMIT_RATE=20r/s
 export API_GLOBAL_BURST=200 nodelay
 export PORT=8081
 export FRONTEND_DEV_HOST=frontend-development
-export FRONTEND_DEV_PORT=8080
+export FRONTEND_DEV_PORT=8081
 export BACKEND_HOST=backend
 export BACKEND_PORT=8081
 export TIMEOUT=30
@@ -175,11 +175,11 @@ dev-stop: backend-stop frontend-dev-stop network-stop
 
 ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION):
 	( cd ${FRONTEND} && tar -zcvf $(FILE_FRONTEND_APP_VERSION) \
-		package.json \
+		index.html \
+    package.json \
         src \
         public \
-		babel.config.js \
-		vue.config.js \
+		vite.config.js \
 		.editorconfig \
 		)
 

@@ -1,9 +1,8 @@
-import { Line, mixins } from 'vue-chartjs'
-// eslint-disable-next-line
+import { Line } from 'vue-chartjs'
 import chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 
-export default Line.extend({
-  mixins: [mixins.reactiveProp],
+export default {
+  extends: Line,
   props: {
     chartData: {
       required: true,
@@ -16,4 +15,4 @@ export default Line.extend({
   mounted () {
     this.renderChart(this.chartData, this.options)
   }
-})
+}
