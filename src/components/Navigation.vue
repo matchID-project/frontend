@@ -376,7 +376,7 @@
           </div>
           <div class="navbar-item" v-if="$route.params.recipe">
             <template v-if="recipeStatus === 'up'">
-              <a
+              <button
                 v-if="stoppingStatus"
                 class="button is-outlined is-danger"
                 disabled
@@ -385,18 +385,18 @@
                   <i class="fa fa-spin fa-spinner"></i>
                 </span>
                 <span>{{localization.recipe.stopping[lang]}} ...</span>
-              </a>
-              <a
+              </button>
+              <button
                 v-else
                 @mouseover="recipeState = 'stop'"
                 @mouseleave="recipeState = 'running'"
                 class="button is-outlined"
-                :disabled="!clickPossible"
                 :class="[
                   {'is-danger': recipeState === 'stop'},
                   {'is-warning' : recipeState === 'running'}
                 ]"
                 @click="stopRecipe($route.params.recipe)"
+                :disabled="disabled"
               >
                 <span class="icon">
                   <i
@@ -409,17 +409,17 @@
                 </span>
                 <span v-if="recipeState === 'stop'">{{localization.recipe.stop[lang]}}</span>
                 <span v-else-if="recipeState === 'running'">{{localization.recipe.running[lang]}} ...</span>
-              </a>
+              </button>
             </template>
-            <a
+            <button
               v-else-if="recipeStatus"
               class="button is-success is-outlined"
-              :disabled="!clickPossible"
               @click="runRecipe($route.params.recipe)"
+              :disabled="disabled"
             >
               <span class="icon"><i class="fa fa-play" aria-hidden="true"></i></span>
               <span>{{localization.recipe.run[lang]}}</span>
-            </a>
+            </button>
           </div>
           <div class="navbar-item breadcrumb">
             <ul>
@@ -515,7 +515,7 @@ export default {
       allRecipes: {},
       loadingRecipes: true,
       recipeStatus: null,
-      clickPossible: true,
+      disabled: false,
       recipeState: 'running',
       stoppingStatus: false,
       interval: {},
@@ -708,20 +708,20 @@ export default {
         })
     },
     runRecipe (recipe) {
-      this.clickPossible = false
+      this.disabled = true
       this.stoppingStatus = false
       fetch(this.apiUrl + 'recipes/' + recipe + '/run', {method: 'PUT'})
         .then(() => {
-          setTimeout(() => { this.clickPossible = true }, 6 * 1000)
+          setTimeout(() => { this.disabled = false }, 6 * 1000)
         })
     },
     stopRecipe (recipe) {
-      this.clickPossible = false
+      this.disabled = true
       this.stoppingStatus = true
 
       fetch(this.apiUrl + 'recipes/' + recipe + '/stop', {method: 'PUT'})
         .then(() => {
-          this.clickPossible = true
+          this.disabled = false
         })
     },
     getStatus (recipe) {
