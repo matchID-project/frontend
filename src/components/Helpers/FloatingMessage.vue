@@ -13,7 +13,7 @@
               <article class="message" :class="message.type"  v-if="message.display" >
                 <div class="message-header">
                   <p>{{message.title}}</p>
-                  <button class="delete" style="pointer-events: auto;" aria-label="delete" @click="message.display = false"></button>
+                  <button class="delete" style="pointer-events: auto;" aria-label="delete" @click="close(message)"></button>
                 </div>
                 <div class="message-body has-text-centered">
                   {{message.message}}
@@ -57,12 +57,17 @@ export default {
     }
   },
   methods: {
+    close (m) {
+      m.display = false
+      this.messages = this.messages.filter(message => message.display)
+    },
     queueMessage (m) {
-      this.messages = this.messages.filter(message => { return message.display })
+      this.messages = this.messages.filter(message => message.display)
       m.display = true
       this.messages.push(m)
       setTimeout(() => {
         m.display = false
+        this.messages = this.messages.filter(message => message.display)
       }, this.timeout[m.type])
     }
   },
