@@ -142,8 +142,13 @@ export default {
       }
     })
     fetch(this.apiUrl + 'login/').then((response) => {
-      this.logged = true
-      window.bus.$emit('changeUser', response.body && response.body.user)
+      const contentType = response.headers.get("content-type")
+      if(contentType && contentType.indexOf("application/json") !== -1) {
+        return response.json().then( (json) => {
+          this.logged = true
+          window.bus.$emit('changeUser', json && json.user)
+        })
+      }
     },
     () => {
       this.logged = false
