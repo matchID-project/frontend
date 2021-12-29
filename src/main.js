@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import VueShortkey from 'vue-shortkey'
+import VueShortkey from 'vue3-shortkey'
 import VueClipboard from 'vue-clipboard2'
 import Codemirror from 'codemirror-editor-vue3'
 
