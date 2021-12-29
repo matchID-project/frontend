@@ -132,9 +132,14 @@ export default {
   },
   created () {
     fetch(this.apiUrl + 'authorize/').then((response) => {
-      response.body.providers.forEach(provider => {
-        this.socialProviders[provider].active = true
-      })
+      const contentType = response.headers.get("content-type");
+      if(contentType && contentType.indexOf("application/json") !== -1) {
+        return response.json().then((json) => {
+          json.providers.forEach(provider => {
+            this.socialProviders[provider].active = true
+          })
+        })
+      }
     })
     fetch(this.apiUrl + 'login/').then((response) => {
       this.logged = true

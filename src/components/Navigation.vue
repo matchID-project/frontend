@@ -588,14 +588,14 @@ export default {
   computed: {
     orderedDatasets () {
       let ordered = {}
-      Object.keys(this.datasets).sort().each(key => {
+      Object.keys(this.datasets).sort().forEach(key => {
         ordered[key] = this.datasets[key]
       })
       return ordered
     },
     orderedRecipes () {
       let ordered = {}
-      Object.keys(this.recipes).sort().each(key => {
+      Object.keys(this.recipes).sort().forEach(key => {
         ordered[key] = this.recipes[key]
       })
       return ordered
@@ -605,10 +605,20 @@ export default {
     isEmpty (obj) {
       return obj ? (Object.keys(obj).length === 0) : true;
     },
+    pickBy (obj, filter) {
+      return Object.keys(obj)
+        .filter((key) => filter(obj[key]))
+        .reduce((newObj, key) => { newObj[key] = obj[key]; return newObj; }, {})
+    },
     shutdown () {
       fetch(this.apiUrl + 'shutdown/', {method: 'PUT'})
         .then(response => {
-          window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-warning', message: response.body.message})
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-warning', message: json.message})
+            })
+          }
         },
         error => {
           window.bus.$emit('message', {'title': this.localization.global.shutdown[this.lang], type: 'is-danger', message: error.body.message})
@@ -626,20 +636,30 @@ export default {
     },
     getConnectors () {
       this.loadingConnectors = true
-      this.$http.get(this.apiUrl + 'connectors/')
+      fetch(this.apiUrl + 'connectors/')
         .then(response => {
-          this.connectors = Object.keys(response.body).sort()
-          window.bus.$emit('reloadConnectors', this.connectors)
-          setTimeout(() => { this.loadingConnectors = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.connectors = Object.keys(json).sort()
+              window.bus.$emit('reloadConnectors', this.connectors)
+              setTimeout(() => { this.loadingConnectors = false }, 500)
+            })
+          }
         })
     },
     getProjects () {
       this.loadingProjects = true
-      this.$http.get(this.apiUrl + 'conf/')
+      fetch(this.apiUrl + 'conf/')
         .then(response => {
-          this.projects = Object.keys(response.body.projects).sort()
-          window.bus.$emit('reloadProjects', this.projects)
-          setTimeout(() => { this.loadingProjects = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.projects = Object.keys(json.projects).sort()
+              window.bus.$emit('reloadProjects', this.projects)
+              setTimeout(() => { this.loadingProjects = false }, 500)
+            })
+          }
         })
     },
     getDependencies (project) {
@@ -651,23 +671,33 @@ export default {
     getDatasets (project) {
       fetch(this.apiUrl + 'datasets/')
         .then(response => {
-          this.allDatasets = response.body
-          this.datasets = response.body.filter((v) => v.project === project)
-          window.bus.$emit('reloadDatasets', this.datasets)
-          setTimeout(() => { this.loadingDatasets = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.allDatasets = json
+              this.datasets = this.pickBy(json, (v) => v.project === project)
+              window.bus.$emit('reloadDatasets', this.datasets)
+              setTimeout(() => { this.loadingDatasets = false }, 500)
+            })
+          }
         })
     },
     getRecipes (project) {
-      this.$http.get(this.apiUrl + 'recipes/')
+      fetch(this.apiUrl + 'recipes/')
         .then(response => {
-          this.allRecipes = response.body
-          this.recipes = response.body.filter((v) => v.project === project)
-          window.bus.$emit('reloadRecipes', this.recipes)
-          setTimeout(() => { this.loadingRecipes = false }, 500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.allRecipes = json
+              this.recipes = this.pickBy(json, (v) => v.project === project)
+              window.bus.$emit('reloadRecipes', this.recipes)
+              setTimeout(() => { this.loadingRecipes = false }, 500)
+            })
+          }
         })
     },
     downloadSample (dataset) {
-      this.$http.post(this.apiUrl + 'datasets/' + dataset + '/?type=csv')
+      fetch(this.apiUrl + 'datasets/' + dataset + '/?type=csv', {method: 'POST'})
         .then(response => {
           var element = document.createElement('a')
           element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(response.data))
@@ -680,7 +710,7 @@ export default {
     runRecipe (recipe) {
       this.clickPossible = false
       this.stoppingStatus = false
-      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/run')
+      fetch(this.apiUrl + 'recipes/' + recipe + '/run', {method: 'PUT'})
         .then(() => {
           setTimeout(() => { this.clickPossible = true }, 6 * 1000)
         })
@@ -689,32 +719,42 @@ export default {
       this.clickPossible = false
       this.stoppingStatus = true
 
-      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/stop')
+      fetch(this.apiUrl + 'recipes/' + recipe + '/stop', {method: 'PUT'})
         .then(() => {
           this.clickPossible = true
         })
     },
     getStatus (recipe) {
       if (recipe !== undefined) {
-        this.$http.get(this.apiUrl + 'recipes/' + recipe + '/status')
+        fetch(this.apiUrl + 'recipes/' + recipe + '/status')
           .then(response => {
-            this.recipeStatus = response.body.status
-            if (this.recipeStatus === 'down') {
-              this.stoppingStatus = false
-              window.bus.$emit('lastRecipeLogs')
-            } else {
-              window.bus.$emit('runningRecipeLogs')
+            const contentType = response.headers.get("content-type")
+            if(contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json().then( (json) => {
+                this.recipeStatus = json.status
+                if (this.recipeStatus === 'down') {
+                  this.stoppingStatus = false
+                  window.bus.$emit('lastRecipeLogs')
+                } else {
+                  window.bus.$emit('runningRecipeLogs')
+                }
+              })
             }
           })
       }
     },
     getJobs () {
-      this.$http.get(this.apiUrl + 'jobs')
+      fetch(this.apiUrl + 'jobs')
         .then(response => {
-          this.runningJobs = response.body.running
-          this.doneJobs = response.body.done
-          if (this.$route.name === 'jobs' || this.$route.name === 'job') {
-            window.bus.$emit('updateJobs', {running: response.body.running, done: response.body.done})
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.runningJobs = json.running
+              this.doneJobs = json.done
+              if (this.$route.name === 'jobs' || this.$route.name === 'job') {
+                window.bus.$emit('updateJobs', {running: json.running, done: json.done})
+              }
+            })
           }
         })
     }
