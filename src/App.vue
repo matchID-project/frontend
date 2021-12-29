@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import 'bulma/css/bulma.css'
 import MatchIdNavigation from '@/components/Navigation.vue'
 
 export default {
