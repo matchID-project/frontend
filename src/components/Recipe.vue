@@ -136,18 +136,26 @@ export default {
       this.loadingCode = true
       this.loadingData = true
 
-      this.$http.get(this.apiUrl + 'recipes/' + recipe)
-        .then(response => { this.source = response.body.source })
+      fetch(this.apiUrl + 'recipes/' + recipe).then(response => {
+        const contentType = response.headers.get("content-type")
+        if(contentType && contentType.indexOf("application/json") !== -1) {
+          return response.json().then( (json) => {
+            this.source = json.source
+          })
+        }
+      })
+      console.log('ici',this.$route, this.$route.params.recipe)
       this.getRecipeYaml(this.$route.params.recipe)
       this.getData(this.$route.params.recipe)
     },
     getRecipeYaml (recipe) {
-      return this.$http.get(this.apiUrl + 'recipes/' + recipe + '/yaml')
-        .then(response => {
-          this.code = response.body
-          setTimeout(() => {
-            this.loadingCode = false
-          }, 800)
+      return fetch(this.apiUrl + 'recipes/' + recipe + '/yaml').then(response => {
+          return response.text().then( (text) => {
+            this.code = text
+            setTimeout(() => {
+              this.loadingCode = false
+            }, 800)
+          })
         },
         (err) => {
           this.loadingCode = false
@@ -161,15 +169,19 @@ export default {
     },
     getData (recipe) {
       this.loadingLogs = true
-      this.$http.put(this.apiUrl + 'recipes/' + recipe + '/test')
-        .then(response => {
-          this.data = response.body.data
-          this.logs = response.body.log
-          this.columns = Object.keys(this.data[0])
-          this.loadingLogs = false
-          setTimeout(() => {
-            this.loadingData = false
-          }, 1500)
+      fetch(this.apiUrl + 'recipes/' + recipe + '/test', {method: 'PUT'}).then(response => {
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.data = json.data
+              this.logs = json.log
+              this.columns = Object.keys(this.data[0])
+              this.loadingLogs = false
+              setTimeout(() => {
+                this.loadingData = false
+              }, 1500)
+            })
+          }
         },
         (err) => {
           this.loadingLogs = false
@@ -180,27 +192,33 @@ export default {
       window.bus.$emit('deleteObject', {'type': 'recipe', 'name': this.$route.params.recipe})
     },
     sendCodeSaving (newCode) {
-      this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
+      fetch(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source,
+        { method: 'POST', headers: { "Content-Type": "application/json" }, body: JSON.stringify({yaml: newCode}) })
         .then(response => {
-          var msg = response.body[Object.keys(response.body)[0]].yaml_validator
-          if (msg !== 'yaml is ok') {
-            this.loadingSave = false
-            this.saveCode = false
-            this.failedSave = true
-            setTimeout(() => {
-              this.failedSave = false
-            }, 3000)
-            window.bus.$emit('message', {'title': 'warning loading ' + this.source, type: 'is-warning', message: msg})
-          } else {
-            this.loadingSave = false
-            this.completedSave = true
-            this.saveCode = false
-            this.failedSave = false
-            window.bus.$emit('message', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
-            setTimeout(() => {
-              this.completedSave = false
-            }, 3000)
-            this.getData(this.$route.params.recipe)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              const msg = json[Object.keys(json)[0]].yaml_validator
+              if (msg !== 'yaml is ok') {
+                this.loadingSave = false
+                this.saveCode = false
+                this.failedSave = true
+                setTimeout(() => {
+                  this.failedSave = false
+                }, 3000)
+                window.bus.$emit('message', {'title': 'warning loading ' + this.source, type: 'is-warning', message: msg})
+              } else {
+                this.loadingSave = false
+                this.completedSave = true
+                this.saveCode = false
+                this.failedSave = false
+                window.bus.$emit('message', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
+                setTimeout(() => {
+                  this.completedSave = false
+                }, 3000)
+                this.getData(this.$route.params.recipe)
+              }
+            })
           }
         },
         (err) => {
