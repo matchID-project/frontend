@@ -99,7 +99,7 @@ export default {
         }
       }
 
-      this.$http[method](url, data)
+      fetch(url, { method: method, body: data })
         .then(() => {
           setTimeout(() => {
             this.loadingAction = false
