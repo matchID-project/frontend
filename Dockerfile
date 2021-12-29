@@ -1,4 +1,4 @@
-FROM node:16-slim as base
+FROM node:16-alpine3.14 as base
 ARG proxy
 
 ARG http_proxy
@@ -6,8 +6,6 @@ ARG https_proxy
 ARG no_proxy
 ARG npm_registry
 ARG sass_registry
-ARG MIRROR_DEBIAN
-ARG NPM_GIT
 ARG NPM_FIX
 ARG NPM_LATEST
 ARG NPM_VERBOSE
@@ -20,16 +18,6 @@ ENV APP ${APP}
 ENV APP_VERSION ${app_ver}
 
 WORKDIR /$app_path
-
-# update debian w/proxy & mirror then installs git in case of git dependencies
-RUN if [ ! -z "${NPM_GIT}" ]; then \
-      echo "$http_proxy $no_proxy"; \
-      (set -x && [ -z "$MIRROR_DEBIAN" ] || sed -i.orig -e "s|http://deb.debian.org\([^[:space:]]*\)|$MIRROR_DEBIAN/debian9|g ; s|http://security.debian.org\([^[:space:]]*\)|$MIRROR_DEBIAN/debian9-security|g" /etc/apt/sources.list) ; \
-      apt-get update; \
-      buildDeps="git"; \
-      apt-get install -qy --no-install-recommends $buildDeps ; \
-      git config --global url."https://".insteadOf git:// ; \
-   fi
 
 # use proxy & private npm registry
 RUN if [ ! -z "$http_proxy" ] ; then \
@@ -90,7 +78,6 @@ ARG https_proxy
 ARG no_proxy
 ARG npm_registry
 ARG sass_registry
-ARG MIRROR_DEBIAN
 
 ARG app_path
 ARG app_name
