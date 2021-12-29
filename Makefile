@@ -175,11 +175,11 @@ dev-stop: backend-stop frontend-dev-stop network-stop
 
 ${FRONTEND}/$(FILE_FRONTEND_APP_VERSION):
 	( cd ${FRONTEND} && tar -zcvf $(FILE_FRONTEND_APP_VERSION) \
-		package.json \
+		index.html \
+    package.json \
         src \
         public \
-		babel.config.js \
-		vue.config.js \
+		vite.config.js \
 		.editorconfig \
 		)
 
