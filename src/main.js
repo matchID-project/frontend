@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import VueShortkey from 'vue-shortkey'
 import VueClipboard from 'vue-clipboard2'
+import Codemirror from 'codemirror-editor-vue3'
 
 import apiConf from '@/assets/json/backend.json'
 import localization from '@/assets/json/lang.json'
@@ -13,6 +14,7 @@ const app = createApp(App)
 
 app.use(router)
 app.use(VueShortkey)
+app.use(Codemirror)
 app.use(VueClipboard)
 
 window.bus = eventBus

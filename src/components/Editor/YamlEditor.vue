@@ -1,13 +1,12 @@
 <template>
   <div id="editor" class="is-fullheight" style="font-size: 12px">
-    <PrismEditor
-      class="language-yaml is-fullheight"
-      v-model="code"
-      :highlight="highlighter"
+    <Codemirror
+      ref="myEditor"
+      v-model:value="code"
       :options="editorOptions"
       @beforeChange="beforeCodeChange"
       @change="onEditorCodeChange"
-      line-numbers
+      class="is-fullheight"
     />
     <a
       class="delete is-large"
@@ -19,18 +18,35 @@
 </template>
 
 <script>
+import Codemirror from 'codemirror-editor-vue3'
 
-  import { PrismEditor } from 'vue-prism-editor';
-  import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
-  import { highlight, languages } from 'prismjs/components/prism-core';
-  import 'prismjs/components/prism-yaml';
-  import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/css/css.js'
 
+import 'codemirror/addon/selection/active-line.js'
+import 'codemirror/addon/dialog/dialog.js'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/addon/search/searchcursor.js'
+import 'codemirror/addon/search/search.js'
 
+// keyMap
+import 'codemirror/addon/edit/matchbrackets.js'
+
+// foldGutter
+import 'codemirror/addon/fold/foldgutter.css'
+import 'codemirror/addon/fold/brace-fold.js'
+import 'codemirror/addon/fold/comment-fold.js'
+import 'codemirror/addon/fold/foldcode.js'
+import 'codemirror/addon/fold/foldgutter.js'
+import 'codemirror/addon/fold/indent-fold.js'
+import 'codemirror/addon/fold/markdown-fold.js'
+import 'codemirror/addon/fold/xml-fold.js'
+import 'codemirror/addon/display/fullscreen.css'
+import 'codemirror/addon/display/fullscreen.js'
 
 export default {
   components: {
-    PrismEditor
+    Codemirror
   },
   props: {
     codeData: String,
@@ -81,7 +97,7 @@ export default {
         this.editor.setOption('fullScreen', true)
         this.$emit('showedFullScreen')
       }
-    },
+    }
   },
   computed: {
     editor () {
@@ -89,9 +105,6 @@ export default {
     }
   },
   methods: {
-    highlighter(code) {
-      return highlight(code, languages.yaml); // languages.<insert language> to return html with markup
-    },
     beforeCodeChange (cm, change) {
       let readOnlyLines = [0, 1]
       if (~readOnlyLines.indexOf(change.from.line)) {
