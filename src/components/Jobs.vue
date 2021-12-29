@@ -216,7 +216,6 @@ export default {
         })
     },
     getLog (recipe) {
-      console.log(this.runningJobs)
       if (this.runningJobs.some(r => { return r.recipe === recipe })) {
         this.getRunningLog(recipe)
       } else {
