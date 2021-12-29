@@ -195,7 +195,7 @@ export default {
   computed: {
     orderedRecipes () {
       let ordered = {}
-      Object.keys(this.recipes).sort().each(key => {
+      Object.keys(this.recipes).sort().forEach(key => {
         ordered[key] = this.recipes[key]
       })
       return ordered
@@ -207,7 +207,7 @@ export default {
     },
     orderedDatasets (type) {
       let ordered = {}
-      Object.keys(this.datasets).sort().each(key => {
+      Object.keys(this.datasets).sort().forEach(key => {
         if (this.datasets[key].connector === type) {
           ordered[key] = this.datasets[key]
         }
