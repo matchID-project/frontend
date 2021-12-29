@@ -355,9 +355,8 @@ export default {
       return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_update/${id}`,
       {
         method: 'POST',
-        body: {
-          script: script
-        }
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ script: script})
       })
     }
   }
