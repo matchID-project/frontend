@@ -175,8 +175,9 @@ export default {
       window.bus.$emit('deleteObject', {'type': 'dataset', 'name': this.$route.params.dataset})
     },
     sendCodeSaving (newCode) {
+      console.log('ici', { yaml: newCode })
       fetch(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source,
-        { method: 'POST', body : {yaml: newCode}})
+        { method: 'POST', headers: { "Content-Type": "application/json"}, body: JSON.stringify({ yaml: newCode })})
         .then(response => {
           const contentType = response.headers.get("content-type")
           if(contentType && contentType.indexOf("application/json") !== -1) {
