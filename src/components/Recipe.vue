@@ -144,7 +144,6 @@ export default {
           })
         }
       })
-      console.log('ici',this.$route, this.$route.params.recipe)
       this.getRecipeYaml(this.$route.params.recipe)
       this.getData(this.$route.params.recipe)
     },
