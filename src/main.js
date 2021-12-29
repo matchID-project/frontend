@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import VueShortkey from 'vue3-shortkey'
-import VueClipboard from 'vue-clipboard2'
+import { VueClipboard } from '@soerenmartius/vue3-clipboard'
 import Codemirror from 'codemirror-editor-vue3'
 
 import apiConf from '@/assets/json/backend.json'
