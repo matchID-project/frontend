@@ -60,12 +60,14 @@ services:
     container_name: ${DC_PREFIX}-frontend-development
     environment:
       APP: ${APP_NAME}
+    restart: always
     volumes:
       - ${FRONTEND}/package.json:/${APP_NAME}/package.json
       - ${FRONTEND}/src:/${APP_NAME}/src
       - ${FRONTEND}/vite.config.js:/${APP_NAME}/vite.config.js
       - ${FRONTEND}/.editorconfig:/${APP_NAME}/.editorconfig
       - ${FRONTEND}/public:/${APP_NAME}/public
+      - ${FRONTEND}/index.html:/${APP_NAME}/index.html
 
 networks:
   default:
