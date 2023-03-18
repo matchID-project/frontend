@@ -3,7 +3,8 @@
 </template>
 
 <script>
-  var noUiSlider = require('nouislider')
+  import noUiSlider from 'nouislider'
+  import 'nouislider/distribute/nouislider.min.css'
 
   export default {
     props: {
@@ -59,7 +60,6 @@
 </script>
 
 <style lang="scss">
-  @import '~nouislider/distribute/nouislider.min.css';
 
   .noUi-target {
     margin-top:12px;

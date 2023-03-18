@@ -43,7 +43,7 @@
                 @click="fireCodeSaving()"
                 v-shortkey="['ctrl', 's']"
                 @shortkey="fireCodeSaving()">
-            <i class="card-footer-icon mID-margin-right-8" 
+            <i class="card-footer-icon mID-margin-right-8"
               :class="[{'fa fa-times': (failedSave === true)},
                        {'fa fa-save': (loadingSave === false) && (completedSave === false) && (failedSave === false)},
                        {'fa fa-spinner fa-spin': loadingSave === true},
@@ -84,9 +84,9 @@
 </template>
 
 <script>
-import YamlEditor from './Editor/YamlEditor'
-import Shortcuts from './Editor/Shortcuts'
-import DataViewer from './DataViewer'
+import YamlEditor from '@/components/Editor/YamlEditor.vue'
+import Shortcuts from '@/components/Editor/Shortcuts.vue'
+import DataViewer from '@/components/DataViewer.vue'
 
 export default {
   components: {
@@ -124,20 +124,27 @@ export default {
       this.loadingCode = true
       this.loadingData = true
 
-      this.$http.get(this.apiUrl + 'datasets/' + dataset)
+      fetch(this.apiUrl + 'datasets/' + dataset)
         .then(response => {
-          this.source = response.body.source
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.source = json.source
+            })
+          }
         })
       this.getDatasetYaml(this.$route.params.dataset)
       this.getData(this.$route.params.dataset)
     },
     getDatasetYaml (dataset) {
-      return this.$http.get(this.apiUrl + 'datasets/' + dataset + '/yaml')
+      return fetch(this.apiUrl + 'datasets/' + dataset + '/yaml')
         .then(response => {
-          this.code = response.body
-          setTimeout(() => {
-            this.loadingCode = false
-          }, 800)
+          return response.text().then( (text) => {
+            this.code = text
+            setTimeout(() => {
+              this.loadingCode = false
+            }, 800)
+          })
         },
         (err) => {
           this.loadingCode = false
@@ -150,39 +157,50 @@ export default {
       this.saveCode = true
     },
     getData (dataset) {
-      this.$http.post(this.apiUrl + 'datasets/' + dataset + '/')
+      fetch(this.apiUrl + 'datasets/' + dataset + '/', { method: 'POST' })
         .then(response => {
-          this.data = response.body.data
-          this.columns = Object.keys(this.data[0])
-          setTimeout(() => {
-            this.loadingData = false
-          }, 1500)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.data = json.data
+              this.columns = Object.keys(this.data[0])
+              setTimeout(() => {
+                this.loadingData = false
+              }, 1500)
+            })
+          }
         })
     },
     objectDelete () {
       window.bus.$emit('deleteObject', {'type': 'dataset', 'name': this.$route.params.dataset})
     },
     sendCodeSaving (newCode) {
-      this.$http.post(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source, {yaml: newCode})
+      fetch(this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.source,
+        { method: 'POST', headers: { "Content-Type": "application/json"}, body: JSON.stringify({ yaml: newCode })})
         .then(response => {
-          var msg = response.body[Object.keys(response.body)[0]].yaml_validator
-          if (msg !== 'yaml is ok') {
-            this.failedSave = true
-            this.saveCode = false
-            this.loadingSave = false
-            setTimeout(() => {
-              this.failedSave = false
-            }, 3000)
-          } else {
-            this.loadingSave = false
-            this.completedSave = true
-            this.saveCode = false
-            this.failedSave = false
-            window.bus.$emit('messagemessage', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
-            setTimeout(() => {
-              this.completedSave = false
-            }, 3000)
-            this.getData(this.$route.params.dataset)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              const msg = json[Object.keys(json)[0]].yaml_validator
+              if (msg !== 'yaml is ok') {
+                this.failedSave = true
+                this.saveCode = false
+                this.loadingSave = false
+                setTimeout(() => {
+                  this.failedSave = false
+                }, 3000)
+              } else {
+                this.loadingSave = false
+                this.completedSave = true
+                this.saveCode = false
+                this.failedSave = false
+                window.bus.$emit('messagemessage', {'title': 'saving ok', type: 'is-success', message: this.source + ' was successfully saved'})
+                setTimeout(() => {
+                  this.completedSave = false
+                }, 3000)
+                this.getData(this.$route.params.dataset)
+              }
+            })
           }
         },
         (err) => {

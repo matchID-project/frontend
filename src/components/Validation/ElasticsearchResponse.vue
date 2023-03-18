@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="card">
           <div class="card-content">
-            <tree-view :data="filteredData" :options="{maxDepth: 3}"></tree-view>
+            <vue-json-pretty :data="filteredData"/>
           </div>
         </div>
       </div>
@@ -13,10 +13,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import TreeView from 'vue-json-tree-view'
-
-Vue.use(TreeView)
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 export default {
   props: {

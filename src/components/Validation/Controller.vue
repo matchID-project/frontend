@@ -11,7 +11,7 @@
                 <span class="select">
                   <select v-model='selectedSearchField'>
                     <option :value="'random'">Random</option>
-                    <option 
+                    <option
                       v-for="column in columns"
                       :key="column.Label"
                       :value="Array.isArray(column.field) ? column.field.join() : column.field"
@@ -165,7 +165,6 @@
       :view="view"
       :actions="actions"
       :elasticsearch="elasticsearch"
-      :esClient="esClient"
       :loading="loading"
     ></data-table>
 
@@ -173,12 +172,11 @@
 </template>
 
 <script>
-import RangeSlider from '../Helpers/RangeSlider'
-import Message from '../Helpers/Message'
-import DataTable from './DataTable'
-import elasticsearchLib from 'elasticsearch'
-import Statistics from './Statistics'
-import Shortcuts from './Shortcuts'
+import RangeSlider from '@/components/Helpers/RangeSlider.vue'
+import Message from '@/components/Helpers/Message.vue'
+import DataTable from '@/components/Validation/DataTable.vue'
+import Statistics from '@/components/Validation/Statistics.vue'
+import Shortcuts from '@/components/Validation/Shortcuts.vue'
 
 export default {
   components: {
@@ -218,29 +216,31 @@ export default {
         message: '',
         type: ''
       },
-      // ES CLIENT
-      esClient: {}
     }
   },
   created () {
-    this.$http.put(this.apiUrl + 'datasets/' + this.$route.params.dataset + '/validation')
+    fetch(this.apiUrl + 'datasets/' + this.$route.params.dataset + '/validation', {method: put})
       .then(response => {
-        this.columns = response.body.props.columns
-        this.scores = response.body.props.scores
-        this.view = response.body.props.view
-        this.actions = response.body.props.actions
-        this.elasticsearch = response.body.props.elasticsearch
+        const contentType = response.headers.get("content-type")
+        if(contentType && contentType.indexOf("application/json") !== -1) {
+          return response.json().then( (json) => {
+            this.columns = json.props.columns
+            this.scores = json.props.scores
+            this.view = json.props.view
+            this.actions = json.props.actions
+            this.elasticsearch = json.props.elasticsearch
 
-        this.connectionMade = true
+            this.connectionMade = true
 
-        this.valuesRangeSlider = this.scores.range
+            this.valuesRangeSlider = this.scores.range
 
-        if (this.elasticsearch.connection.host.match(/^\//) || this.elasticsearch.connection.host === '') {
-          this.elasticsearch.connection.host = window.location.host + this.elasticsearch.connection.host
+            if (this.elasticsearch.connection.host.match(/^\//) || this.elasticsearch.connection.host === '') {
+              this.elasticsearch.connection.host = window.location.host + this.elasticsearch.connection.host
+            }
+
+            this.refreshData()
+          })
         }
-        this.esClient = new elasticsearchLib.Client(this.elasticsearch.connection)
-
-        this.refreshData()
       })
   },
   mounted () {
@@ -280,56 +280,63 @@ export default {
     getData () {
       this.loading = true
       return this.search(this.searchString, this.selectedSearchField).then(response => {
-        response.hits.hits.forEach(element => {
-          if (this.displayOnlyUndone || !element._source.validation_done) {
-            if (this.actions.display) {
-              if (this.scores.column) {
-                element._source.validation_decision = (element._source.validation_decision === undefined) ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
+        const contentType = response.headers.get("content-type")
+        if(contentType && contentType.indexOf("application/json") !== -1) {
+          return response.json().then( (json) => {
+            json.hits.hits.forEach(element => {
+              if (this.displayOnlyUndone || !element._source.validation_done) {
+                if (this.actions.display) {
+                  if (this.scores.column) {
+                    element._source.validation_decision = (element._source.validation_decision === undefined) ? element._source[this.scores.column] > this.scores.preComputed.decision : element._source.validation_decision
 
-                element._source.validation_done = (element._source.validation_done === undefined) ? false : element._source.validation_done
+                    element._source.validation_done = (element._source.validation_done === undefined) ? false : element._source.validation_done
 
-                if (this.actions.action.indecision_display) {
-                  element._source.validation_indecision = (element._source.validation_indecision === undefined) ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
+                    if (this.actions.action.indecision_display) {
+                      element._source.validation_indecision = (element._source.validation_indecision === undefined) ? Array.isArray(this.scores.preComputed.indecision) && element._source[this.scores.column] <= this.scores.preComputed.indecision[1] && element._source[this.scores.column] >= this.scores.preComputed.indecision[0] : element._source.validation_indecision
+                    }
+                  } else {
+                    element._source.validation_decision = !element._source.validation_decision ? false : element._source.validation_decision
+
+                    element._source.validation_done = !element._source.validation_done ? false : element._source.validation_done
+
+                    if (this.actions.action.indecision_display) {
+                      element._source.validation_indecision = !element._source.validation_indecision ? false : element._source.validation_indecision
+                    }
+                  }
+
+                  element._source.validation = false
                 }
-              } else {
-                element._source.validation_decision = !element._source.validation_decision ? false : element._source.validation_decision
-
-                element._source.validation_done = !element._source.validation_done ? false : element._source.validation_done
-
-                if (this.actions.action.indecision_display) {
-                  element._source.validation_indecision = !element._source.validation_indecision ? false : element._source.validation_indecision
-                }
+                this.dataTable.push(Object.assign(element._source, {_id: element._id}))
               }
-
-              element._source.validation = false
-            }
-            this.dataTable.push(Object.assign(element._source, {_id: element._id}))
-          }
-        })
-        this.loading = false
+            })
+            this.loading = false
+          })
+        }
       }, error => {
         this.manageError(error)
       })
     },
     search (query, fields) {
       if (fields.includes(',')) {
-        return this.esClient.search({
-          index: this.elasticsearch.index,
-          size: this.elasticsearch.size,
-          body: {
+        return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search`, {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            size: this.elasticsearch.size,
             query: {
               multi_match: {
                 query: query,
                 fields: fields.split(',')
               }
             }
-          }
+          })
         })
       } else if (fields === 'random') {
-        return this.esClient.search({
-          index: this.elasticsearch.index,
-          size: this.elasticsearch.size,
-          body: {
+        return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search`, {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            size: this.elasticsearch.size,
             query: {
               function_score: {
                 query: {
@@ -347,15 +354,10 @@ export default {
                 ]
               }
             }
-          }
+          })
         })
       }
-
-      return this.esClient.search({
-        index: this.elasticsearch.index,
-        size: this.elasticsearch.size,
-        q: fields + ':' + query
-      })
+      return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search?q=${fields}:${query}`)
     },
     updateValuesRangeSlider (valueRange) {
       this.valuesRangeSlider = valueRange.map(v => {
@@ -368,7 +370,12 @@ export default {
     },
     getStatistics () {
       this.getElasticsearchStatistics().then(response => {
-        this.statisticsResults = Object.assign({}, this.statisticsResults, response)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.statisticsResults = Object.assign({}, this.statisticsResults, json)
+            })
+          }
       }, error => {
         this.manageError(error)
       })
@@ -376,7 +383,7 @@ export default {
     getElasticsearchStatistics () {
       let aggs = {}
       if (this.scores.aggs !== undefined) {
-        aggs = this.$lodash.clone(this.scores.aggs)
+        aggs = {...this.scores.aggs}
       }
       aggs.decision = {
         terms: {
@@ -391,10 +398,11 @@ export default {
         }
       }
 
-      return this.esClient.search({
-        index: this.elasticsearch.index,
-        size: 0,
-        body: {
+      return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_search`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          size: 0,
           aggs: {
             threshold: {
               filter: {
@@ -438,7 +446,7 @@ export default {
               aggs: aggs
             }
           }
-        }
+        })
       })
     },
     manageError (errorMessage) {

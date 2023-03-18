@@ -20,7 +20,7 @@
                 {{localization.navbar.jobs.running[lang]}}
               </p>
               <ul class="menu-list">
-                <li v-if="$lodash.isEmpty(runningJobs)">
+                <li v-if="isEmpty(runningJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </li>
                 <li v-else v-for="(job, key) in runningJobs" :key="key">
@@ -50,7 +50,7 @@
                 {{localization.navbar.jobs.done[lang]}}
               </p>
               <div class="menu-list">
-                <p v-if="$lodash.isEmpty(doneJobs)">
+                <p v-if="isEmpty(doneJobs)">
                   {{localization.navbar.jobs.empty[lang]}}
                 </p>
                 <p v-else v-for="(recipe, key) in groupedRecipes" :key="key">
@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import Pagination from './Helpers/Pagination'
+import Pagination from '@/components/Helpers/Pagination.vue'
 
 export default {
   components: {
@@ -129,8 +129,8 @@ export default {
   data () {
     return {
       evtSource: null,
-      runningJobs: {},
-      doneJobs: {},
+      runningJobs: [],
+      doneJobs: [],
       log: null,
       warningFilter: false,
       filter: '',
@@ -179,21 +179,39 @@ export default {
       return this.warningNumber > 0
     },
     groupedRecipes () {
-      return this.$lodash.groupBy(this.doneJobs, v => { return v.recipe })
+      return this.groupBy(this.doneJobs, v => { return v.recipe })
     }
   },
   methods: {
+    isEmpty (obj) {
+      return obj ? (Object.keys(obj).length === 0) : true;
+    },
+    groupBy (arr, criteria) {
+	    return arr.reduce((obj, item) => {
+        const key = typeof criteria === 'function' ? criteria(item) : item[criteria];
+        if (!obj.hasOwnProperty(key)) {
+          obj[key] = [];
+        }
+        obj[key].push(item);
+        return obj;
+      }, {})
+    },
     setPageCurrent (page) {
       this.pageCurrent = page
       this.$emit('pageChanged', page)
     },
     getJobs () {
-      this.$http.get(this.apiUrl + 'jobs')
+      fetch(this.apiUrl + 'jobs')
         .then(response => {
-          this.runningJobs = response.body.running
-          this.doneJobs = response.body.done
-          if (this.$route.name === 'job') {
-            this.getLog(this.$route.params.job)
+          const contentType = response.headers.get("content-type")
+          if(contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then( (json) => {
+              this.runningJobs = json.running
+              this.doneJobs = json.done
+              if (this.$route.name === 'job') {
+                this.getLog(this.$route.params.job)
+              }
+            })
           }
         })
     },
@@ -201,13 +219,15 @@ export default {
       if (this.runningJobs.some(r => { return r.recipe === recipe })) {
         this.getRunningLog(recipe)
       } else {
-        this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log')
+        fetch(this.apiUrl + 'recipes/' + recipe + '/log')
           .then(response => {
-            let arr = response.body.split('\n')
-            if ((this.log === null) || (arr.length !== this.log.length)) {
-              this.log = arr
-              this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
-            }
+            return response.text().then( (text) => {
+              let arr = text.split('\n')
+              if ((this.log === null) || (arr.length !== this.log.length)) {
+                this.log = arr
+                this.setPageCurrent(Math.ceil(this.log.length / this.pageSize))
+              }
+            })
           })
         if (this.evtSource !== null) {
           this.evtSource.close()

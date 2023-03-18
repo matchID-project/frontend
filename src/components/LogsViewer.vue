@@ -116,9 +116,11 @@ export default {
         return
       }
       this.lastLogsLoaded = true
-      this.$http.get(this.apiUrl + 'recipes/' + recipe + '/log').then(response => {
-        this.realLogs = response.body
-        this.realLogsLoading = false
+      fetch(this.apiUrl + 'recipes/' + recipe + '/log').then(response => {
+        return response.text().then( (text) => {
+          this.realLogs = text
+          this.realLogsLoading = false
+        })
       },
       () => {
       })

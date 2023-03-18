@@ -87,9 +87,9 @@ export default {
 
       if (this.type === 'project') {
         url = this.apiUrl + 'conf/' + name + '/'
-        method = 'put'
+        method = 'PUT'
       } else {
-        method = 'post'
+        method = 'POST'
         url = this.apiUrl + 'conf/' + this.$route.params.project + '/' + this.type + 's/' + name + '.yml'
 
         if (this.type === 'dataset') {
@@ -99,7 +99,7 @@ export default {
         }
       }
 
-      this.$http[method](url, data)
+      fetch(url, { method: method, headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) })
         .then(() => {
           setTimeout(() => {
             this.loadingAction = false

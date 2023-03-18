@@ -1,13 +1,13 @@
 <template>
   <div id="editor" class="is-fullheight" style="font-size: 12px">
-    <codemirror
+    <Codemirror
       ref="myEditor"
-      :code="code"
+      v-model:value="code"
       :options="editorOptions"
       @beforeChange="beforeCodeChange"
       @change="onEditorCodeChange"
       class="is-fullheight"
-    ></codemirror>
+    />
     <a
       class="delete is-large"
       v-show="isFullScreen"
@@ -18,35 +18,35 @@
 </template>
 
 <script>
+import Codemirror from 'codemirror-editor-vue3'
 
-import {codemirror} from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/css/css.js'
 
-require('codemirror/addon/selection/active-line.js')
-
-require('codemirror/addon/dialog/dialog.js')
-require('codemirror/addon/dialog/dialog.css')
-require('codemirror/addon/search/searchcursor.js')
-require('codemirror/addon/search/search.js')
+import 'codemirror/addon/selection/active-line.js'
+import 'codemirror/addon/dialog/dialog.js'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/addon/search/searchcursor.js'
+import 'codemirror/addon/search/search.js'
 
 // keyMap
-require('codemirror/addon/edit/matchbrackets.js')
+import 'codemirror/addon/edit/matchbrackets.js'
 
 // foldGutter
-require('codemirror/addon/fold/foldgutter.css')
-require('codemirror/addon/fold/brace-fold.js')
-require('codemirror/addon/fold/comment-fold.js')
-require('codemirror/addon/fold/foldcode.js')
-require('codemirror/addon/fold/foldgutter.js')
-require('codemirror/addon/fold/indent-fold.js')
-require('codemirror/addon/fold/markdown-fold.js')
-require('codemirror/addon/fold/xml-fold.js')
-
-require('codemirror/addon/display/fullscreen.css')
-require('codemirror/addon/display/fullscreen.js')
+import 'codemirror/addon/fold/foldgutter.css'
+import 'codemirror/addon/fold/brace-fold.js'
+import 'codemirror/addon/fold/comment-fold.js'
+import 'codemirror/addon/fold/foldcode.js'
+import 'codemirror/addon/fold/foldgutter.js'
+import 'codemirror/addon/fold/indent-fold.js'
+import 'codemirror/addon/fold/markdown-fold.js'
+import 'codemirror/addon/fold/xml-fold.js'
+import 'codemirror/addon/display/fullscreen.css'
+import 'codemirror/addon/display/fullscreen.js'
 
 export default {
   components: {
-    codemirror
+    Codemirror
   },
   props: {
     codeData: String,

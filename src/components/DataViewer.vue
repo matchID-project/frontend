@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import Pagination from './Helpers/Pagination'
+import Pagination from '@/components/Helpers/Pagination.vue'
 
 export default {
   components: {

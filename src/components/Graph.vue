@@ -69,11 +69,11 @@
                         >
                 </circle>
                 <g class="transform-origin: center center">
-                  <icon
+                  <Icon
                         v-show="node.active"
                         :x="-7.5 * scale[nodeStatus(node)]"
                         :y="-7.5 * scale[nodeStatus(node)]"
-                        :scale="scale[nodeStatus(node)]"
+                        :sytle="`font-size: ${scale[nodeStatus(node)]}px`"
                         :name="icons[nodeStatus(node)]"
                         :color="colors[nodeStatus(node)]"
                   >
@@ -105,8 +105,7 @@
 
 <script>
 import * as d3 from 'd3'
-import 'vue-awesome/icons'
-import Icon from 'vue-awesome/components/Icon'
+import { Icon } from '@iconify/vue'
 
 export default {
   components: {
@@ -138,12 +137,12 @@ export default {
         'ml': 2
       },
       scale: {
-        'dataset': 1,
-        'recipe': 1,
-        'elasticsearch': 1.5,
-        'ml': 1.5,
-        'hidden': 1,
-        'inactive': 1
+        'dataset': 24,
+        'recipe': 24,
+        'elasticsearch': 36,
+        'ml': 36,
+        'hidden': 24,
+        'inactive': 24
       },
       collide: {
         'project': 5,
@@ -192,11 +191,11 @@ export default {
         'inactive': 6
       },
       icons: {
-        'project': 'industry',
-        'dataset': 'table',
-        'elasticsearch': 'database',
-        'recipe': 'flask',
-        'ml': 'magic'
+        'project': 'fa-solid:industry',
+        'dataset': 'fa-solid:table',
+        'elasticsearch': 'fa-solid:database',
+        'recipe': 'fa-solid:flask',
+        'ml': 'fa-solid:magic'
       },
       strokeDasharray: {
         'projectLink': '0',

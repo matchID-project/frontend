@@ -66,7 +66,7 @@
                   <div class="field has-text-centered" :class="{'is-grouped' : actions.action.indecision_display}">
                     <p class="has-text-centered mID-nowrap" :class="{'mID-margin-right-8' : actions.action.indecision_display}">
                       <label class="checkbox">
-                        <toggle-button
+                        <Toggle
                           v-model="entry.validation_decision"
                           :value="entry.validation_decision"
                           :color="{checked: '#00d1b2', unchecked: '#ff3860'}"
@@ -95,12 +95,10 @@
                   <div class="field has-text-centered">
                     <p class="has-text-centered mID-nowrap">
                       <label class="checkbox">
-                        <toggle-button
+                        <toggle
                           v-model="entry.validation_done"
-                          :value="entry.validation_done"
-                          color="#363636"
-                          :labels="{checked: '✅', unchecked: 'O'}"
-                          :sync="true"
+                          offLabel="O"
+                          onLabel="✅"
                           @change="updateData(entry, 'done')"
                         />
                       </label>
@@ -125,22 +123,21 @@
 </template>
 
 <script>
-import Vue from 'vue'
 
-import ProgressBar from '../Helpers/ProgressBar'
-import ScrollManager from '../Helpers/FixedHeader/ScrollManager'
-import TableHeader from '../Helpers/FixedHeader/TableHeader'
-import ElasticsearchResponse from './ElasticsearchResponse'
+import ProgressBar from '@/components/Helpers/ProgressBar.vue'
+import ScrollManager from '@/components/Helpers/FixedHeader/ScrollManager.js'
+import TableHeader from '@/components/Helpers/FixedHeader/TableHeader.vue'
+import ElasticsearchResponse from '@/components/Validation/ElasticsearchResponse.vue'
 
-import formatCell from '../../assets/js/formatCell'
-import ToggleButton from 'vue-js-toggle-button'
-Vue.use(ToggleButton)
+import formatCell from '@/components/../assets/js/formatCell.js'
+import Toggle from '@vueform/toggle'
 
 export default {
   components: {
     ProgressBar,
     TableHeader,
-    ElasticsearchResponse
+    ElasticsearchResponse,
+    Toggle
   },
   props: {
     columns: {
@@ -171,10 +168,6 @@ export default {
       type: Boolean,
       default: false,
       required: true
-    },
-    esClient: {
-      type: Object,
-      required: false
     }
   },
   data () {
@@ -359,14 +352,15 @@ export default {
           'script': script
         }
       })
-      return this.esClient.update({
-        index: this.elasticsearch.index,
-        id: id,
-        body: {
-          'script': script
-        }
+      return fetch(`${this.elasticsearch.connection.host}/${this.elasticsearch.index}/_update/${id}`,
+      {
+        method: 'POST',
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ script: script})
       })
     }
   }
 }
 </script>
+
+<style src="@vueform/toggle/themes/default.css"></style>
