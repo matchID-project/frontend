@@ -1,4 +1,4 @@
-FROM node:18.15-alpine3.17 as base
+FROM node:18.20-alpine3.19 as base
 ARG proxy
 
 ARG http_proxy
