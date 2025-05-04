@@ -77,7 +77,7 @@ export NPM_LATEST=true
 #temp fix before updating
 #export NPM_AUDIT_IGNORE=true
 
-DC := 'docker-compose'
+DC := docker compose
 include /etc/os-release
 
 version:
